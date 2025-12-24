@@ -4,125 +4,246 @@
 
 Website für den Baseballverein **Kutro Crazy Geese** (crazy-geese.at), spielend in der **Baseball Landesliga Ost** (Österreich).
 
+**Live:** https://skofield05.github.io/crazy-geese-website/
+**Repo:** https://github.com/skofield05/crazy-geese-website
+
 ## Architektur
 
 Statische Website, gehostet auf GitHub Pages. Keine Datenbank, kein Backend.
 
 ```
-index.html      → Lädt data.json per JavaScript und rendert die Seite
-style.css       → Responsive Design, mobile-first
-data/data.json  → Alle Vereinsdaten (Tabelle, Spiele, Kontakt)
-scripts/        → Python Scraper für automatische Updates
+index.html        → Hauptseite (lädt data.json per JavaScript)
+style.css         → Styling (CSS Variables für Farben)
+data/data.json    → Alle Daten (Tabelle, Spiele, Kontakt)
+scripts/scraper.py → Python Scraper für automatische Updates
+geese_logo.png    → Vereinslogo (auch Favicon)
+CLAUDE.md         → Diese Dokumentation
 ```
 
-## Datenquelle
+## Aktuelle Saison (2025)
 
-Die Ligadaten kommen von der Austrian Baseball Softball Federation (ABF):
+- **Ergebnis:** 13 Siege, 0 Niederlagen – **MEISTER!**
+- **Finale:** 12:1 gegen Danube Titans (20.09.2025)
+- Alle 13 Spiele sind in `data/data.json` gespeichert
 
-| Seite | URL | Rendering |
-|-------|-----|-----------|
-| Tabelle | `/standings` | Serverseitig |
-| Kalender | `/calendars` | Serverseitig (mit Filtern) |
-| Spielplan | `/schedule-and-results` | JavaScript (Datepicker) |
+---
+
+## Datenquelle: ABF Website
+
+Die Ligadaten kommen von der Austrian Baseball Softball Federation:
+
+| Seite | URL-Suffix | Rendering | Verwendung |
+|-------|------------|-----------|------------|
+| Tabelle | `/standings` | Serverseitig | Team-Platzierungen |
+| Kalender | `/calendars` | Serverseitig | Spiele + Ergebnisse (mit Filter) |
+| Spielplan | `/schedule-and-results` | JavaScript | Echte Spieltage |
 
 **Basis-URL:** `https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-YYYY`
 
-### Scraper-Logik
+### Bekannter ABF-Bug
 
-Der Scraper (`scripts/scraper.py`) holt Daten in 3 Schritten:
+Die Kalender-Seite (`/calendars`) zeigt das **aktuelle Datum** statt des echten Spieldatums an. Daher holt der Scraper:
+1. Spiele + Ergebnisse von `/calendars` (mit Team-Filter)
+2. Echte Spieltage separat von `/schedule-and-results` (via Datepicker-Navigation)
 
-1. **Tabelle** von `/standings` - Team-Platzierungen
-2. **Spiele** von `/calendars` - Durchsucht alle Runden (Regular Season, Playoffs, Platzierungsrunde) mit Team-Filter
-3. **Spieltage** von `/schedule-and-results` - Navigiert durch Datepicker für echte Daten
+---
 
-**WICHTIG:** Die Kalender-Seite hat einen Bug und zeigt das aktuelle Datum statt des echten Spieldatums. Daher werden die Daten separat von der Schedule-Seite geholt.
-
-### Duplikat-Vermeidung
-
-Der Scraper fügt nur NEUE Spiele hinzu. Ein Spiel gilt als Duplikat wenn:
-- Datum + Heim + Gast übereinstimmen, ODER
-- Heim + Gast + Ergebnis übereinstimmen (falls Datum fehlt)
-
-## Häufige Aufgaben
-
-### Spielergebnis eintragen
-Bearbeite `data/data.json` → `spiele.vergangene`, füge neues Spiel hinzu:
-```json
-{
-  "datum": "2025-04-20",
-  "zeit": "14:00",
-  "heim": "Kutro Crazy Geese",
-  "gast": "Vienna Bucks",
-  "ergebnis_heim": 12,
-  "ergebnis_gast": 4,
-  "ort": "Heimplatz"
-}
-```
-
-### Tabelle aktualisieren
-Entweder `python scripts/scraper.py` laufen lassen, oder manuell in `data/data.json` → `tabelle.teams` die Werte anpassen.
-
-### Neue Saison starten
-1. In `scripts/scraper.py`: `ABF_BASE` URL auf neue Saison ändern (z.B. `baseball-landesliga-ost-2026`)
-2. In `data/data.json`: `verein.saison` ändern
-3. In `data/data.json`: `verein.abf_url` aktualisieren
-4. Optional: `spiele.vergangene` leeren für frischen Start (oder behalten für Historie)
-5. Scraper laufen lassen: `python scripts/scraper.py`
-
-**Hinweis:** Der Scraper erkennt automatisch:
-- Alle verfügbaren Runden (Regular Season, Playoffs, etc.)
-- Die Team-ID der Crazy Geese
-- Bereits vorhandene Spiele werden nicht doppelt eingetragen
-
-### Kontaktdaten ändern
-Bearbeite `data/data.json` → `kontakt`
-
-## GitHub Actions
-
-Der Workflow `.github/workflows/update-standings.yml` läuft automatisch:
-- Sonntag 22:00 Uhr (nach Spieltagen)
-- Montag 08:00 Uhr (Backup)
-
-Kann auch manuell getriggert werden über GitHub → Actions → Run workflow.
-
-## Design
-
-- Dark Theme mit Grün als Primärfarbe (Vereinsfarben anpassbar in style.css)
-- Mobile-first, responsive
-- Fonts: Bebas Neue (Headlines), Source Sans 3 (Body)
-
-## Scraper Details
+## Scraper (`scripts/scraper.py`)
 
 ### Installation
+
 ```bash
 pip install playwright
 python -m playwright install chromium
 ```
 
 ### Ausführung
+
+```bash
+cd crazy-geese-website
+python scripts/scraper.py
+```
+
+### Was der Scraper macht
+
+1. **Tabelle laden** von `/standings`
+2. **Runden-IDs extrahieren** automatisch von `/calendars` (Regular Season, Playoffs, Platzierungsrunde)
+3. **Team-ID finden** automatisch aus Dropdown (Crazy Geese = 35667 für 2025)
+4. **Alle Runden durchsuchen** mit Team-Filter
+5. **Spieltage holen** von `/schedule-and-results`:
+   - Navigiert 30x zurück zum Saisonstart
+   - Geht vorwärts durch alle Spieltage
+   - Matcht Spielnummern (#1, #3, etc.) mit Daten
+6. **Duplikate vermeiden** - nur neue Spiele werden hinzugefügt
+7. **data.json speichern**
+
+### Datepicker-Navigation
+
+Die Schedule-Seite hat einen Datepicker mit 3 Buttons im `.date-picker`:
+- `buttons[0]`: Linker Pfeil (← vorheriger Spieltag)
+- `buttons[1]`: Kalender-Icon (ignorieren)
+- `buttons[2]`: Rechter Pfeil (→ nächster Spieltag)
+
+### Duplikat-Erkennung
+
+Ein Spiel gilt als Duplikat wenn:
+- Datum + Heim + Gast übereinstimmen, ODER
+- Heim + Gast + Ergebnis übereinstimmen (falls Datum fehlt)
+
+---
+
+## Häufige Aufgaben
+
+### Scraper laufen lassen (empfohlen)
+
 ```bash
 python scripts/scraper.py
 ```
 
-### Ablauf
-1. Lädt bestehende `data.json`
-2. Scraped Tabelle von `/standings`
-3. Extrahiert Runden-IDs und Team-ID automatisch von `/calendars`
-4. Durchsucht alle Runden (Regular Season, Playoffs, Platzierungsrunde)
-5. Holt echte Spieltage von `/schedule-and-results` via Datepicker-Navigation
-6. Merged neue Spiele (keine Duplikate)
-7. Speichert aktualisierte `data.json`
+Holt automatisch neue Spiele und aktualisiert die Tabelle.
 
-### Datepicker-Navigation
-Die Schedule-Seite hat einen Datepicker mit 3 Buttons:
-- Button 0: Linker Pfeil (vorheriger Spieltag)
-- Button 1: Kalender-Icon
-- Button 2: Rechter Pfeil (nächster Spieltag)
+### Manuell Spiel eintragen
 
-Der Scraper navigiert 30x zurück zum Saisonstart, dann vorwärts durch alle Spieltage.
+In `data/data.json` → `spiele.vergangene`:
+
+```json
+{
+  "datum": "2025-05-03",
+  "zeit": "11:00",
+  "heim": "Kutro Crazy Geese",
+  "gast": "Vienna Bucks",
+  "ergebnis_heim": 14,
+  "ergebnis_gast": 4,
+  "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+  "phase": "Regular Season"
+}
+```
+
+### Neue Saison starten (z.B. 2026)
+
+1. **Scraper anpassen** (`scripts/scraper.py`):
+   ```python
+   ABF_BASE = "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026"
+   ```
+
+2. **data.json anpassen**:
+   ```json
+   "verein": {
+     "saison": "2026",
+     "abf_url": "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026"
+   }
+   ```
+
+3. **Optional:** `spiele.vergangene` und `spiele.naechste` leeren
+
+4. **Scraper ausführen:**
+   ```bash
+   python scripts/scraper.py
+   ```
+
+Der Scraper erkennt automatisch die neuen Runden-IDs und Team-IDs.
+
+---
+
+## Design
+
+### Farben (Farbenblind-freundlich)
+
+```css
+/* In style.css :root */
+--color-primary: #1e2d4d;     /* Navy Blau (Logo) */
+--color-win: #2563eb;         /* Blau für Siege */
+--color-loss: #ea580c;        /* Orange für Niederlagen */
+--color-tie: #a3a3a3;         /* Grau für Unentschieden */
+```
+
+**Warum Blau/Orange?** Für Rot-Grün-Schwäche optimal unterscheidbar.
+
+### Logo
+
+- Datei: `geese_logo.png`
+- Verwendet als: Header-Logo + Favicon
+- Farben: Navy (#1e2d4d), Rot, Weiß
+
+### Fonts
+
+- Headlines: Bebas Neue
+- Body: Source Sans 3
+
+---
+
+## Automatische Updates (TODO)
+
+Für automatische Updates via GitHub Actions:
+
+### Geplanter Workflow (`.github/workflows/update-standings.yml`)
+
+```yaml
+name: Update Standings
+
+on:
+  schedule:
+    # Sonntag 22:00 UTC (nach Spieltagen)
+    - cron: '0 22 * * 0'
+    # Montag 08:00 UTC (Backup)
+    - cron: '0 8 * * 1'
+  workflow_dispatch:  # Manueller Trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright
+          playwright install chromium
+
+      - name: Run scraper
+        run: python scripts/scraper.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add data/data.json
+          git diff --staged --quiet || git commit -m "Auto-update standings"
+          git push
+```
+
+### Aktivierung
+
+1. Datei `.github/workflows/update-standings.yml` erstellen
+2. In GitHub → Settings → Actions → General:
+   - "Allow all actions" aktivieren
+   - "Read and write permissions" für GITHUB_TOKEN
+
+---
 
 ## Wichtige Pfade
 
-- Vereinsdaten: `data/data.json`
-- Styling anpassen: `style.css` (CSS Variables am Anfang)
-- Scraper: `scripts/scraper.py` (ABF_BASE Variable für neue Saison anpassen)
+| Was | Wo |
+|-----|-----|
+| Vereinsdaten | `data/data.json` |
+| Styling/Farben | `style.css` (CSS Variables am Anfang) |
+| Scraper-URL | `scripts/scraper.py` → `ABF_BASE` Variable |
+| Logo | `geese_logo.png` |
+
+---
+
+## Changelog
+
+### 2025-12-24
+- Alle 13 Spiele der Saison 2025 importiert
+- Neuer Scraper: durchsucht alle Runden automatisch
+- Logo integriert (Header + Favicon)
+- Farbenblind-freundliches Design (Blau/Orange)
+- Kompakter Header
+- "Alle Spiele anzeigen" Button
+- Dokumentation aktualisiert
