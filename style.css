@@ -4,23 +4,24 @@
    ============================================ */
 
 :root {
-  /* Vereinsfarben – hier anpassen */
-  --color-primary: #2d5a27;      /* Dunkelgrün */
-  --color-primary-light: #4a8c3f;
-  --color-accent: #f4d03f;        /* Gold für Highlights */
-  
+  /* Vereinsfarben – basierend auf Logo */
+  --color-primary: #1e2d4d;       /* Navy Blau */
+  --color-primary-light: #3b5998;
+  --color-accent: #f0f0f0;        /* Hell für Kontrast */
+  --color-accent-light: #ffffff;
+
   /* Basis */
-  --color-bg: #0f1215;
-  --color-bg-card: #1a1f24;
-  --color-bg-hover: #252b32;
+  --color-bg: #0d1117;
+  --color-bg-card: #161b22;
+  --color-bg-hover: #21262d;
   --color-text: #e8e8e8;
-  --color-text-muted: #8a9199;
-  --color-border: #2a3038;
-  
-  /* Ergebnisse */
-  --color-win: #2d5a27;
-  --color-loss: #8b2635;
-  --color-tie: #5a5a2d;
+  --color-text-muted: #8b949e;
+  --color-border: #30363d;
+
+  /* Ergebnisse - Farbenblind-freundlich (Blau/Orange statt Grün/Rot) */
+  --color-win: #2563eb;           /* Blau für Siege */
+  --color-loss: #ea580c;          /* Orange für Niederlagen */
+  --color-tie: #a3a3a3;           /* Grau für Unentschieden */
   
   /* Spacing */
   --space-xs: 0.25rem;
@@ -56,13 +57,13 @@ body {
 }
 
 a {
-  color: var(--color-primary-light);
+  color: #60a5fa;               /* Hellblau für Links */
   text-decoration: none;
   transition: color 0.2s;
 }
 
 a:hover {
-  color: var(--color-accent);
+  color: #93c5fd;
 }
 
 /* ============================================
@@ -70,8 +71,8 @@ a:hover {
    ============================================ */
 
 .hero {
-  background: linear-gradient(135deg, var(--color-primary) 0%, #1a3518 100%);
-  padding: var(--space-2xl) var(--space-md);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0f1726 100%);
+  padding: var(--space-lg) var(--space-md);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -94,27 +95,39 @@ a:hover {
 }
 
 .logo {
-  font-size: 4rem;
   margin-bottom: var(--space-sm);
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+.logo img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+}
+
+@media (min-width: 600px) {
+  .logo img {
+    width: 100px;
+    height: 100px;
+  }
 }
 
 .hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 10vw, 4.5rem);
+  font-size: clamp(1.8rem, 8vw, 2.5rem);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: white;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  margin-bottom: var(--space-xs);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  margin-bottom: 0;
 }
 
 .tagline {
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.8);
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  margin-bottom: var(--space-lg);
+  margin-bottom: 0;
 }
 
 .hero-badge .badge {
@@ -128,8 +141,9 @@ a:hover {
 }
 
 .hero-badge .badge.gold {
-  background: linear-gradient(135deg, #f4d03f 0%, #c9a227 100%);
+  background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
   color: #1a1a1a;
+  font-weight: 700;
 }
 
 /* ============================================
@@ -257,12 +271,16 @@ a:hover {
 }
 
 .standings tr.highlight {
-  background: var(--color-primary);
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
   color: white;
 }
 
 .standings tr.highlight td {
   border-color: var(--color-primary-light);
+}
+
+.standings tr.highlight .col-team {
+  font-weight: 700;
 }
 
 .standings tbody tr:not(.highlight):hover {
@@ -327,7 +345,8 @@ a:hover {
 }
 
 .game-matchup .team.us {
-  color: var(--color-primary-light);
+  color: #60a5fa;               /* Hellblau für Crazy Geese */
+  font-weight: 700;
 }
 
 .game-matchup .vs {
@@ -342,12 +361,30 @@ a:hover {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
 }
 
 .no-games {
   color: var(--color-text-muted);
   font-style: italic;
+}
+
+.show-all-btn {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.show-all-btn:hover {
+  background: var(--color-bg-hover);
+  border-color: #60a5fa;
+  color: #60a5fa;
 }
 
 /* ============================================

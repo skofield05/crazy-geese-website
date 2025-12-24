@@ -25,13 +25,62 @@
     "stand": "2025-12-24",
     "phase": "Endklassement",
     "teams": [
-      { "rang": 1, "name": "Kutro Crazy Geese", "kuerzel": "CG", "siege": 13, "niederlagen": 0, "unentschieden": 0 },
-      { "rang": 2, "name": "Danube Titans", "kuerzel": "DT", "siege": 11, "niederlagen": 3, "unentschieden": 0 },
-      { "rang": 3, "name": "Vienna Lawnmowers", "kuerzel": "LM", "siege": 8, "niederlagen": 6, "unentschieden": 0 },
-      { "rang": 4, "name": "Vienna Bucks", "kuerzel": "BU", "siege": 6, "niederlagen": 8, "unentschieden": 0 },
-      { "rang": 5, "name": "Vienna Metrostars 3", "kuerzel": "MS", "siege": 6, "niederlagen": 9, "unentschieden": 0 },
-      { "rang": 6, "name": "Woodquarter Red Devils", "kuerzel": "RD", "siege": 3, "niederlagen": 11, "unentschieden": 0 },
-      { "rang": 7, "name": "Dirty Sox Graz", "kuerzel": "DS", "siege": 2, "niederlagen": 12, "unentschieden": 0 }
+      {
+        "rang": 1,
+        "name": "Kutro Crazy Geese",
+        "kuerzel": "CG",
+        "siege": 13,
+        "niederlagen": 0,
+        "unentschieden": 0
+      },
+      {
+        "rang": 2,
+        "name": "Danube Titans",
+        "kuerzel": "DT",
+        "siege": 11,
+        "niederlagen": 3,
+        "unentschieden": 0
+      },
+      {
+        "rang": 3,
+        "name": "Vienna Lawnmowers",
+        "kuerzel": "LM",
+        "siege": 8,
+        "niederlagen": 6,
+        "unentschieden": 0
+      },
+      {
+        "rang": 4,
+        "name": "Vienna Bucks",
+        "kuerzel": "BU",
+        "siege": 6,
+        "niederlagen": 8,
+        "unentschieden": 0
+      },
+      {
+        "rang": 5,
+        "name": "Vienna Metrostars 3",
+        "kuerzel": "MS",
+        "siege": 6,
+        "niederlagen": 9,
+        "unentschieden": 0
+      },
+      {
+        "rang": 6,
+        "name": "Woodquarter Red Devils",
+        "kuerzel": "RD",
+        "siege": 3,
+        "niederlagen": 11,
+        "unentschieden": 0
+      },
+      {
+        "rang": 7,
+        "name": "Dirty Sox Graz",
+        "kuerzel": "DS",
+        "siege": 2,
+        "niederlagen": 12,
+        "unentschieden": 0
+      }
     ]
   },
   "spiele": {
@@ -39,13 +88,133 @@
     "naechste": [],
     "vergangene": [
       {
-        "datum": "2025-09-14",
+        "datum": "2025-05-03",
+        "zeit": "11:00",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Vienna Bucks",
+        "ergebnis_heim": 14,
+        "ergebnis_gast": 4,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-05-17",
+        "zeit": "12:00",
+        "heim": "Dirty Sox Graz",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 6,
+        "ergebnis_gast": 33,
+        "ort": "Ballpark Graz, Graz",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-05-17",
+        "zeit": "14:30",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Dirty Sox Graz",
+        "ergebnis_heim": 20,
+        "ergebnis_gast": 7,
+        "ort": "Ballpark Graz, Graz",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-06-14",
+        "zeit": "11:00",
+        "heim": "Vienna Bucks",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 8,
+        "ergebnis_gast": 22,
+        "ort": "Ballpark Spenadlwiese, Vienna",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-06-14",
+        "zeit": "13:30",
+        "heim": "Vienna Metrostars 3",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 6,
+        "ergebnis_gast": 26,
+        "ort": "",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-07-05",
         "zeit": "13:00",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Vienna Lawnmowers",
+        "ergebnis_heim": 23,
+        "ergebnis_gast": 11,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-07-12",
+        "zeit": "11:00",
+        "heim": "Danube Titans",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 8,
+        "ergebnis_gast": 9,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-07-12",
+        "zeit": "13:30",
+        "heim": "Vienna Lawnmowers",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 4,
+        "ergebnis_gast": 16,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-07-19",
+        "zeit": "13:30",
+        "heim": "Woodquarter Red Devils",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 4,
+        "ergebnis_gast": 7,
+        "ort": "Cubsfield, Stockerau",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-07-19",
+        "zeit": "16:00",
         "heim": "Kutro Crazy Geese",
         "gast": "Danube Titans",
         "ergebnis_heim": 8,
-        "ergebnis_gast": 5,
-        "ort": "Heimplatz",
+        "ergebnis_gast": 0,
+        "ort": "Cubsfield, Stockerau",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-08-23",
+        "zeit": "11:00",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Woodquarter Red Devils",
+        "ergebnis_heim": 12,
+        "ergebnis_gast": 7,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-08-23",
+        "zeit": "16:00",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Vienna Metrostars 3",
+        "ergebnis_heim": 14,
+        "ergebnis_gast": 10,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2025-09-20",
+        "zeit": "14:00",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Danube Titans",
+        "ergebnis_heim": 12,
+        "ergebnis_gast": 1,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
         "phase": "Finale"
       }
     ]

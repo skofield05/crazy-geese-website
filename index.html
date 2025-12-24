@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kutro Crazy Geese – Baseball Landesliga Ost</title>
   <meta name="description" content="Offizielle Website der Kutro Crazy Geese – Baseball in der Landesliga Ost">
+  <link rel="icon" type="image/png" href="geese_logo.png">
+  <link rel="apple-touch-icon" href="geese_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
@@ -13,12 +15,9 @@
 <body>
   <header class="hero">
     <div class="hero-content">
-      <div class="logo">🪿</div>
+      <div class="logo"><img src="geese_logo.png" alt="Crazy Geese Baseball Club Logo"></div>
       <h1>Crazy Geese</h1>
       <p class="tagline">Baseball Landesliga Ost</p>
-      <div class="hero-badge" id="hero-badge">
-        <!-- Wird per JS befüllt -->
-      </div>
     </div>
   </header>
 
@@ -69,6 +68,7 @@
         <div class="games-list" id="past-games">
           <!-- Wird per JS befüllt -->
         </div>
+        <button class="show-all-btn" id="show-all-games" style="display: none;">Alle Spiele anzeigen</button>
       </div>
     </section>
 
@@ -114,15 +114,6 @@
     }
 
     function renderPage(data) {
-      // Hero Badge
-      const heroBadge = document.getElementById('hero-badge');
-      const team = data.tabelle.teams.find(t => t.kuerzel === 'CG');
-      if (team && team.rang === 1) {
-        heroBadge.innerHTML = `<span class="badge gold">🏆 Platz ${team.rang}</span>`;
-      } else if (team) {
-        heroBadge.innerHTML = `<span class="badge">Platz ${team.rang}</span>`;
-      }
-
       // Season Badge
       document.getElementById('season-badge').textContent = data.verein.saison;
       
@@ -152,13 +143,27 @@
         nextGames.innerHTML = '<p class="no-games">Keine anstehenden Spiele – Saisonpause</p>';
       }
 
-      // Past Games
+      // Past Games (neueste zuerst)
       const pastGames = document.getElementById('past-games');
+      const showAllBtn = document.getElementById('show-all-games');
       if (data.spiele.vergangene && data.spiele.vergangene.length > 0) {
-        pastGames.innerHTML = data.spiele.vergangene
-          .slice(0, 5)
+        const sortedGames = [...data.spiele.vergangene].reverse(); // Neueste zuerst
+        const displayCount = 5;
+
+        pastGames.innerHTML = sortedGames
+          .slice(0, displayCount)
           .map(renderGame)
           .join('');
+
+        // "Alle anzeigen" Button
+        if (sortedGames.length > displayCount) {
+          showAllBtn.style.display = 'block';
+          showAllBtn.textContent = `Alle ${sortedGames.length} Spiele anzeigen`;
+          showAllBtn.onclick = () => {
+            pastGames.innerHTML = sortedGames.map(renderGame).join('');
+            showAllBtn.style.display = 'none';
+          };
+        }
       } else {
         pastGames.innerHTML = '<p class="no-games">Noch keine Spiele</p>';
       }
