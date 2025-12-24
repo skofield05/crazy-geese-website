@@ -1,0 +1,53 @@
+{
+  "verein": {
+    "name": "Kutro Crazy Geese",
+    "kurzname": "Crazy Geese",
+    "liga": "Baseball Landesliga Ost",
+    "saison": "2025",
+    "website": "https://crazy-geese.at",
+    "abf_url": "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2025"
+  },
+  "kontakt": {
+    "email": "info@crazy-geese.at",
+    "telefon": "",
+    "adresse": {
+      "name": "Heimplatz",
+      "strasse": "",
+      "plz": "",
+      "ort": ""
+    },
+    "social": {
+      "instagram": "",
+      "facebook": ""
+    }
+  },
+  "tabelle": {
+    "stand": "2025-12-24",
+    "phase": "Endklassement",
+    "teams": [
+      { "rang": 1, "name": "Kutro Crazy Geese", "kuerzel": "CG", "siege": 13, "niederlagen": 0, "unentschieden": 0 },
+      { "rang": 2, "name": "Danube Titans", "kuerzel": "DT", "siege": 11, "niederlagen": 3, "unentschieden": 0 },
+      { "rang": 3, "name": "Vienna Lawnmowers", "kuerzel": "LM", "siege": 8, "niederlagen": 6, "unentschieden": 0 },
+      { "rang": 4, "name": "Vienna Bucks", "kuerzel": "BU", "siege": 6, "niederlagen": 8, "unentschieden": 0 },
+      { "rang": 5, "name": "Vienna Metrostars 3", "kuerzel": "MS", "siege": 6, "niederlagen": 9, "unentschieden": 0 },
+      { "rang": 6, "name": "Woodquarter Red Devils", "kuerzel": "RD", "siege": 3, "niederlagen": 11, "unentschieden": 0 },
+      { "rang": 7, "name": "Dirty Sox Graz", "kuerzel": "DS", "siege": 2, "niederlagen": 12, "unentschieden": 0 }
+    ]
+  },
+  "spiele": {
+    "letztes_update": "2025-12-24",
+    "naechste": [],
+    "vergangene": [
+      {
+        "datum": "2025-09-14",
+        "zeit": "13:00",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Danube Titans",
+        "ergebnis_heim": 8,
+        "ergebnis_gast": 5,
+        "ort": "Heimplatz",
+        "phase": "Finale"
+      }
+    ]
+  }
+}

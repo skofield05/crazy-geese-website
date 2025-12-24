@@ -1,0 +1,50 @@
+# GitHub Actions Workflow
+# Aktualisiert die Vereinsdaten automatisch von der ABF-Seite
+
+name: Update Standings
+
+on:
+  # Manueller Trigger (für Tests)
+  workflow_dispatch:
+  
+  # Automatisch jeden Sonntag um 22:00 Uhr (MESZ = 20:00 UTC)
+  # und Montag früh um 08:00 (falls Sonntag-Update fehlschlägt)
+  schedule:
+    - cron: '0 20 * * 0'  # Sonntag 22:00 MESZ
+    - cron: '0 6 * * 1'   # Montag 08:00 MESZ
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Dependencies
+        run: |
+          pip install playwright
+          playwright install chromium
+          playwright install-deps
+      
+      - name: Run Scraper
+        run: python scripts/scraper.py
+      
+      - name: Check for Changes
+        id: changes
+        run: |
+          git diff --quiet data/data.json || echo "changed=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and Push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add data/data.json
+          git commit -m "🏆 Daten aktualisiert $(date +'%Y-%m-%d %H:%M')"
+          git push

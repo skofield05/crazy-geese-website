@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kutro Crazy Geese – Baseball Landesliga Ost</title>
+  <meta name="description" content="Offizielle Website der Kutro Crazy Geese – Baseball in der Landesliga Ost">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-content">
+      <div class="logo">🪿</div>
+      <h1>Crazy Geese</h1>
+      <p class="tagline">Baseball Landesliga Ost</p>
+      <div class="hero-badge" id="hero-badge">
+        <!-- Wird per JS befüllt -->
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a href="#tabelle">Tabelle</a>
+    <a href="#spiele">Spiele</a>
+    <a href="#kontakt">Kontakt</a>
+  </nav>
+
+  <main>
+    <section id="tabelle" class="section">
+      <h2>Tabelle <span class="season-badge" id="season-badge">2025</span></h2>
+      <p class="table-phase" id="table-phase">Endklassement</p>
+      <div class="table-container">
+        <table class="standings">
+          <thead>
+            <tr>
+              <th class="col-rank">#</th>
+              <th class="col-team">Team</th>
+              <th class="col-stat">W</th>
+              <th class="col-stat">L</th>
+              <th class="col-stat hide-mobile">T</th>
+            </tr>
+          </thead>
+          <tbody id="standings-body">
+            <!-- Wird per JS befüllt -->
+          </tbody>
+        </table>
+      </div>
+      <p class="data-source">
+        Quelle: <a href="https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2025/standings" target="_blank" rel="noopener">ABF</a>
+        • Stand: <span id="table-date">-</span>
+      </p>
+    </section>
+
+    <section id="spiele" class="section">
+      <h2>Spiele</h2>
+      
+      <div id="next-games-container">
+        <h3>Nächste Spiele</h3>
+        <div class="games-list" id="next-games">
+          <p class="no-games">Keine anstehenden Spiele</p>
+        </div>
+      </div>
+
+      <div id="past-games-container">
+        <h3>Letzte Ergebnisse</h3>
+        <div class="games-list" id="past-games">
+          <!-- Wird per JS befüllt -->
+        </div>
+      </div>
+    </section>
+
+    <section id="kontakt" class="section">
+      <h2>Kontakt</h2>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h3>📧 Email</h3>
+          <p><a href="mailto:info@crazy-geese.at" id="contact-email">info@crazy-geese.at</a></p>
+        </div>
+        <div class="contact-card" id="contact-location-card">
+          <h3>📍 Spielort</h3>
+          <p id="contact-location">-</p>
+        </div>
+        <div class="contact-card">
+          <h3>🔗 Links</h3>
+          <p>
+            <a href="https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2025/teams/35667" target="_blank" rel="noopener">ABF Teamseite</a>
+          </p>
+          <p id="social-links"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year">2025</span> Kutro Crazy Geese</p>
+    <p class="footer-links">
+      <a href="https://www.baseballsoftball.at" target="_blank" rel="noopener">Austrian Baseball Softball Federation</a>
+    </p>
+  </footer>
+
+  <script>
+    // Daten laden und Seite befüllen
+    async function loadData() {
+      try {
+        const response = await fetch('data/data.json');
+        const data = await response.json();
+        renderPage(data);
+      } catch (error) {
+        console.error('Fehler beim Laden der Daten:', error);
+      }
+    }
+
+    function renderPage(data) {
+      // Hero Badge
+      const heroBadge = document.getElementById('hero-badge');
+      const team = data.tabelle.teams.find(t => t.kuerzel === 'CG');
+      if (team && team.rang === 1) {
+        heroBadge.innerHTML = `<span class="badge gold">🏆 Platz ${team.rang}</span>`;
+      } else if (team) {
+        heroBadge.innerHTML = `<span class="badge">Platz ${team.rang}</span>`;
+      }
+
+      // Season Badge
+      document.getElementById('season-badge').textContent = data.verein.saison;
+      
+      // Table Phase
+      document.getElementById('table-phase').textContent = data.tabelle.phase;
+      
+      // Table Date
+      document.getElementById('table-date').textContent = formatDate(data.tabelle.stand);
+
+      // Standings
+      const tbody = document.getElementById('standings-body');
+      tbody.innerHTML = data.tabelle.teams.map(team => `
+        <tr class="${team.kuerzel === 'CG' ? 'highlight' : ''}">
+          <td class="col-rank">${team.rang}</td>
+          <td class="col-team">${team.name}</td>
+          <td class="col-stat">${team.siege}</td>
+          <td class="col-stat">${team.niederlagen}</td>
+          <td class="col-stat hide-mobile">${team.unentschieden}</td>
+        </tr>
+      `).join('');
+
+      // Next Games
+      const nextGames = document.getElementById('next-games');
+      if (data.spiele.naechste && data.spiele.naechste.length > 0) {
+        nextGames.innerHTML = data.spiele.naechste.map(renderGame).join('');
+      } else {
+        nextGames.innerHTML = '<p class="no-games">Keine anstehenden Spiele – Saisonpause</p>';
+      }
+
+      // Past Games
+      const pastGames = document.getElementById('past-games');
+      if (data.spiele.vergangene && data.spiele.vergangene.length > 0) {
+        pastGames.innerHTML = data.spiele.vergangene
+          .slice(0, 5)
+          .map(renderGame)
+          .join('');
+      } else {
+        pastGames.innerHTML = '<p class="no-games">Noch keine Spiele</p>';
+      }
+
+      // Contact
+      if (data.kontakt.email) {
+        const emailEl = document.getElementById('contact-email');
+        emailEl.href = `mailto:${data.kontakt.email}`;
+        emailEl.textContent = data.kontakt.email;
+      }
+
+      if (data.kontakt.adresse && data.kontakt.adresse.name) {
+        const addr = data.kontakt.adresse;
+        let locationText = addr.name;
+        if (addr.strasse) locationText += `<br>${addr.strasse}`;
+        if (addr.plz && addr.ort) locationText += `<br>${addr.plz} ${addr.ort}`;
+        document.getElementById('contact-location').innerHTML = locationText;
+      }
+
+      // Social Links
+      const socialLinks = document.getElementById('social-links');
+      let socialHtml = '';
+      if (data.kontakt.social.instagram) {
+        socialHtml += `<a href="https://instagram.com/${data.kontakt.social.instagram}" target="_blank" rel="noopener">Instagram</a> `;
+      }
+      if (data.kontakt.social.facebook) {
+        socialHtml += `<a href="${data.kontakt.social.facebook}" target="_blank" rel="noopener">Facebook</a>`;
+      }
+      socialLinks.innerHTML = socialHtml;
+
+      // Year in footer
+      document.getElementById('year').textContent = new Date().getFullYear();
+    }
+
+    function renderGame(game) {
+      const isHome = game.heim.includes('Crazy Geese');
+      const hasResult = game.ergebnis_heim !== null && game.ergebnis_heim !== undefined;
+      
+      let resultClass = '';
+      if (hasResult) {
+        const ourScore = isHome ? game.ergebnis_heim : game.ergebnis_gast;
+        const theirScore = isHome ? game.ergebnis_gast : game.ergebnis_heim;
+        resultClass = ourScore > theirScore ? 'win' : (ourScore < theirScore ? 'loss' : 'tie');
+      }
+
+      return `
+        <div class="game-card ${resultClass}">
+          <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + game.zeit : ''}</div>
+          <div class="game-matchup">
+            <span class="team ${isHome ? 'us' : ''}">${game.heim}</span>
+            <span class="vs">${hasResult ? game.ergebnis_heim + ':' + game.ergebnis_gast : 'vs'}</span>
+            <span class="team ${!isHome ? 'us' : ''}">${game.gast}</span>
+          </div>
+          ${game.phase ? `<div class="game-phase">${game.phase}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    // Start
+    loadData();
+  </script>
+</body>
+</html>
