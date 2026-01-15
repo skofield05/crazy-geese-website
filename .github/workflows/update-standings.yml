@@ -6,12 +6,16 @@ name: Update Standings
 on:
   # Manueller Trigger (für Tests)
   workflow_dispatch:
-  
+
   # Automatisch jeden Sonntag um 22:00 Uhr (MESZ = 20:00 UTC)
   # und Montag früh um 08:00 (falls Sonntag-Update fehlschlägt)
   schedule:
     - cron: '0 20 * * 0'  # Sonntag 22:00 MESZ
     - cron: '0 6 * * 1'   # Montag 08:00 MESZ
+
+# WICHTIG: Schreibrechte für git push
+permissions:
+  contents: write
 
 jobs:
   update:
