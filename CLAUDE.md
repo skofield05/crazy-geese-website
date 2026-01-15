@@ -1,5 +1,13 @@
 # CLAUDE.md – Projektkontext für Claude Code
 
+---
+## ⚠️ REMINDER FÜR CLAUDE
+
+**Bei Saisonstart 2026:** Frage den User, ob der neue Spielplan schon verfügbar ist!
+Wenn ja → GitHub Actions an die echten Spieltage anpassen (siehe "TODO: Saison 2026").
+
+---
+
 ## Was ist das?
 
 Website für den Baseballverein **Kutro Crazy Geese** (crazy-geese.at), spielend in der **Baseball Landesliga Ost** (Österreich).
@@ -172,57 +180,37 @@ Der Scraper erkennt automatisch die neuen Runden-IDs und Team-IDs.
 
 ---
 
-## Automatische Updates (TODO)
+## Automatische Updates (GitHub Actions)
 
-Für automatische Updates via GitHub Actions:
+Der Workflow `.github/workflows/update-standings.yml` ist aktiv und läuft automatisch.
 
-### Geplanter Workflow (`.github/workflows/update-standings.yml`)
+**Aktueller Schedule:**
+- Sonntag 22:00 MESZ (20:00 UTC)
+- Montag 08:00 MESZ (06:00 UTC) - Backup
 
-```yaml
-name: Update Standings
-
-on:
-  schedule:
-    # Sonntag 22:00 UTC (nach Spieltagen)
-    - cron: '0 22 * * 0'
-    # Montag 08:00 UTC (Backup)
-    - cron: '0 8 * * 1'
-  workflow_dispatch:  # Manueller Trigger
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          pip install playwright
-          playwright install chromium
-
-      - name: Run scraper
-        run: python scripts/scraper.py
-
-      - name: Commit and push
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add data/data.json
-          git diff --staged --quiet || git commit -m "Auto-update standings"
-          git push
+**Manuell auslösen:**
+```bash
+gh workflow run "Update Standings"
 ```
 
-### Aktivierung
+---
 
-1. Datei `.github/workflows/update-standings.yml` erstellen
-2. In GitHub → Settings → Actions → General:
-   - "Allow all actions" aktivieren
-   - "Read and write permissions" für GITHUB_TOKEN
+## TODO: Saison 2026
+
+**Wenn der neue Spielplan verfügbar ist:**
+
+1. **GitHub Actions an Spieltage anpassen** - Schedule so ändern, dass der Scraper nur an echten Spieltagen läuft (spart Ressourcen, vermeidet Rate-Limiting):
+   ```yaml
+   schedule:
+     # Beispiel: Nur an Spieltagen alle 3 Stunden
+     - cron: '0 9,12,15,18,21 3 5 *'   # 03.05. (Spieltag 1)
+     - cron: '0 9,12,15,18,21 17 5 *'  # 17.05. (Spieltag 2)
+     # ... etc. für jeden Spieltag
+   ```
+
+2. **Scraper auf 2026 umstellen** (siehe "Neue Saison starten")
+
+3. **data.json zurücksetzen** - alte Spiele archivieren oder leeren
 
 ---
 
@@ -238,6 +226,12 @@ jobs:
 ---
 
 ## Changelog
+
+### 2026-01-15
+- GitHub Actions Fix: Schreibrechte für GITHUB_TOKEN
+- Backup aller Infos von crazy-geese.at (`data/alte-website-infos.md`)
+- 25 Bilder von alter Website gesichert (`data/alte-website-bilder/`)
+- Reminder für Saison 2026 hinzugefügt
 
 ### 2025-12-24
 - Alle 13 Spiele der Saison 2025 importiert
