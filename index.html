@@ -106,7 +106,7 @@
     // Daten laden und Seite befüllen
     async function loadData() {
       try {
-        const response = await fetch('data/data.json');
+        const response = await fetch('data/data.json?v=' + Date.now());
         const data = await response.json();
         renderPage(data);
       } catch (error) {
