@@ -127,7 +127,20 @@ a:hover {
   color: rgba(255,255,255,0.7);
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  margin-bottom: 0;
+  margin-bottom: var(--space-sm);
+}
+
+.champion-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1e2d4d;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
 }
 
 .hero-badge .badge {
@@ -420,6 +433,58 @@ a:hover {
   color: var(--color-win);
   font-weight: 600;
   margin-top: var(--space-sm) !important;
+}
+
+/* ============================================
+   SPONSORS
+   ============================================ */
+
+.sponsors-section {
+  background: var(--color-bg-card);
+  border-top: 1px solid var(--color-border);
+}
+
+.sponsors-section h2 {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-lg);
+}
+
+.sponsors-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-lg) var(--space-xl);
+}
+
+.sponsor-logo {
+  display: block;
+  opacity: 0.7;
+  transition: opacity 0.2s, transform 0.2s;
+  filter: grayscale(100%) brightness(1.2);
+}
+
+.sponsor-logo:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  filter: grayscale(0%) brightness(1);
+}
+
+.sponsor-logo img {
+  height: 40px;
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+@media (min-width: 600px) {
+  .sponsor-logo img {
+    height: 50px;
+    max-width: 140px;
+  }
 }
 
 /* ============================================

@@ -6,6 +6,11 @@
 **Bei Saisonstart 2026:** Frage den User, ob der neue Spielplan schon verfügbar ist!
 Wenn ja → GitHub Actions an die echten Spieltage anpassen (siehe "TODO: Saison 2026").
 
+**Nach Mitgliederversammlung:** Trainingszeiten für "Mitmachen"-Sektion erfragen!
+- Kindertraining (bisher Di 17:00-18:00)
+- Slowpitch (bisher Di 18:00-20:00)
+- Erwachsenen-Training?
+
 ---
 
 ## Was ist das?
