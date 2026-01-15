@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.baseballsoftball.at)",
+      "Bash(pip show:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nSaison 2025 komplett: Alle 13 Spiele, neues Design & verbesserter Scraper\n\n- Alle 13 Spiele der Saison 2025 mit korrekten Daten importiert \\(13W-0L\\)\n- Neuer Scraper: durchsucht automatisch alle Runden \\(Regular Season, Playoffs, Platzierungsrunde\\)\n- Scraper holt Spieltage von Schedule-Seite \\(ABF Kalender-Bug umgangen\\)\n- Duplikat-Vermeidung: nur neue Spiele werden hinzugefügt\n- Logo integriert \\(Header + Favicon\\)\n- Farbenblind-freundliches Design \\(Blau/Orange statt Grün/Rot\\)\n- Kompakterer Header\n- \"Alle Spiele anzeigen\" Button\n- Dokumentation in CLAUDE.md aktualisiert\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:crazy-geese.at)",
+      "WebFetch(domain:www.crazy-geese.at)",
+      "Bash(gh run:*)",
+      "Bash(gh workflow run:*)",
+      "Bash(git pull:*)",
+      "Bash(git config:*)"
+    ]
+  }
+}

@@ -8,17 +8,20 @@
     "abf_url": "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2025"
   },
   "kontakt": {
-    "email": "info@crazy-geese.at",
-    "telefon": "",
+    "ansprechpartner": {
+      "name": "Thomas Soffried",
+      "funktion": "Obmann",
+      "telefon": "0676/43 51 164",
+      "email": "thomas.soffried@crazy-geese.at"
+    },
+    "email": "office@crazy-geese.at",
     "adresse": {
-      "name": "Heimplatz",
-      "strasse": "",
-      "plz": "",
-      "ort": ""
+      "name": "Geese Ballpark",
+      "ort": "Rohrbach bei Mattersburg"
     },
     "social": {
-      "instagram": "",
-      "facebook": ""
+      "instagram": "rohrbachcrazygeese",
+      "facebook": "https://www.facebook.com/pages/Crazy-Geese/106774436026973"
     }
   },
   "tabelle": {

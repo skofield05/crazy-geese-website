@@ -75,13 +75,14 @@
     <section id="kontakt" class="section">
       <h2>Kontakt</h2>
       <div class="contact-grid">
-        <div class="contact-card">
-          <h3>📧 Email</h3>
-          <p><a href="mailto:info@crazy-geese.at" id="contact-email">info@crazy-geese.at</a></p>
+        <div class="contact-card" id="contact-person-card">
+          <h3>👤 Ansprechpartner</h3>
+          <p id="contact-person"></p>
         </div>
         <div class="contact-card" id="contact-location-card">
           <h3>📍 Spielort</h3>
           <p id="contact-location">-</p>
+          <p class="free-entry">Eintritt frei!</p>
         </div>
         <div class="contact-card">
           <h3>🔗 Links</h3>
@@ -168,18 +169,23 @@
         pastGames.innerHTML = '<p class="no-games">Noch keine Spiele</p>';
       }
 
-      // Contact
-      if (data.kontakt.email) {
-        const emailEl = document.getElementById('contact-email');
-        emailEl.href = `mailto:${data.kontakt.email}`;
-        emailEl.textContent = data.kontakt.email;
+      // Contact - Ansprechpartner
+      if (data.kontakt.ansprechpartner) {
+        const person = data.kontakt.ansprechpartner;
+        let personHtml = `<strong>${person.name}</strong>`;
+        if (person.funktion) personHtml += `<br><span class="contact-role">${person.funktion}</span>`;
+        if (person.telefon) personHtml += `<br><a href="tel:${person.telefon.replace(/\//g, '')}">${person.telefon}</a>`;
+        if (person.email) personHtml += `<br><a href="mailto:${person.email}">${person.email}</a>`;
+        document.getElementById('contact-person').innerHTML = personHtml;
       }
 
+      // Contact - Spielort
       if (data.kontakt.adresse && data.kontakt.adresse.name) {
         const addr = data.kontakt.adresse;
         let locationText = addr.name;
         if (addr.strasse) locationText += `<br>${addr.strasse}`;
         if (addr.plz && addr.ort) locationText += `<br>${addr.plz} ${addr.ort}`;
+        else if (addr.ort) locationText += `<br>${addr.ort}`;
         document.getElementById('contact-location').innerHTML = locationText;
       }
 
