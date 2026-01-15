@@ -435,6 +435,14 @@ a:hover {
   margin-top: var(--space-sm) !important;
 }
 
+.maps-link {
+  display: inline-block;
+  background: var(--color-bg-hover);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
 /* ============================================
    SPONSORS
    ============================================ */
