@@ -13,6 +13,62 @@ Wenn ja → GitHub Actions an die echten Spieltage anpassen (siehe "TODO: Saison
 
 ---
 
+## TODO: Domain- & E-Mail-Migration (Gandi/Uberspace → Dynadot)
+
+**Ziel:** Weg von Gandi (Private Equity) und Uberspace-Kosten für crazy-geese.at reduzieren.
+
+**Hintergrund:**
+- Gandi wurde 2023 von Total Web Solutions (Private Equity) übernommen
+- Gandi bietet keine kostenlosen E-Mails mehr
+- Dynadot ist unabhängig, nicht PE-owned, und bietet kostenlose E-Mail-Weiterleitung
+
+### Domains
+
+| Domain | Registrar | E-Mail |
+|--------|-----------|--------|
+| **crazy-geese.at** | Gandi → Dynadot | Uberspace → Dynadot Weiterleitung |
+| **berndschmidl.com** | Gandi → Dynadot | Bleibt bei Uberspace |
+| **friedrichgradisnik.com** | Gandi → Dynadot | Keine E-Mails |
+
+### Dynadot Preise
+- .at Domain: €10.08/Jahr
+- .com Domain: ~$10-12/Jahr
+- Transfer: €0.30 für .at
+- E-Mail-Weiterleitung: Kostenlos (bis 10 Adressen/Domain, 500 Mails/Tag)
+
+### Schritte
+
+1. **Dynadot-Account erstellen**
+   - https://www.dynadot.com
+
+2. **Auth-Codes bei Gandi holen**
+   - Für alle 3 Domains Transfer-Codes anfordern
+
+3. **Domains zu Dynadot transferieren**
+   - Transfer starten mit Auth-Codes
+   - Transfer bestätigen (E-Mail)
+
+4. **DNS-Einstellungen bei Dynadot**
+   - **crazy-geese.at:** GitHub Pages + E-Mail-Weiterleitung
+   - **berndschmidl.com:** MX-Records auf Uberspace setzen
+   - **friedrichgradisnik.com:** Nur Website-DNS (falls nötig)
+
+5. **E-Mail-Weiterleitung für crazy-geese.at einrichten**
+   - Dynadot Dashboard → Domain → Email Forwarding
+   - Alle bisherigen Adressen als Weiterleitungen anlegen
+
+6. **Testen** – E-Mails und Websites prüfen
+
+7. **Uberspace crazy-geese.at Konto kündigen** – erst wenn alles funktioniert!
+   - berndschmidl.com Konto bei Uberspace bleibt aktiv
+
+### Einschränkungen E-Mail-Weiterleitung
+- **Empfangen:** ✓ Kostenlos
+- **Senden:** ✗ Nicht möglich (Antworten kommen von privater Adresse)
+- Max. 10 Weiterleitungen pro Domain, 500 Mails/Tag
+
+---
+
 ## Was ist das?
 
 Website für den Baseballverein **Kutro Crazy Geese** (crazy-geese.at), spielend in der **Baseball Landesliga Ost** (Österreich).
@@ -231,6 +287,10 @@ gh workflow run "Update Standings"
 ---
 
 ## Changelog
+
+### 2026-01-18
+- TODO: Domain- & E-Mail-Migration von Gandi/Uberspace zu Dynadot dokumentiert
+- Dynadot statt Cloudflare (unabhängig, nicht Private Equity)
 
 ### 2026-01-15
 - GitHub Actions Fix: Schreibrechte für GITHUB_TOKEN
