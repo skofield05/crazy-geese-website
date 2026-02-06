@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archiv – Kutro Crazy Geese</title>
+  <meta name="description" content="Archiv vergangener Saisons der Kutro Crazy Geese">
+  <link rel="icon" type="image/png" href="geese_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header-bar">
+    <div class="header-brand">
+      <a href="index.html" class="brand-link">
+        <img src="geese_logo.png" alt="Crazy Geese Logo" class="brand-logo">
+        <div class="brand-text">
+          <span class="brand-name">Crazy Geese</span>
+          <span class="brand-tagline">Baseball Landesliga Ost</span>
+        </div>
+        <span class="brand-badge">🏆 Titelverteidiger</span>
+      </a>
+      <div class="header-icons">
+        <a href="https://www.google.com/maps/place/Baseballfeld+der+Rohrbach+Crazy+Geese/@47.7094292,16.4454336,736m" target="_blank" rel="noopener" class="header-icon" title="Ballpark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </a>
+        <a href="https://www.facebook.com/pages/Crazy-Geese/106774436026973" target="_blank" rel="noopener" class="header-icon" title="Facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="https://instagram.com/rohrbachcrazygeese" target="_blank" rel="noopener" class="header-icon" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/></svg>
+        </a>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="baseball.html" class="nav-link">Baseball</a>
+      <a href="softball.html" class="nav-link">Softball</a>
+      <a href="nachwuchs.html" class="nav-link">Nachwuchs</a>
+      <a href="kontakt.html" class="nav-link">Kontakt</a>
+      <a href="archiv.html" class="nav-link active">Archiv</a>
+    </nav>
+    <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <h1>📚 Archiv</h1>
+      <p>Vergangene Saisons</p>
+    </section>
+
+    <section class="section">
+      <div class="archiv-season">
+        <div class="archiv-header">
+          <h2>🏆 Saison 2025 – MEISTER</h2>
+          <span class="archiv-bilanz">13 Siege, 0 Niederlagen</span>
+        </div>
+
+        <h3>Endtabelle</h3>
+        <div class="table-container">
+          <table class="standings">
+            <thead>
+              <tr>
+                <th class="col-rank">#</th>
+                <th class="col-team">Team</th>
+                <th class="col-stat">W</th>
+                <th class="col-stat">L</th>
+              </tr>
+            </thead>
+            <tbody id="archiv-standings-2025"></tbody>
+          </table>
+        </div>
+
+        <h3>Alle Spiele</h3>
+        <div class="games-list" id="archiv-games-2025"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-social">
+      <span>follow us on:</span>
+      <a href="https://www.facebook.com/pages/Crazy-Geese/106774436026973" target="_blank" rel="noopener" title="Facebook">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+      <a href="https://instagram.com/rohrbachcrazygeese" target="_blank" rel="noopener" title="Instagram">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
+      </a>
+    </div>
+    <p>© <span id="year">2026</span> Kutro Crazy Geese</p>
+  </footer>
+
+  <script>
+    async function loadArchiv() {
+      try {
+        const response = await fetch('data/archiv/2025.json?v=' + Date.now());
+        const data = await response.json();
+        renderArchiv(data);
+      } catch (error) {
+        console.error('Fehler:', error);
+      }
+    }
+
+    function renderArchiv(data) {
+      // Tabelle
+      const tbody = document.getElementById('archiv-standings-2025');
+      tbody.innerHTML = data.tabelle.teams.map(team => `
+        <tr class="${team.kuerzel === 'CG' ? 'highlight' : ''}">
+          <td class="col-rank">${team.rang}</td>
+          <td class="col-team">${team.name}</td>
+          <td class="col-stat">${team.siege}</td>
+          <td class="col-stat">${team.niederlagen}</td>
+        </tr>
+      `).join('');
+
+      // Spiele
+      const gamesDiv = document.getElementById('archiv-games-2025');
+      gamesDiv.innerHTML = data.spiele.map(renderGame).join('');
+    }
+
+    function renderGame(game) {
+      const isHome = game.heim.includes('Crazy Geese');
+      const hasResult = game.ergebnis_heim !== null;
+      const badge = isHome ? '<span class="game-badge home">HEIMSPIEL</span>' : '<span class="game-badge away">AUSWÄRTS</span>';
+
+      let resultClass = '';
+      if (hasResult) {
+        const ourScore = isHome ? game.ergebnis_heim : game.ergebnis_gast;
+        const theirScore = isHome ? game.ergebnis_gast : game.ergebnis_heim;
+        resultClass = ourScore > theirScore ? 'win' : (ourScore < theirScore ? 'loss' : 'tie');
+      }
+
+      return `
+        <div class="game-card ${resultClass}">
+          <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + game.zeit : ''} ${badge}</div>
+          <div class="game-matchup">
+            <span class="team ${isHome ? 'us' : ''}">${game.heim}</span>
+            <span class="vs">${hasResult ? game.ergebnis_heim + ':' + game.ergebnis_gast : 'vs'}</span>
+            <span class="team ${!isHome ? 'us' : ''}">${game.gast}</span>
+          </div>
+          ${game.phase ? `<div class="game-phase">${game.phase}</div>` : ''}
+        </div>
+      `;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('de-AT', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      document.querySelector('.nav').classList.toggle('open');
+    });
+
+    loadArchiv();
+  </script>
+</body>
+</html>

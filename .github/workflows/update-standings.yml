@@ -1,5 +1,6 @@
 # GitHub Actions Workflow
 # Aktualisiert die Vereinsdaten automatisch von der ABF-Seite
+# Saison 2026 - Läuft nur an Spieltagen
 
 name: Update Standings
 
@@ -7,11 +8,35 @@ on:
   # Manueller Trigger (für Tests)
   workflow_dispatch:
 
-  # Automatisch jeden Sonntag um 22:00 Uhr (MESZ = 20:00 UTC)
-  # und Montag früh um 08:00 (falls Sonntag-Update fehlschlägt)
+  # Automatisch an Spieltagen (alle 3 Stunden von 9-21 Uhr MESZ)
+  # MESZ = UTC+2, also 9:00 MESZ = 07:00 UTC
   schedule:
-    - cron: '0 20 * * 0'  # Sonntag 22:00 MESZ
-    - cron: '0 6 * * 1'   # Montag 08:00 MESZ
+    # Spieltag 1: 03.05.2026 (Sonntag)
+    - cron: '0 7,10,13,16,19 3 5 *'
+    # Spieltag 2: 16.05.2026 (Samstag)
+    - cron: '0 7,10,13,16,19 16 5 *'
+    # Spieltag 3: 23.05.2026 (Samstag)
+    - cron: '0 7,10,13,16,19 23 5 *'
+    # Spieltag 4: 13.06.2026 (Samstag)
+    - cron: '0 7,10,13,16,19 13 6 *'
+    # Spieltag 5: 20.06.2026 (Samstag)
+    - cron: '0 7,10,13,16,19 20 6 *'
+    # Spieltag 6: 19.07.2026 (Sonntag)
+    - cron: '0 7,10,13,16,19 19 7 *'
+    # Spieltag 7: 02.08.2026 (Sonntag)
+    - cron: '0 7,10,13,16,19 2 8 *'
+    # Spieltag 8: 15.08.2026 (Samstag)
+    - cron: '0 7,10,13,16,19 15 8 *'
+    # Playoffs 1. Wochenende: 05.-06.09.2026
+    - cron: '0 7,10,13,16,19 5-6 9 *'
+    # Playoffs 2. Wochenende: 12.-13.09.2026
+    - cron: '0 7,10,13,16,19 12-13 9 *'
+    # Backup: Montag nach Spieltagen
+    - cron: '0 6 4,17,24 5 1'
+    - cron: '0 6 14,21 6 1'
+    - cron: '0 6 20 7 1'
+    - cron: '0 6 3,16 8 1'
+    - cron: '0 6 7,14 9 1'
 
 # WICHTIG: Schreibrechte für git push
 permissions:
@@ -20,35 +45,35 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install Dependencies
         run: |
           pip install playwright
           playwright install chromium
           playwright install-deps
-      
+
       - name: Run Scraper
         run: python scripts/scraper.py
-      
+
       - name: Check for Changes
         id: changes
         run: |
           git diff --quiet data/data.json || echo "changed=true" >> $GITHUB_OUTPUT
-      
+
       - name: Commit and Push
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
           git add data/data.json
-          git commit -m "🏆 Daten aktualisiert $(date +'%Y-%m-%d %H:%M')"
+          git commit -m "Update Standings $(date +'%Y-%m-%d %H:%M')"
           git push

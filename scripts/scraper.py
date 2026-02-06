@@ -39,7 +39,7 @@ HINWEISE:
     - Daher werden Daten separat von der Schedule-Seite geholt
 
 AUTOR: Claude Code
-LETZTE AKTUALISIERUNG: 2025-12-24
+LETZTE AKTUALISIERUNG: 2026-02-06
 =============================================================================
 """
 
@@ -63,7 +63,7 @@ DATA_FILE = SCRIPT_DIR.parent / "data" / "data.json"
 
 # ABF URLs - WICHTIG: Bei neuer Saison hier die URL anpassen!
 # Format: baseball-landesliga-ost-YYYY
-ABF_BASE = "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2025"
+ABF_BASE = "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026"
 ABF_STANDINGS = f"{ABF_BASE}/standings"
 ABF_CALENDAR = f"{ABF_BASE}/calendars"
 ABF_SCHEDULE = f"{ABF_BASE}/schedule-and-results"
