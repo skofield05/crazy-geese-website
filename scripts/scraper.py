@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 =============================================================================
-ABF Scraper für Kutro Crazy Geese
+ABF Scraper für Rohrbach Crazy Geese
 =============================================================================
 
 Dieser Scraper holt automatisch Tabellen- und Spieldaten von der
@@ -55,7 +55,7 @@ from playwright.sync_api import sync_playwright
 
 # Vereinsdaten
 TEAM_NAME = "Crazy Geese"
-TEAM_FULL_NAME = "Kutro Crazy Geese"
+TEAM_FULL_NAME = "Rohrbach Crazy Geese"
 
 # Dateipfade
 SCRIPT_DIR = Path(__file__).parent
@@ -463,7 +463,7 @@ def update_data():
     6. Speichert
     """
     print("=" * 60)
-    print("ABF SCRAPER - Kutro Crazy Geese")
+    print("ABF SCRAPER - Rohrbach Crazy Geese")
     print("=" * 60)
     print(f"Zeitpunkt: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Datenquelle: {ABF_BASE}")

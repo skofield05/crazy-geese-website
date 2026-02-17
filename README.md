@@ -1,4 +1,4 @@
-# 🪿 Kutro Crazy Geese – Website
+# 🪿 Rohrbach Crazy Geese – Website
 
 Statische Vereinswebsite für die Crazy Geese Baseball, automatisch aktualisiert via GitHub Actions.
 

@@ -71,7 +71,7 @@ Wenn ja → GitHub Actions an die echten Spieltage anpassen (siehe "TODO: Saison
 
 ## Was ist das?
 
-Website für den Baseballverein **Kutro Crazy Geese** (crazy-geese.at), spielend in der **Baseball Landesliga Ost** (Österreich).
+Website für den Baseballverein **Rohrbach Crazy Geese** (crazy-geese.at), spielend in der **Baseball Landesliga Ost** (Österreich).
 
 **Live:** https://skofield05.github.io/crazy-geese-website/
 **Repo:** https://github.com/skofield05/crazy-geese-website
@@ -179,7 +179,7 @@ In `data/data.json` → `spiele.vergangene`:
 {
   "datum": "2025-05-03",
   "zeit": "11:00",
-  "heim": "Kutro Crazy Geese",
+  "heim": "Rohrbach Crazy Geese",
   "gast": "Vienna Bucks",
   "ergebnis_heim": 14,
   "ergebnis_gast": 4,
