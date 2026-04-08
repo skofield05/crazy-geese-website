@@ -13,59 +13,73 @@ Wenn ja → GitHub Actions an die echten Spieltage anpassen (siehe "TODO: Saison
 
 ---
 
-## TODO: Domain- & E-Mail-Migration (Gandi/Uberspace → Dynadot)
+## Domain- & E-Mail-Migration (Gandi → Cloudflare)
 
 **Ziel:** Weg von Gandi (Private Equity) und Uberspace-Kosten für crazy-geese.at reduzieren.
 
 **Hintergrund:**
 - Gandi wurde 2023 von Total Web Solutions (Private Equity) übernommen
 - Gandi bietet keine kostenlosen E-Mails mehr
-- Dynadot ist unabhängig, nicht PE-owned, und bietet kostenlose E-Mail-Weiterleitung
+- Cloudflare bietet kostenloses DNS, CDN, SSL und E-Mail-Routing
 
 ### Domains
 
 | Domain | Registrar | E-Mail |
 |--------|-----------|--------|
-| **crazy-geese.at** | Gandi → Dynadot | Uberspace → Dynadot Weiterleitung |
-| **berndschmidl.com** | Gandi → Dynadot | Bleibt bei Uberspace |
-| **friedrichgradisnik.com** | Gandi → Dynadot | Keine E-Mails |
-
-### Dynadot Preise
-- .at Domain: €10.08/Jahr
-- .com Domain: ~$10-12/Jahr
-- Transfer: €0.30 für .at
-- E-Mail-Weiterleitung: Kostenlos (bis 10 Adressen/Domain, 500 Mails/Tag)
+| **crazy-geese.at** | Gandi → Cloudflare | Uberspace → Cloudflare Email Routing |
+| **berndschmidl.com** | Gandi → Cloudflare | Bleibt bei Uberspace |
+| **friedrichgradisnik.com** | Gandi → Cloudflare | Keine E-Mails |
 
 ### Schritte
 
-1. **Dynadot-Account erstellen**
-   - https://www.dynadot.com
+1. **Cloudflare-Account erstellen** (falls noch nicht vorhanden)
+   - https://dash.cloudflare.com/sign-up
 
-2. **Auth-Codes bei Gandi holen**
-   - Für alle 3 Domains Transfer-Codes anfordern
+2. **Domain zu Cloudflare hinzufügen**
+   - Cloudflare Dashboard → "Add a site" → `crazy-geese.at`
+   - Free Plan auswählen
+   - Cloudflare zeigt die neuen Nameserver an
 
-3. **Domains zu Dynadot transferieren**
-   - Transfer starten mit Auth-Codes
-   - Transfer bestätigen (E-Mail)
+3. **Nameserver bei Gandi ändern**
+   - Gandi Dashboard → crazy-geese.at → Nameservers
+   - Gandi-Nameserver durch Cloudflare-Nameserver ersetzen
+   - Propagation dauert bis zu 24h (meist schneller)
 
-4. **DNS-Einstellungen bei Dynadot**
-   - **crazy-geese.at:** GitHub Pages + E-Mail-Weiterleitung
-   - **berndschmidl.com:** MX-Records auf Uberspace setzen
-   - **friedrichgradisnik.com:** Nur Website-DNS (falls nötig)
+4. **DNS-Einstellungen bei Cloudflare**
+   - A-Record: `@` → `185.199.108.153` (GitHub Pages)
+   - A-Record: `@` → `185.199.109.153`
+   - A-Record: `@` → `185.199.110.153`
+   - A-Record: `@` → `185.199.111.153`
+   - CNAME: `www` → `skofield05.github.io`
+   - Alle DNS-Proxy (orange Wolke) auf **DNS only** (grau) stellen!
+     (GitHub Pages braucht direkte DNS-Auflösung für SSL)
 
-5. **E-Mail-Weiterleitung für crazy-geese.at einrichten**
-   - Dynadot Dashboard → Domain → Email Forwarding
-   - Alle bisherigen Adressen als Weiterleitungen anlegen
+5. **GitHub Pages Custom Domain aktivieren**
+   - Repo Settings → Pages → Custom domain: `crazy-geese.at`
+   - "Enforce HTTPS" aktivieren (nach DNS-Propagation)
+   - CNAME-Datei ist bereits im Repo
 
-6. **Testen** – E-Mails und Websites prüfen
+6. **E-Mail-Routing bei Cloudflare einrichten**
+   - Cloudflare Dashboard → crazy-geese.at → Email → Email Routing
+   - Destination address (Gmail) verifizieren
+   - Routing Rules erstellen:
+     - `office@crazy-geese.at` → Gmail
+     - `softball@crazy-geese.at` → Gmail
+     - Catch-All → Gmail (optional, fängt alle @crazy-geese.at ab)
 
-7. **Uberspace crazy-geese.at Konto kündigen** – erst wenn alles funktioniert!
+7. **Testen** – Website und E-Mails prüfen
+
+8. **Uberspace crazy-geese.at Konto kündigen** – erst wenn alles funktioniert!
    - berndschmidl.com Konto bei Uberspace bleibt aktiv
 
-### Einschränkungen E-Mail-Weiterleitung
-- **Empfangen:** ✓ Kostenlos
-- **Senden:** ✗ Nicht möglich (Antworten kommen von privater Adresse)
-- Max. 10 Weiterleitungen pro Domain, 500 Mails/Tag
+9. **Optional: Domain-Transfer zu Cloudflare Registrar**
+   - Erst nach erfolgreicher Migration (Nameserver müssen schon bei Cloudflare sein)
+   - Auth-Code bei Gandi holen → Transfer bei Cloudflare starten
+   - Vorteil: Alles an einem Ort, At-Cost-Preise
+
+### Einschränkungen E-Mail-Routing
+- **Empfangen:** ✓ Kostenlos (unbegrenzt Adressen, Catch-All möglich)
+- **Senden:** ✗ Nicht direkt möglich (Antworten kommen von Gmail-Adresse)
 
 ---
 
@@ -73,7 +87,7 @@ Wenn ja → GitHub Actions an die echten Spieltage anpassen (siehe "TODO: Saison
 
 Website für den Baseballverein **Rohrbach Crazy Geese** (crazy-geese.at), spielend in der **Baseball Landesliga Ost** (Österreich).
 
-**Live:** https://skofield05.github.io/crazy-geese-website/
+**Live:** https://crazy-geese.at
 **Repo:** https://github.com/skofield05/crazy-geese-website
 
 ## Architektur
