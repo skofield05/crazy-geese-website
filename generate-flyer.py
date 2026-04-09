@@ -247,7 +247,7 @@ def draw_page2(c):
     c.drawCentredString(w / 2, footer_h - 4 * mm, "crazy-geese.at")
 
     c.setFont("Helvetica", 6.5)
-    c.drawCentredString(w / 2, footer_h - 8 * mm, "office@crazy-geese.at  |  @rohrbachcrazygeese")
+    c.drawCentredString(w / 2, footer_h - 8 * mm, "crazygeese93@gmail.com  |  @rohrbachcrazygeese")
 
     c.setFont("Helvetica", 6)
     c.setFillColor(HexColor("#94a3b8"))
