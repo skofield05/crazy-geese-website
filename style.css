@@ -337,10 +337,16 @@ li {
 }
 
 .hero-logo-bg {
-  width: 60%;
-  max-width: 500px;
-  opacity: 0.08;
-  filter: grayscale(100%);
+  width: 120%;
+  max-width: 900px;
+  opacity: 0.06;
+  filter: grayscale(100%) blur(2px);
+  animation: hero-logo-pulse 8s ease-in-out infinite;
+}
+
+@keyframes hero-logo-pulse {
+  0%, 100% { opacity: 0.04; transform: scale(1); }
+  50% { opacity: 0.08; transform: scale(1.03); }
 }
 
 .hero-bg-overlay {
@@ -349,7 +355,7 @@ li {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, var(--color-bg) 70%);
+  background: radial-gradient(ellipse at center, transparent 0%, var(--color-bg) 60%);
 }
 
 /* Highlight cards: Nächstes Spiel + Nächstes Heimspiel */
