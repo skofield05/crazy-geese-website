@@ -19,7 +19,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header-bar">
+  <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
+  <header class="header-bar" role="banner">
     <div class="header-brand">
       <a href="index.html" class="brand-link">
         <img src="geese_logo.png" alt="Crazy Geese Logo" class="brand-logo">
@@ -43,18 +44,18 @@
       </a>
     </div>
 
-    <nav class="nav">
+    <nav class="nav" aria-label="Hauptnavigation">
       <a href="index.html" class="nav-link">Home</a>
       <a href="baseball.html" class="nav-link">Baseball</a>
-      <a href="softball.html" class="nav-link active">Softball</a>
+      <a href="softball.html" class="nav-link active" aria-current="page">Softball</a>
       <a href="nachwuchs.html" class="nav-link">Nachwuchs</a>
       <a href="kontakt.html" class="nav-link">Kontakt</a>
       <a href="archiv.html" class="nav-link">Archiv</a>
     </nav>
-    <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menü öffnen" aria-expanded="false">☰</button>
   </header>
 
-  <main>
+  <main id="main-content">
     <section class="page-header">
       <h1>🥎 Slowpitch Softball</h1>
       <p>Für Männer & Frauen jeden Alters</p>
@@ -121,8 +122,10 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      document.querySelector('.nav').classList.toggle('open');
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const nav = document.querySelector('.nav');
+      nav.classList.toggle('open');
+      this.setAttribute('aria-expanded', nav.classList.contains('open'));
     });
   </script>
   <!-- Cloudflare Web Analytics -->
