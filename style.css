@@ -570,6 +570,24 @@ li {
   background: var(--color-text-muted);
 }
 
+.game-sport {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.game-sport.baseball {
+  background: var(--color-primary);
+  color: var(--color-accent);
+}
+
+.game-sport.softball {
+  background: #7c3aed;
+  color: white;
+}
+
 /* ============================================
    SECTIONS
    ============================================ */

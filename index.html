@@ -112,11 +112,6 @@
         </div>
       </div>
 
-      <!-- SOFTBALL TERMINE -->
-      <div class="softball-termine" id="softball-termine" style="display: none;">
-        <h3>🥎 Softball-Termine</h3>
-        <div id="softball-games"></div>
-      </div>
     </section>
 
     <!-- MITMACHEN TEASER -->
@@ -225,10 +220,19 @@
       `).join('');
 
       const today = new Date().toISOString().split('T')[0];
-      const upcoming = (data.spiele.naechste || []).filter(g => g.datum >= today);
 
-      // Highlight: Nächstes Spiel
-      const nextGame = upcoming[0];
+      // Baseball + Softball zusammenführen
+      const baseballGames = (data.spiele.naechste || [])
+        .filter(g => g.datum >= today)
+        .map(g => ({ ...g, sport: 'baseball' }));
+      const softballGames = (data.softball && data.softball.naechste_termine || [])
+        .filter(t => t.datum >= today)
+        .map(t => ({ ...t, sport: 'softball' }));
+      const allGames = [...baseballGames, ...softballGames]
+        .sort((a, b) => (a.datum + (a.zeit || '')) .localeCompare(b.datum + (b.zeit || '')));
+
+      // Highlight: Nächstes Spiel (egal welche Sportart)
+      const nextGame = allGames[0];
       const nextGameCard = document.getElementById('next-game-card');
       if (nextGame) {
         nextGameCard.innerHTML = `
@@ -240,7 +244,7 @@
       }
 
       // Highlight: Nächstes Heimspiel
-      const nextHomeGame = upcoming.find(g => g.ort && g.ort.toLowerCase().includes('rohrbach'));
+      const nextHomeGame = allGames.find(g => g.ort && g.ort.toLowerCase().includes('rohrbach'));
       const nextHomeCard = document.getElementById('next-home-card');
       if (nextHomeGame) {
         nextHomeCard.innerHTML = `
@@ -253,40 +257,34 @@
       }
 
       // Weitere Spiele (ohne die beiden Highlights)
-      const nextGames = document.getElementById('next-games');
-      const shownIds = [nextGame, nextHomeGame].filter(Boolean).map(g => g.datum + g.zeit);
-      const remaining = upcoming.filter(g => !shownIds.includes(g.datum + g.zeit)).slice(0, 4);
+      const nextGamesEl = document.getElementById('next-games');
+      const shownIds = [nextGame, nextHomeGame].filter(Boolean).map(g => g.datum + g.zeit + g.sport);
+      const remaining = allGames.filter(g => !shownIds.includes(g.datum + g.zeit + g.sport)).slice(0, 4);
       if (remaining.length > 0) {
-        nextGames.innerHTML = remaining.map(g => renderGameCompact(g)).join('');
+        nextGamesEl.innerHTML = remaining.map(g => renderGameCompact(g)).join('');
       } else {
-        nextGames.innerHTML = '<p class="no-games">Keine weiteren Spiele</p>';
-      }
-
-      // Softball-Termine
-      if (data.softball && data.softball.naechste_termine && data.softball.naechste_termine.length > 0) {
-        const softballSection = document.getElementById('softball-termine');
-        softballSection.style.display = 'block';
-        const softballGames = document.getElementById('softball-games');
-        softballGames.innerHTML = data.softball.naechste_termine
-          .filter(t => t.datum >= today)
-          .map(t => `
-            <div class="game-compact">
-              <span class="game-date-compact">${formatDateShort(t.datum)}</span>
-              <span class="game-time-compact">${t.zeit || ''}</span>
-              <span class="game-opponent">${t.gegner || t.beschreibung || 'Softball'}</span>
-              ${t.ort ? `<span class="game-location-compact">📍 ${t.ort}</span>` : ''}
-            </div>
-          `).join('');
+        nextGamesEl.innerHTML = '<p class="no-games">Keine weiteren Spiele</p>';
       }
 
       document.getElementById('year').textContent = new Date().getFullYear();
     }
 
     function renderHighlightGame(game) {
+      const sportTag = game.sport === 'softball' ? 'SOFTBALL' : 'BASEBALL';
+      const sportClass = game.sport === 'softball' ? 'softball' : 'baseball';
+      if (game.sport === 'softball') {
+        return `
+          <span class="game-sport ${sportClass}">${sportTag}</span>
+          <span class="highlight-date">${formatDateLong(game.datum)}</span>
+          <span class="highlight-time">${game.zeit || ''} Uhr</span>
+          <span class="highlight-opponent">${game.gegner || game.beschreibung || 'Softball'}</span>
+          ${game.ort ? `<span class="highlight-location">📍 ${game.ort}</span>` : ''}
+        `;
+      }
       const isHome = game.heim.includes('Crazy Geese');
       const opponent = isHome ? game.gast : game.heim;
-      const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
       return `
+        <span class="game-sport ${sportClass}">${sportTag}</span>
         <span class="highlight-date">${formatDateLong(game.datum)}</span>
         <span class="highlight-time">${game.zeit || ''} Uhr</span>
         <span class="highlight-opponent">vs ${opponent}</span>
@@ -295,6 +293,19 @@
     }
 
     function renderGameCompact(game) {
+      const sportTag = game.sport === 'softball' ? 'SOFTBALL' : 'BASEBALL';
+      const sportClass = game.sport === 'softball' ? 'softball' : 'baseball';
+      if (game.sport === 'softball') {
+        return `
+          <div class="game-compact">
+            <span class="game-date-compact">${formatDateShort(game.datum)}</span>
+            <span class="game-time-compact">${game.zeit || ''}</span>
+            <span class="game-opponent">${game.gegner || game.beschreibung || 'Softball'}</span>
+            <span class="game-sport ${sportClass}">${sportTag}</span>
+            ${game.ort ? `<span class="game-location-compact">📍 ${game.ort}</span>` : ''}
+          </div>
+        `;
+      }
       const isHome = game.heim.includes('Crazy Geese');
       const opponent = isHome ? game.gast : game.heim;
       const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
@@ -306,6 +317,7 @@
           <span class="game-date-compact">${formatDateShort(game.datum)}</span>
           <span class="game-time-compact">${game.zeit || ''}</span>
           <span class="game-opponent">${opponent}</span>
+          <span class="game-sport ${sportClass}">${sportTag}</span>
           <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
           ${game.ort ? `<span class="game-location-compact">📍 ${game.ort}</span>` : ''}
         </div>
