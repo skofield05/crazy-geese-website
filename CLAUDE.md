@@ -34,7 +34,7 @@ Website für den Baseballverein **Rohrbach Crazy Geese** (crazy-geese.at), spiel
 | Jörg Dorner | Obmann Stellvertreter |
 | Christian Suchard | Kassier |
 | Maria Fridecky | Kassier Stellvertreterin |
-| Michael Rigby | Schriftführer |
+| Mike Rigby | Schriftführer |
 | Thomas Kissich | Schriftführer Stellvertreter |
 
 ---

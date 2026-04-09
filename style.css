@@ -353,7 +353,7 @@ li {
   }
 
   .game-compact {
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: auto auto 1fr;
     grid-template-rows: auto auto auto;
     font-size: 0.9rem;
   }
@@ -369,18 +369,23 @@ li {
   }
 
   .game-opponent {
-    grid-column: 3;
-    grid-row: 1;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: 1rem;
   }
 
   .game-sport {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 3;
   }
 
   .game-homeaway {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 3;
+  }
+
+  .game-location-compact {
+    grid-row: 4;
   }
 
   .highlight-opponent {
