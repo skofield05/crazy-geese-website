@@ -838,7 +838,7 @@ li {
 .game-card {
   background: var(--color-bg-card);
   border-radius: 8px;
-  padding: var(--space-md);
+  padding: var(--space-lg);
   border-left: 4px solid var(--color-border);
   transition: transform 0.2s;
 }
@@ -867,16 +867,16 @@ li {
 }
 
 .game-card.next-game-featured .game-date {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: var(--color-accent);
 }
 
 .game-card.next-game-featured .game-matchup {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 }
 
 .game-date {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: var(--color-text-muted);
   margin-bottom: var(--space-xs);
 }
@@ -886,10 +886,12 @@ li {
   align-items: center;
   gap: var(--space-sm);
   flex-wrap: wrap;
+  font-size: 1.1rem;
 }
 
 .game-matchup .team {
   font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .game-matchup .team.us {
@@ -899,20 +901,20 @@ li {
 
 .game-matchup .vs {
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: 1rem;
   min-width: 3rem;
   text-align: center;
 }
 
 .game-location {
-  margin-top: var(--space-xs);
-  font-size: 0.8rem;
+  margin-top: var(--space-sm);
+  font-size: 0.95rem;
   color: var(--color-text-muted);
 }
 
 .game-phase {
   margin-top: var(--space-xs);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--color-text-muted);
