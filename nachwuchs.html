@@ -55,7 +55,7 @@
     <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menü öffnen" aria-expanded="false">☰</button>
   </header>
 
-  <main>
+  <main id="main-content">
     <section class="page-header">
       <h1>👶 Nachwuchs</h1>
       <p>Baseball für Kinder und Jugendliche</p>
@@ -118,8 +118,10 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      document.querySelector('.nav').classList.toggle('open');
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const nav = document.querySelector('.nav');
+      nav.classList.toggle('open');
+      this.setAttribute('aria-expanded', nav.classList.contains('open'));
     });
   </script>
   <!-- Cloudflare Web Analytics -->
