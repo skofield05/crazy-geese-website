@@ -16,3 +16,11 @@ Thumbs.db
 *.log
 tmpclaude-*
 .claude/
+
+# Lokale Dateien (nicht fuer die Website)
+*.xls
+*.xlsx
+*.pdf
+flyer-a6.html
+.~lock.*
+WhatsApp Image*
