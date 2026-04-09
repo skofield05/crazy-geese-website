@@ -1,88 +1,6 @@
 # CLAUDE.md – Projektkontext für Claude Code
 
 ---
-## ⚠️ REMINDER FÜR CLAUDE
-
-**Bei Saisonstart 2026:** Frage den User, ob der neue Spielplan schon verfügbar ist!
-Wenn ja → GitHub Actions an die echten Spieltage anpassen (siehe "TODO: Saison 2026").
-
-**Nach Mitgliederversammlung:** Trainingszeiten für "Mitmachen"-Sektion erfragen!
-- Kindertraining (bisher Di 17:00-18:00)
-- Slowpitch (bisher Di 18:00-20:00)
-- Erwachsenen-Training?
-
----
-
-## Domain- & E-Mail-Migration (Gandi → Cloudflare)
-
-**Ziel:** Weg von Gandi (Private Equity) und Uberspace-Kosten für crazy-geese.at reduzieren.
-
-**Hintergrund:**
-- Gandi wurde 2023 von Total Web Solutions (Private Equity) übernommen
-- Gandi bietet keine kostenlosen E-Mails mehr
-- Cloudflare bietet kostenloses DNS, CDN, SSL und E-Mail-Routing
-
-### Domains
-
-| Domain | Registrar | E-Mail |
-|--------|-----------|--------|
-| **crazy-geese.at** | Gandi → Cloudflare | Uberspace → Cloudflare Email Routing |
-| **berndschmidl.com** | Gandi → Cloudflare | Bleibt bei Uberspace |
-| **friedrichgradisnik.com** | Gandi → Cloudflare | Keine E-Mails |
-
-### Schritte
-
-1. **Cloudflare-Account erstellen** (falls noch nicht vorhanden)
-   - https://dash.cloudflare.com/sign-up
-
-2. **Domain zu Cloudflare hinzufügen**
-   - Cloudflare Dashboard → "Add a site" → `crazy-geese.at`
-   - Free Plan auswählen
-   - Cloudflare zeigt die neuen Nameserver an
-
-3. **Nameserver bei Gandi ändern**
-   - Gandi Dashboard → crazy-geese.at → Nameservers
-   - Gandi-Nameserver durch Cloudflare-Nameserver ersetzen
-   - Propagation dauert bis zu 24h (meist schneller)
-
-4. **DNS-Einstellungen bei Cloudflare**
-   - A-Record: `@` → `185.199.108.153` (GitHub Pages)
-   - A-Record: `@` → `185.199.109.153`
-   - A-Record: `@` → `185.199.110.153`
-   - A-Record: `@` → `185.199.111.153`
-   - CNAME: `www` → `skofield05.github.io`
-   - Alle DNS-Proxy (orange Wolke) auf **DNS only** (grau) stellen!
-     (GitHub Pages braucht direkte DNS-Auflösung für SSL)
-
-5. **GitHub Pages Custom Domain aktivieren**
-   - Repo Settings → Pages → Custom domain: `crazy-geese.at`
-   - "Enforce HTTPS" aktivieren (nach DNS-Propagation)
-   - CNAME-Datei ist bereits im Repo
-
-6. **E-Mail-Routing bei Cloudflare einrichten**
-   - Cloudflare Dashboard → crazy-geese.at → Email → Email Routing
-   - Destination address (Gmail) verifizieren
-   - Routing Rules erstellen:
-     - `office@crazy-geese.at` → Gmail
-     - `softball@crazy-geese.at` → Gmail
-     - Catch-All → Gmail (optional, fängt alle @crazy-geese.at ab)
-
-7. **Testen** – Website und E-Mails prüfen
-
-8. **Uberspace crazy-geese.at Konto kündigen** – erst wenn alles funktioniert!
-   - berndschmidl.com Konto bei Uberspace bleibt aktiv
-
-9. **Optional: Domain-Transfer zu Cloudflare Registrar**
-   - Erst nach erfolgreicher Migration (Nameserver müssen schon bei Cloudflare sein)
-   - Auth-Code bei Gandi holen → Transfer bei Cloudflare starten
-   - Vorteil: Alles an einem Ort, At-Cost-Preise
-
-### Einschränkungen E-Mail-Routing
-- **Empfangen:** ✓ Kostenlos (unbegrenzt Adressen, Catch-All möglich)
-- **Senden:** ✗ Nicht direkt möglich (Antworten kommen von Gmail-Adresse)
-
----
-
 ## Was ist das?
 
 Website für den Baseballverein **Rohrbach Crazy Geese** (crazy-geese.at), spielend in der **Baseball Landesliga Ost** (Österreich).
@@ -90,24 +8,78 @@ Website für den Baseballverein **Rohrbach Crazy Geese** (crazy-geese.at), spiel
 **Live:** https://crazy-geese.at
 **Repo:** https://github.com/skofield05/crazy-geese-website
 
+---
+
+## Aktuelle Saison (2026)
+
+- **Liga:** Baseball Landesliga Ost
+- **Teamname:** Rohrbach Crazy Geese (bis 2025: "Kutro Crazy Geese")
+- **Vorjahr:** 2025 – 13 Siege, 0 Niederlagen – **MEISTER!**
+- **Spielplan 2026:** 16 Spiele (8 Spieltage, Mai–August), verifiziert gegen Excel + ABF
+- **E-Mail:** crazygeese93@gmail.com (keine @crazy-geese.at Adressen mehr)
+
+### Trainingszeiten
+
+| Sportart | Wann | Kontakt |
+|----------|------|---------|
+| **Baseball** | Sonntag ab 15:00, Mittwoch ab 18:00 (Pitcher/Catcher) | — |
+| **Kindertraining** | Montag & Donnerstag ab 17:00 | Joey Vickery, Harald (Harry) Burian |
+| **Slowpitch Softball** | Termine werden bekanntgegeben | Mike Rigby, Thomas Kissich |
+
+### Vorstand (laut Vereinsregisterauszug 2025)
+
+| Name | Funktion |
+|------|----------|
+| Thomas Soffried | Obmann |
+| Jörg Dorner | Obmann Stellvertreter |
+| Christian Suchard | Kassier |
+| Maria Fridecky | Kassier Stellvertreterin |
+| Michael Rigby | Schriftführer |
+| Thomas Kissich | Schriftführer Stellvertreter |
+
+---
+
 ## Architektur
 
 Statische Website, gehostet auf GitHub Pages. Keine Datenbank, kein Backend.
 
 ```
-index.html        → Hauptseite (lädt data.json per JavaScript)
-style.css         → Styling (CSS Variables für Farben)
-data/data.json    → Alle Daten (Tabelle, Spiele, Kontakt)
-scripts/scraper.py → Python Scraper für automatische Updates
-geese_logo.png    → Vereinslogo (auch Favicon)
-CLAUDE.md         → Diese Dokumentation
+index.html           → Landing Page (Spielplan, Tabelle, Mitmachen)
+baseball.html        → Baseball-Seite (Training, alle Spiele, ICS-Download)
+softball.html        → Slowpitch Softball
+nachwuchs.html       → Kindertraining & Schulkooperationen
+kontakt.html         → Kontakt, Vorstand, Ballpark
+archiv.html          → Saisonarchiv (2025)
+style.css            → Styling (CSS Variables, responsive, barrierefrei)
+data/data.json       → Alle Daten (Tabelle, Spiele, Kontakt, Softball)
+data/*.ics           → Kalender-Dateien (alle Spiele + nur Heimspiele)
+scripts/scraper.py   → Python Scraper für automatische Updates
+geese_logo.png       → Vereinslogo (Header, Favicon, Hero-Hintergrund)
+.github/workflows/   → GitHub Actions (Scraper an Spieltagen)
 ```
 
-## Aktuelle Saison (2025)
+### Landing Page (index.html)
 
-- **Ergebnis:** 13 Siege, 0 Niederlagen – **MEISTER!**
-- **Finale:** 12:1 gegen Danube Titans (20.09.2025)
-- Alle 13 Spiele sind in `data/data.json` gespeichert
+- **Hero-Bereich:** Logo als dezenter Hintergrund (Blur + Puls-Animation)
+- **Zwei Highlight-Karten:** "Nächstes Spiel" + "Nächstes Heimspiel" (prominent)
+- **Spielplan-Liste:** Weitere Spiele mit BASEBALL/SOFTBALL + HEIM/AUSWÄRTS Tags
+- **Tabelle:** Baseball Landesliga Ost
+- **Mitmachen:** Einladung zum Schnuppertraining
+- **Sponsoren**
+- Baseball + Softball Termine werden chronologisch zusammengeführt
+
+### Daten-Struktur (data.json)
+
+```json
+{
+  "verein": { "name", "saison", "website", "abf_url" },
+  "kontakt": { "ansprechpartner", "email", "adresse", "social" },
+  "tabelle": { "phase", "teams": [...] },
+  "spiele": { "naechste": [...], "vergangene": [...] },
+  "softball": { "naechste_termine": [] },
+  "archiv": { "2025": { "ergebnis", "bilanz", "datei" } }
+}
+```
 
 ---
 
@@ -121,7 +93,7 @@ Die Ligadaten kommen von der Austrian Baseball Softball Federation:
 | Kalender | `/calendars` | Serverseitig | Spiele + Ergebnisse (mit Filter) |
 | Spielplan | `/schedule-and-results` | JavaScript | Echte Spieltage |
 
-**Basis-URL:** `https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-YYYY`
+**Basis-URL:** `https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026`
 
 ### Bekannter ABF-Bug
 
@@ -150,108 +122,20 @@ python scripts/scraper.py
 ### Was der Scraper macht
 
 1. **Tabelle laden** von `/standings`
-2. **Runden-IDs extrahieren** automatisch von `/calendars` (Regular Season, Playoffs, Platzierungsrunde)
-3. **Team-ID finden** automatisch aus Dropdown (Crazy Geese = 35667 für 2025)
+2. **Runden-IDs extrahieren** automatisch von `/calendars`
+3. **Team-ID finden** automatisch aus Dropdown
 4. **Alle Runden durchsuchen** mit Team-Filter
-5. **Spieltage holen** von `/schedule-and-results`:
-   - Navigiert 30x zurück zum Saisonstart
-   - Geht vorwärts durch alle Spieltage
-   - Matcht Spielnummern (#1, #3, etc.) mit Daten
+5. **Spieltage holen** von `/schedule-and-results` (Datepicker-Navigation)
 6. **Duplikate vermeiden** - nur neue Spiele werden hinzugefügt
 7. **data.json speichern**
 
-### Datepicker-Navigation
+### Bekannter Scraper-Bug
 
-Die Schedule-Seite hat einen Datepicker mit 3 Buttons im `.date-picker`:
-- `buttons[0]`: Linker Pfeil (← vorheriger Spieltag)
-- `buttons[1]`: Kalender-Icon (ignorieren)
-- `buttons[2]`: Rechter Pfeil (→ nächster Spieltag)
-
-### Duplikat-Erkennung
-
-Ein Spiel gilt als Duplikat wenn:
-- Datum + Heim + Gast übereinstimmen, ODER
-- Heim + Gast + Ergebnis übereinstimmen (falls Datum fehlt)
-
----
-
-## Häufige Aufgaben
-
-### Scraper laufen lassen (empfohlen)
-
-```bash
-python scripts/scraper.py
-```
-
-Holt automatisch neue Spiele und aktualisiert die Tabelle.
-
-### Manuell Spiel eintragen
-
-In `data/data.json` → `spiele.vergangene`:
-
-```json
-{
-  "datum": "2025-05-03",
-  "zeit": "11:00",
-  "heim": "Rohrbach Crazy Geese",
-  "gast": "Vienna Bucks",
-  "ergebnis_heim": 14,
-  "ergebnis_gast": 4,
-  "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
-  "phase": "Regular Season"
-}
-```
-
-### Neue Saison starten (z.B. 2026)
-
-1. **Scraper anpassen** (`scripts/scraper.py`):
-   ```python
-   ABF_BASE = "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026"
-   ```
-
-2. **data.json anpassen**:
-   ```json
-   "verein": {
-     "saison": "2026",
-     "abf_url": "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026"
-   }
-   ```
-
-3. **Optional:** `spiele.vergangene` und `spiele.naechste` leeren
-
-4. **Scraper ausführen:**
-   ```bash
-   python scripts/scraper.py
-   ```
-
-Der Scraper erkennt automatisch die neuen Runden-IDs und Team-IDs.
-
----
-
-## Design
-
-### Farben (Farbenblind-freundlich)
-
-```css
-/* In style.css :root */
---color-primary: #1e2d4d;     /* Navy Blau (Logo) */
---color-win: #2563eb;         /* Blau für Siege */
---color-loss: #ea580c;        /* Orange für Niederlagen */
---color-tie: #a3a3a3;         /* Grau für Unentschieden */
-```
-
-**Warum Blau/Orange?** Für Rot-Grün-Schwäche optimal unterscheidbar.
-
-### Logo
-
-- Datei: `geese_logo.png`
-- Verwendet als: Header-Logo + Favicon
-- Farben: Navy (#1e2d4d), Rot, Weiß
-
-### Fonts
-
-- Headlines: Bebas Neue
-- Body: Source Sans 3
+Der Scraper importiert teilweise **fehlerhafte Daten**:
+- Alte "Kutro Crazy Geese" Spiele ohne Datum (Geisterdaten von der ABF-Seite)
+- Kommende Spiele werden doppelt in "vergangene" kopiert
+- **Workaround:** Nach Scraper-Lauf `vergangene` auf Müll prüfen und bereinigen
+- **TODO:** Scraper verbessern – Spiele ohne Datum oder mit altem Teamnamen filtern
 
 ---
 
@@ -259,9 +143,10 @@ Der Scraper erkennt automatisch die neuen Runden-IDs und Team-IDs.
 
 Der Workflow `.github/workflows/update-standings.yml` ist aktiv und läuft automatisch.
 
-**Aktueller Schedule:**
-- Sonntag 22:00 MESZ (20:00 UTC)
-- Montag 08:00 MESZ (06:00 UTC) - Backup
+**Schedule:** An jedem Spieltag alle 3 Stunden (9-21 Uhr MESZ) + Backup am Montag danach.
+
+Spieltage 2026: 03.05., 16.05., 23.05., 13.06., 20.06., 19.07., 02.08., 15.08.
+Playoffs: 05.-06.09., 12.-13.09.
 
 **Manuell auslösen:**
 ```bash
@@ -270,22 +155,110 @@ gh workflow run "Update Standings"
 
 ---
 
-## TODO: Saison 2026
+## Design
 
-**Wenn der neue Spielplan verfügbar ist:**
+### Farben (Farbenblind-freundlich)
 
-1. **GitHub Actions an Spieltage anpassen** - Schedule so ändern, dass der Scraper nur an echten Spieltagen läuft (spart Ressourcen, vermeidet Rate-Limiting):
-   ```yaml
-   schedule:
-     # Beispiel: Nur an Spieltagen alle 3 Stunden
-     - cron: '0 9,12,15,18,21 3 5 *'   # 03.05. (Spieltag 1)
-     - cron: '0 9,12,15,18,21 17 5 *'  # 17.05. (Spieltag 2)
-     # ... etc. für jeden Spieltag
-   ```
+```css
+--color-primary: #191934;     /* Navy Blau (Logo) */
+--color-win: #2563eb;         /* Blau für Siege */
+--color-loss: #ea580c;        /* Orange für Niederlagen */
+--color-tie: #a3a3a3;         /* Grau für Unentschieden */
+```
 
-2. **Scraper auf 2026 umstellen** (siehe "Neue Saison starten")
+**Warum Blau/Orange?** Für Rot-Grün-Schwäche optimal unterscheidbar.
 
-3. **data.json zurücksetzen** - alte Spiele archivieren oder leeren
+### Sport-Tags
+
+| Tag | Farbe | Verwendung |
+|-----|-------|------------|
+| BASEBALL | Navy | Baseball-Spiele |
+| SOFTBALL | Lila (#7c3aed) | Softball-Termine |
+| HEIM | Blau (#2563eb) | Heimspiele |
+| AUSWÄRTS | Grau | Auswärtsspiele |
+
+### Logo
+
+- Datei: `geese_logo.png`
+- Verwendet als: Header-Logo, Favicon, Hero-Hintergrund (transparent + blur)
+
+### Fonts
+
+- Headlines: Bebas Neue
+- Body: Raleway
+
+### Barrierefreiheit
+
+- Skip-Links auf allen Seiten
+- ARIA-Labels (Navigation, Tabelle, Mobile-Menü)
+- Fokus-Styles für Tastaturnavigation
+- Farben nie alleiniger Informationsträger (immer auch Text)
+- Telefonnummern als klickbare `tel:` Links
+
+---
+
+## Kalender-Dateien (ICS)
+
+Zwei ICS-Dateien für Kalender-Import:
+- `data/crazy-geese-alle-spiele-2026.ics` – Alle 16 Spiele
+- `data/crazy-geese-heimspiele-2026.ics` – Nur 6 Heimspiele
+
+Download-Buttons auf `baseball.html`. Bei Spielplan-Änderungen müssen die ICS-Dateien manuell aktualisiert werden.
+
+---
+
+## Domain & Hosting
+
+| Was | Wo |
+|-----|-----|
+| Domain | crazy-geese.at (Cloudflare DNS) |
+| Hosting | GitHub Pages |
+| E-Mail | crazygeese93@gmail.com (keine @crazy-geese.at mehr) |
+| Analytics | Cloudflare Web Analytics |
+
+---
+
+## Häufige Aufgaben
+
+### Scraper laufen lassen
+
+```bash
+python scripts/scraper.py
+# oder remote:
+gh workflow run "Update Standings"
+```
+
+### Softball-Termine eintragen
+
+In `data/data.json` → `softball.naechste_termine`:
+
+```json
+{
+  "datum": "2026-06-01",
+  "zeit": "18:00",
+  "gegner": "Team XY",
+  "ort": "Geese Ballpark, Rohrbach"
+}
+```
+
+Erscheinen automatisch auf der Landing Page mit SOFTBALL-Tag.
+
+### Manuell Spiel eintragen
+
+In `data/data.json` → `spiele.vergangene`:
+
+```json
+{
+  "datum": "2026-05-03",
+  "zeit": "13:30",
+  "heim": "Rohrbach Crazy Geese",
+  "gast": "Woodquarter Red Devils",
+  "ergebnis_heim": 10,
+  "ergebnis_gast": 3,
+  "ort": "Sportzentrum Spenadlwiese, Wien",
+  "phase": "Grunddurchgang"
+}
+```
 
 ---
 
@@ -296,27 +269,52 @@ gh workflow run "Update Standings"
 | Vereinsdaten | `data/data.json` |
 | Styling/Farben | `style.css` (CSS Variables am Anfang) |
 | Scraper-URL | `scripts/scraper.py` → `ABF_BASE` Variable |
+| GitHub Actions | `.github/workflows/update-standings.yml` |
+| Spielplan (Excel) | `Landesliga Ost 2026 Spielplan V1.xls` (nicht im Repo) |
+| Vereinsregisterauszug | `Vereinsregisterauszug_CrazyGeese_2025.pdf` (nicht im Repo) |
 | Logo | `geese_logo.png` |
+| ICS-Kalender | `data/crazy-geese-*-2026.ics` |
+
+---
+
+## TODO
+
+- [ ] Scraper verbessern: alte Kutro-Daten und Duplikate filtern
+- [ ] Hintergrundbild: besseres Foto statt Logo (Actionfoto oder Teamfoto)
+- [ ] Schema.org JSON-LD Markup für bessere Google-Ergebnisse
+- [ ] Nachwuchs-Emoji: besseres als Baby-Emoji finden
 
 ---
 
 ## Changelog
 
+### 2026-04-09
+- Komplettes Website-Update für Saison 2026
+- Trainingszeiten aktualisiert (Baseball, Kinder, Softball)
+- Kontakte: Joey Vickery, Harald Burian (Nachwuchs), Mike Rigby, Thomas Kissich (Softball)
+- Vorstand laut Vereinsregisterauszug 2025 aktualisiert
+- Alle @crazy-geese.at Adressen durch crazygeese93@gmail.com ersetzt
+- Landing Page: Highlight-Karten (Nächstes Spiel + Heimspiel), Sport-Tags
+- Slideshow durch Logo-Hintergrund ersetzt (Blur + Puls-Animation)
+- ICS-Kalenderdateien für alle Spiele + Heimspiele
+- Barrierefreiheit: Skip-Links, ARIA, Fokus-Styles auf allen Seiten
+- Spielplan-Texte vergrößert für bessere Lesbarkeit
+- Mitmachen-Sektion: Einladung zum Schnuppertraining
+- Baseball + Softball chronologisch zusammengeführt
+- Mitgliedschafts-Sektion entfernt
+- Ben Miller, Daniel Horky, Jörg Dorner (als Trainer) entfernt
+- US-Coach-Referenzen entfernt
+
 ### 2026-01-18
-- TODO: Domain- & E-Mail-Migration von Gandi/Uberspace zu Dynadot dokumentiert
-- Dynadot statt Cloudflare (unabhängig, nicht Private Equity)
+- TODO: Domain- & E-Mail-Migration dokumentiert
 
 ### 2026-01-15
 - GitHub Actions Fix: Schreibrechte für GITHUB_TOKEN
-- Backup aller Infos von crazy-geese.at (`data/alte-website-infos.md`)
-- 25 Bilder von alter Website gesichert (`data/alte-website-bilder/`)
-- Reminder für Saison 2026 hinzugefügt
+- Backup aller Infos von crazy-geese.at
+- 25 Bilder von alter Website gesichert
 
 ### 2025-12-24
 - Alle 13 Spiele der Saison 2025 importiert
 - Neuer Scraper: durchsucht alle Runden automatisch
 - Logo integriert (Header + Favicon)
 - Farbenblind-freundliches Design (Blau/Orange)
-- Kompakter Header
-- "Alle Spiele anzeigen" Button
-- Dokumentation aktualisiert
