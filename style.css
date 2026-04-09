@@ -315,7 +315,7 @@ li {
 }
 
 /* ============================================
-   SLIDESHOW + HERO GRID
+   HERO BACKGROUND + HERO GRID
    ============================================ */
 
 .section-hero {
@@ -324,38 +324,32 @@ li {
   padding: var(--space-2xl) var(--space-md);
 }
 
-.slideshow {
+.hero-bg {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.slide {
+.hero-logo-bg {
+  width: 60%;
+  max-width: 500px;
+  opacity: 0.08;
+  filter: grayscale(100%);
+}
+
+.hero-bg-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-}
-
-.slide.active {
-  opacity: 1;
-}
-
-.slideshow-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(13, 17, 23, 0.7) 0%, rgba(13, 17, 23, 0.5) 100%);
+  background: radial-gradient(ellipse at center, transparent 0%, var(--color-bg) 70%);
 }
 
 .hero-grid {
