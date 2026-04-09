@@ -650,6 +650,37 @@ li {
   font-size: 1.1rem;
 }
 
+/* Nachwuchs Intro: Bild + Info nebeneinander */
+.nachwuchs-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.nachwuchs-hero-img {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 768px) {
+  .nachwuchs-intro {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .nachwuchs-hero-img {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nachwuchs-intro .info-card {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
 /* Info Cards */
 .info-card {
   background: var(--color-bg-card);
@@ -1348,13 +1379,85 @@ footer {
    UTILITIES
    ============================================ */
 
+/* ============================================
+   BILLA LOSE STICKER
+   ============================================ */
+
+.billa-sticker {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+  z-index: 99;
+  background: linear-gradient(135deg, #ffdd00 0%, #ffc800 100%);
+  color: #1a1a1a;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: 50px;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  animation: billa-bounce 3s ease-in-out infinite;
+}
+
+.billa-sticker:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  color: #1a1a1a;
+}
+
+.billa-sticker-text {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.billa-sticker-sub {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+@keyframes billa-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.billa-sticker:hover {
+  animation: none;
+  transform: scale(1.08);
+}
+
+@media (max-width: 500px) {
+  .billa-sticker {
+    bottom: var(--space-sm);
+    right: var(--space-sm);
+    padding: var(--space-xs) var(--space-md);
+  }
+
+  .billa-sticker-text {
+    font-size: 0.95rem;
+  }
+
+  .billa-sticker-sub {
+    font-size: 0.65rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
   .game-card,
-  .slide {
+  .slide,
+  .billa-sticker {
     transition: none;
+    animation: none;
   }
 }
