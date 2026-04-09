@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-02-06",
+    "letztes_update": "2026-04-09",
     "naechste": [
       {
         "datum": "2026-05-03",
@@ -234,7 +234,296 @@
         "phase": "Grunddurchgang"
       }
     ],
-    "vergangene": []
+    "vergangene": [
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Woodquarter Red Devils",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Ballpark Spenadlwiese, Vienna",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Vienna Bucks",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Ballpark Spenadlwiese, Vienna",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Schremser Beers 2",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Dirty Sox Graz",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Danube Titans",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Cubsfield, Stockerau",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Vienna Lawnmowers",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Cubsfield, Stockerau",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Danube Titans",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Metrostars",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Tulln Ravens",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Ballpark Graz, Graz",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Dirty Sox Graz",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Ballpark Graz, Graz",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Metrostars",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Ballpark Freudenau, Vienna",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Tulln Ravens",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Ballpark Freudenau, Vienna",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Schremser Beers 2",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Woodquarter Red Devils",
+        "gast": "Kutro Crazy Geese",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Vienna Bucks",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "",
+        "zeit": "",
+        "heim": "Kutro Crazy Geese",
+        "gast": "Vienna Lawnmowers",
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 0,
+        "ort": "Geese Ballpark, Rohrbach bei Mattersburg",
+        "phase": "Regular Season"
+      },
+      {
+        "datum": "2026-05-03",
+        "zeit": "13:30",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Woodquarter Red Devils",
+        "ort": "Sportzentrum Spenadlwiese, Wien",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-05-03",
+        "zeit": "16:00",
+        "heim": "Vienna Bucks",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Sportzentrum Spenadlwiese, Wien",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-05-16",
+        "zeit": "11:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Schremser Beers 2",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-05-16",
+        "zeit": "16:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Graz Dirty Sox",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-05-23",
+        "zeit": "11:00",
+        "heim": "Danube Titans",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Cubsfield, Stockerau",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-05-23",
+        "zeit": "13:30",
+        "heim": "Vienna Lawnmowers",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Cubsfield, Stockerau",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-06-13",
+        "zeit": "11:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Danube Titans",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-06-13",
+        "zeit": "16:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Vienna Metrostars 3",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-06-20",
+        "zeit": "13:30",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Tulln Ravens",
+        "ort": "Sox Field, Graz",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-06-20",
+        "zeit": "16:00",
+        "heim": "Graz Dirty Sox",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Sox Field, Graz",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-07-19",
+        "zeit": "11:00",
+        "heim": "Vienna Metrostars 3",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Freudenau, Wien",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-07-19",
+        "zeit": "13:30",
+        "heim": "Tulln Ravens",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Freudenau, Wien",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-08-02",
+        "zeit": "11:00",
+        "heim": "Schremser Beers 2",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Beers Field, Schrems",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-08-02",
+        "zeit": "13:30",
+        "heim": "Woodquarter Red Devils",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Beers Field, Schrems",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-08-15",
+        "zeit": "11:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Vienna Bucks",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang"
+      },
+      {
+        "datum": "2026-08-15",
+        "zeit": "16:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Vienna Lawnmowers",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang"
+      }
+    ]
   },
   "softball": {
     "naechste_termine": []
