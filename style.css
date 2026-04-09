@@ -574,6 +574,35 @@ li {
   color: white;
 }
 
+/* Calendar download */
+.calendar-download {
+  margin-bottom: var(--space-xl);
+  text-align: center;
+}
+
+.calendar-download p {
+  margin-bottom: var(--space-md);
+  color: var(--color-text-muted);
+}
+
+.calendar-buttons {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-calendar {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  font-size: 0.95rem;
+}
+
+.btn-calendar:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-text-muted);
+}
+
 .section h2 {
   font-family: var(--font-display);
   font-size: 2rem;
