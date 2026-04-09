@@ -158,8 +158,11 @@
       }
 
       return `
-        <div class="game-card ${resultClass} ${isFeatured ? 'next-game-featured' : ''}">
-          <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + game.zeit : ''} ${badge}</div>
+        <div class="game-card ${resultClass} ${isFeatured ? 'next-game-featured' : ''}" role="article" aria-label="${game.heim} gegen ${game.gast}">
+          <div class="game-card-header">
+            <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + game.zeit : ''}</div>
+            <div class="game-tags">${badge}</div>
+          </div>
           <div class="game-matchup">
             <span class="team ${isHome ? 'us' : ''}">${game.heim}</span>
             <span class="vs">${hasResult ? game.ergebnis_heim + ':' + game.ergebnis_gast : 'vs'}</span>

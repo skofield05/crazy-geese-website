@@ -20,8 +20,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <a href="#spielplan" class="skip-link">Zum Inhalt springen</a>
   <!-- HEADER MIT NAVIGATION -->
-  <header class="header-bar">
+  <header class="header-bar" role="banner">
     <div class="header-brand">
       <a href="index.html" class="brand-link">
         <img src="geese_logo.png" alt="Crazy Geese Logo" class="brand-logo">
@@ -45,8 +46,8 @@
       </a>
     </div>
 
-    <nav class="nav">
-      <a href="index.html" class="nav-link active">Home</a>
+    <nav class="nav" aria-label="Hauptnavigation">
+      <a href="index.html" class="nav-link active" aria-current="page">Home</a>
       <a href="baseball.html" class="nav-link">Baseball</a>
       <a href="softball.html" class="nav-link">Softball</a>
       <a href="nachwuchs.html" class="nav-link">Nachwuchs</a>
@@ -54,7 +55,7 @@
       <a href="archiv.html" class="nav-link">Archiv</a>
     </nav>
 
-    <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menü öffnen" aria-expanded="false">☰</button>
   </header>
 
   <main>
@@ -92,7 +93,7 @@
           <h2>⚾ Baseball-Tabelle</h2>
           <p class="table-phase" id="table-phase">Vorsaison</p>
           <div class="table-container">
-            <table class="standings">
+            <table class="standings" aria-label="Baseball Landesliga Ost Tabelle">
               <thead>
                 <tr>
                   <th class="col-rank">#</th>
@@ -337,8 +338,10 @@
     }
 
     // Mobile Menu
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      document.querySelector('.nav').classList.toggle('open');
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const nav = document.querySelector('.nav');
+      nav.classList.toggle('open');
+      this.setAttribute('aria-expanded', nav.classList.contains('open'));
     });
 
     loadData();
