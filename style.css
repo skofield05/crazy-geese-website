@@ -352,6 +352,100 @@ li {
   background: radial-gradient(ellipse at center, transparent 0%, var(--color-bg) 70%);
 }
 
+/* Highlight cards: Nächstes Spiel + Nächstes Heimspiel */
+.hero-highlights {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto var(--space-xl);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+@media (min-width: 600px) {
+  .hero-highlights {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.highlight-card {
+  background: rgba(22, 27, 34, 0.95);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  padding: var(--space-lg);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.highlight-card.highlight-home {
+  border-color: var(--color-red);
+}
+
+.highlight-label {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-xs);
+}
+
+.highlight-home .highlight-label {
+  color: var(--color-red);
+}
+
+.highlight-date {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.03em;
+}
+
+.highlight-time {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.highlight-opponent {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  letter-spacing: 0.03em;
+}
+
+.highlight-location {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.highlight-free {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-red);
+  margin-top: var(--space-xs);
+}
+
+/* Softball-Termine */
+.softball-termine {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: var(--space-xl) auto 0;
+  background: rgba(22, 27, 34, 0.95);
+  border-radius: 8px;
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border);
+}
+
+.softball-termine h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-md);
+}
+
 .hero-grid {
   position: relative;
   z-index: 1;

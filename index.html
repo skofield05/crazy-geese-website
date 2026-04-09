@@ -65,18 +65,29 @@
         <div class="hero-bg-overlay"></div>
       </div>
 
+      <!-- HIGHLIGHT: Nächstes Spiel + Nächstes Heimspiel -->
+      <div class="hero-highlights">
+        <div class="highlight-card" id="next-game-card">
+          <span class="highlight-label">Nächstes Spiel</span>
+          <!-- Wird per JS befüllt -->
+        </div>
+        <div class="highlight-card highlight-home" id="next-home-card">
+          <span class="highlight-label">Nächstes Heimspiel</span>
+          <!-- Wird per JS befüllt -->
+        </div>
+      </div>
+
       <div class="hero-grid">
-        <!-- SPIELPLAN links -->
+        <!-- SPIELPLAN -->
         <div class="spielplan-card">
           <h2>Spielplan <span class="season-badge" id="season-badge">2026</span></h2>
-          <h3 class="spielplan-subtitle">Nächste Spiele</h3>
           <div class="games-list games-compact" id="next-games">
             <!-- Wird per JS befüllt -->
           </div>
           <a href="baseball.html#alle-spiele" class="show-all-link">Alle Spiele anzeigen →</a>
         </div>
 
-        <!-- TABELLE rechts -->
+        <!-- TABELLE -->
         <div class="tabelle-card">
           <h2>Tabelle</h2>
           <p class="table-phase" id="table-phase">Vorsaison</p>
@@ -99,6 +110,12 @@
             Quelle: <a href="https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026" target="_blank" rel="noopener">ABF</a>
           </p>
         </div>
+      </div>
+
+      <!-- SOFTBALL TERMINE -->
+      <div class="softball-termine" id="softball-termine" style="display: none;">
+        <h3>🥎 Softball-Termine</h3>
+        <div id="softball-games"></div>
       </div>
     </section>
 
@@ -207,27 +224,85 @@
         </tr>
       `).join('');
 
-      // Next Games
-      const nextGames = document.getElementById('next-games');
-      if (data.spiele.naechste && data.spiele.naechste.length > 0) {
-        nextGames.innerHTML = data.spiele.naechste.slice(0, 4).map((game, i) => renderGameCompact(game, i === 0)).join('');
+      const today = new Date().toISOString().split('T')[0];
+      const upcoming = (data.spiele.naechste || []).filter(g => g.datum >= today);
+
+      // Highlight: Nächstes Spiel
+      const nextGame = upcoming[0];
+      const nextGameCard = document.getElementById('next-game-card');
+      if (nextGame) {
+        nextGameCard.innerHTML = `
+          <span class="highlight-label">Nächstes Spiel</span>
+          ${renderHighlightGame(nextGame)}
+        `;
       } else {
-        nextGames.innerHTML = '<p class="no-games">Saisonpause</p>';
+        nextGameCard.innerHTML = '<span class="highlight-label">Nächstes Spiel</span><p class="no-games">Saisonpause</p>';
+      }
+
+      // Highlight: Nächstes Heimspiel
+      const nextHomeGame = upcoming.find(g => g.ort && g.ort.toLowerCase().includes('rohrbach'));
+      const nextHomeCard = document.getElementById('next-home-card');
+      if (nextHomeGame) {
+        nextHomeCard.innerHTML = `
+          <span class="highlight-label">Nächstes Heimspiel</span>
+          ${renderHighlightGame(nextHomeGame)}
+          <span class="highlight-free">🎟️ Eintritt frei!</span>
+        `;
+      } else {
+        nextHomeCard.innerHTML = '<span class="highlight-label">Nächstes Heimspiel</span><p class="no-games">Keine Heimspiele geplant</p>';
+      }
+
+      // Weitere Spiele (ohne die beiden Highlights)
+      const nextGames = document.getElementById('next-games');
+      const shownIds = [nextGame, nextHomeGame].filter(Boolean).map(g => g.datum + g.zeit);
+      const remaining = upcoming.filter(g => !shownIds.includes(g.datum + g.zeit)).slice(0, 4);
+      if (remaining.length > 0) {
+        nextGames.innerHTML = remaining.map(g => renderGameCompact(g)).join('');
+      } else {
+        nextGames.innerHTML = '<p class="no-games">Keine weiteren Spiele</p>';
+      }
+
+      // Softball-Termine
+      if (data.softball && data.softball.naechste_termine && data.softball.naechste_termine.length > 0) {
+        const softballSection = document.getElementById('softball-termine');
+        softballSection.style.display = 'block';
+        const softballGames = document.getElementById('softball-games');
+        softballGames.innerHTML = data.softball.naechste_termine
+          .filter(t => t.datum >= today)
+          .map(t => `
+            <div class="game-compact">
+              <span class="game-date-compact">${formatDateShort(t.datum)}</span>
+              <span class="game-time-compact">${t.zeit || ''}</span>
+              <span class="game-opponent">${t.gegner || t.beschreibung || 'Softball'}</span>
+              ${t.ort ? `<span class="game-location-compact">📍 ${t.ort}</span>` : ''}
+            </div>
+          `).join('');
       }
 
       document.getElementById('year').textContent = new Date().getFullYear();
     }
 
-    function renderGameCompact(game, isFirst = false) {
+    function renderHighlightGame(game) {
       const isHome = game.heim.includes('Crazy Geese');
       const opponent = isHome ? game.gast : game.heim;
-      // Heimspiel nur wenn wirklich in Rohrbach
+      const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
+      return `
+        <span class="highlight-date">${formatDateLong(game.datum)}</span>
+        <span class="highlight-time">${game.zeit || ''} Uhr</span>
+        <span class="highlight-opponent">vs ${opponent}</span>
+        <span class="highlight-location">📍 ${game.ort || ''}</span>
+      `;
+    }
+
+    function renderGameCompact(game) {
+      const isHome = game.heim.includes('Crazy Geese');
+      const opponent = isHome ? game.gast : game.heim;
       const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
       const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
       const homeAwayClass = isHomeGame ? 'home' : 'away';
 
       return `
-        <div class="game-compact ${isFirst ? 'next-game' : ''}">
+        <div class="game-compact">
           <span class="game-date-compact">${formatDateShort(game.datum)}</span>
           <span class="game-time-compact">${game.zeit || ''}</span>
           <span class="game-opponent">${opponent}</span>
@@ -241,6 +316,12 @@
       if (!dateStr) return '-';
       const date = new Date(dateStr);
       return date.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' });
+    }
+
+    function formatDateLong(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('de-AT', { weekday: 'long', day: '2-digit', month: 'long' });
     }
 
     // Mobile Menu
