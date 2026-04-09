@@ -16,6 +16,7 @@ Thumbs.db
 *.log
 tmpclaude-*
 .claude/
+tests/
 
 # Lokale Dateien (nicht fuer die Website)
 *.xls
