@@ -246,6 +246,39 @@ li {
   color: white;
 }
 
+/* Hervorgehobener Nav-Link (z.B. "Was ist Baseball?") */
+.nav > .nav-link.nav-link-highlight {
+  background: var(--color-red);
+  color: white;
+  margin: auto var(--space-sm) auto var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  align-self: center;
+}
+
+.nav > .nav-link.nav-link-highlight:hover,
+.nav > .nav-link.nav-link-highlight.active {
+  background: #c41010;
+  color: white;
+}
+
+/* Video Container (responsive 16:9) */
+.video-container {
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.video-container iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+}
+
 .nav-dropdown:hover > .nav-link {
   background: var(--color-primary-light);
   color: white;
