@@ -265,8 +265,6 @@ li {
 
 /* Video Container (responsive 16:9) */
 .video-container {
-  max-width: 800px;
-  margin: 0 auto;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
@@ -277,6 +275,17 @@ li {
   width: 100%;
   aspect-ratio: 16 / 9;
   border: none;
+}
+
+.video-adblock-hint {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-top: var(--space-md);
+}
+
+.video-adblock-hint a {
+  color: var(--color-win);
 }
 
 .nav-dropdown:hover > .nav-link {
