@@ -358,6 +358,14 @@ li {
     border-bottom: 1px solid var(--color-border);
   }
 
+  .nav > .nav-link.nav-link-highlight {
+    margin: var(--space-sm) var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: none;
+    font-size: 0.95rem;
+    align-self: flex-start;
+  }
+
   .dropdown-menu {
     position: static;
     box-shadow: none;
