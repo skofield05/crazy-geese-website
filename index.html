@@ -93,7 +93,8 @@
           <div class="games-list games-compact" id="next-games">
             <!-- Wird per JS befüllt -->
           </div>
-          <a href="baseball.html#alle-spiele" class="show-all-link">Alle Spiele anzeigen →</a>
+          <a href="baseball.html#alle-spiele" class="show-all-link">Alle Baseball-Spiele →</a>
+          <a href="softball.html#abbqs" class="show-all-link">Alle Softball-Termine →</a>
         </div>
 
         <!-- TABELLE -->
@@ -282,10 +283,14 @@
       const sportTag = game.sport === 'softball' ? 'SOFTBALL' : 'BASEBALL';
       const sportClass = game.sport === 'softball' ? 'softball' : 'baseball';
       if (game.sport === 'softball') {
+        const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
+        const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
+        const homeAwayClass = isHomeGame ? 'home' : 'away';
         return `
           <span class="game-sport ${sportClass}">${sportTag}</span>
+          <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
           <span class="highlight-date">${formatDateLong(game.datum)}</span>
-          <span class="highlight-time">${game.zeit || ''} Uhr</span>
+          ${game.zeit ? `<span class="highlight-time">${game.zeit} Uhr</span>` : ''}
           <span class="highlight-opponent">${game.gegner || game.beschreibung || 'Softball'}</span>
           ${game.ort ? `<span class="highlight-location">📍 ${game.ort}</span>` : ''}
         `;
@@ -305,12 +310,16 @@
       const sportTag = game.sport === 'softball' ? 'SOFTBALL' : 'BASEBALL';
       const sportClass = game.sport === 'softball' ? 'softball' : 'baseball';
       if (game.sport === 'softball') {
+        const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
+        const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
+        const homeAwayClass = isHomeGame ? 'home' : 'away';
         return `
           <div class="game-compact">
             <span class="game-date-compact">${formatDateShort(game.datum)}</span>
             <span class="game-time-compact">${game.zeit || ''}</span>
             <span class="game-opponent">${game.gegner || game.beschreibung || 'Softball'}</span>
             <span class="game-sport ${sportClass}">${sportTag}</span>
+            <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
             ${game.ort ? `<span class="game-location-compact">📍 ${game.ort}</span>` : ''}
           </div>
         `;
