@@ -237,7 +237,26 @@
     "vergangene": []
   },
   "softball": {
-    "naechste_termine": []
+    "naechste_termine": [
+      {
+        "datum": "2026-05-10",
+        "zeit": "",
+        "beschreibung": "ABBQS Turnier",
+        "ort": "Diving Ducks Field, Am Zehnergürtel 155, Wiener Neustadt"
+      },
+      {
+        "datum": "2026-07-05",
+        "zeit": "",
+        "beschreibung": "ABBQS Turnier",
+        "ort": "Geese Ballpark, Rohrbach"
+      },
+      {
+        "datum": "2026-09-27",
+        "zeit": "",
+        "beschreibung": "ABBQS Turnier",
+        "ort": "Geese Ballpark, Rohrbach"
+      }
+    ]
   },
   "archiv": {
     "2025": {
