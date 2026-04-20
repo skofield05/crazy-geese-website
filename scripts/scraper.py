@@ -89,23 +89,23 @@ def save_data(data):
 def game_exists(existing_games, new_game):
     """
     Prüft ob ein Spiel bereits existiert (Duplikat-Vermeidung).
-    Ein Spiel ist identisch wenn Datum, Heim und Gast übereinstimmen.
-    Falls Datum leer ist, wird nach Heim/Gast/Ergebnis verglichen.
+    - Haben beide ein Datum: Match auf (datum, heim, gast).
+    - Fehlt mind. einem das Datum: Match nur auf (heim, gast) – damit
+      Geisterdaten ohne Datum nicht als "neues" Spiel neben dem echten
+      Eintrag landen.
     """
     for game in existing_games:
-        # Wenn beide Daten haben, vergleiche Datum + Teams
-        if new_game.get("datum") and game.get("datum"):
-            if (game["datum"] == new_game["datum"] and
-                game["heim"] == new_game["heim"] and
-                game["gast"] == new_game["gast"]):
+        if game.get("heim") != new_game.get("heim"):
+            continue
+        if game.get("gast") != new_game.get("gast"):
+            continue
+        new_date = new_game.get("datum") or ""
+        old_date = game.get("datum") or ""
+        if new_date and old_date:
+            if new_date == old_date:
                 return True
-        # Sonst vergleiche Teams + Ergebnis
         else:
-            if (game["heim"] == new_game["heim"] and
-                game["gast"] == new_game["gast"] and
-                game.get("ergebnis_heim") == new_game.get("ergebnis_heim") and
-                game.get("ergebnis_gast") == new_game.get("ergebnis_gast")):
-                return True
+            return True
     return False
 
 
@@ -512,18 +512,34 @@ def update_data():
     vergangene = list(data.get("spiele", {}).get("vergangene", []))
     naechste = list(data.get("spiele", {}).get("naechste", []))
 
+    skipped_kutro = 0
+    skipped_ghost = 0
+
     for game in new_games:
+        heim = game.get("heim", "")
+        gast = game.get("gast", "")
+
+        # Filter: alte "Kutro Crazy Geese" Spiele ignorieren
+        if "Kutro" in heim or "Kutro" in gast:
+            skipped_kutro += 1
+            continue
+
         # Konvertiere zu data.json Format
         formatted_game = {
             "datum": game.get("datum", ""),
             "zeit": game.get("zeit", ""),
-            "heim": game.get("heim", ""),
-            "gast": game.get("gast", ""),
+            "heim": heim,
+            "gast": gast,
             "ergebnis_heim": game.get("ergebnis_heim"),
             "ergebnis_gast": game.get("ergebnis_gast"),
             "ort": game.get("ort", ""),
             "phase": game.get("phase", "Regular Season")
         }
+
+        # Filter: Geisterdaten ohne Datum und ohne Ergebnis
+        if not formatted_game["datum"] and formatted_game.get("ergebnis_heim") is None:
+            skipped_ghost += 1
+            continue
 
         # Prüfe ob Spiel bereits existiert
         all_existing = vergangene + naechste
@@ -556,6 +572,10 @@ def update_data():
     data["spiele"]["letztes_update"] = datetime.now().strftime("%Y-%m-%d")
 
     print(f"      Neue Spiele hinzugefügt: {added_count}")
+    if skipped_kutro:
+        print(f"      Ignoriert (Kutro): {skipped_kutro}")
+    if skipped_ghost:
+        print(f"      Ignoriert (ohne Datum & Ergebnis): {skipped_ghost}")
     print(f"      Gesamt vergangene: {len(vergangene)}")
     print(f"      Gesamt nächste: {len(naechste)}")
 

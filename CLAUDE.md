@@ -129,13 +129,12 @@ python scripts/scraper.py
 6. **Duplikate vermeiden** - nur neue Spiele werden hinzugefügt
 7. **data.json speichern**
 
-### Bekannter Scraper-Bug
+### Scraper-Filter (2026-04-20)
 
-Der Scraper importiert teilweise **fehlerhafte Daten**:
-- Alte "Kutro Crazy Geese" Spiele ohne Datum (Geisterdaten von der ABF-Seite)
-- Kommende Spiele werden doppelt in "vergangene" kopiert
-- **Workaround:** Nach Scraper-Lauf `vergangene` auf Müll prüfen und bereinigen
-- **TODO:** Scraper verbessern – Spiele ohne Datum oder mit altem Teamnamen filtern
+Der Scraper filtert automatisch:
+- Spiele mit "Kutro" in Heim/Gast (alte Team-Referenzen der ABF-Seite)
+- Geisterdaten ohne Datum **und** ohne Ergebnis
+- Duplikate: Match auf (datum, heim, gast) bzw. (heim, gast) wenn ein Datum fehlt – damit Geisterdaten nicht neben echten Einträgen landen
 
 ---
 
@@ -279,7 +278,6 @@ In `data/data.json` → `spiele.vergangene`:
 
 ## TODO
 
-- [ ] Scraper verbessern: alte Kutro-Daten und Duplikate filtern
 - [ ] Hintergrundbild: besseres Foto statt Logo (Actionfoto oder Teamfoto)
 - [ ] Schema.org JSON-LD Markup für bessere Google-Ergebnisse
 - [ ] Nachwuchs-Emoji: besseres als Baby-Emoji finden
