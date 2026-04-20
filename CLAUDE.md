@@ -131,10 +131,11 @@ python scripts/scraper.py
 
 ### Scraper-Filter (2026-04-20)
 
-Der Scraper filtert automatisch:
-- Spiele mit "Kutro" in Heim/Gast (alte Team-Referenzen der ABF-Seite)
-- Geisterdaten ohne Datum **und** ohne Ergebnis
-- Duplikate: Match auf (datum, heim, gast) bzw. (heim, gast) wenn ein Datum fehlt – damit Geisterdaten nicht neben echten Einträgen landen
+Der Scraper verarbeitet ABF-Daten:
+- **Normalisierung:** Die ABF-Datenbank führt uns teils noch als "Kutro Crazy Geese" – Teamnamen werden beim Import auf "Rohrbach Crazy Geese" umgeschrieben (Tabelle + Spiele)
+- **Ghost-Filter:** Einträge ohne Datum **und** ohne Ergebnis werden verworfen
+- **Dedup:** Match auf (datum, heim, gast) bzw. (heim, gast) wenn ein Datum fehlt – damit Geisterdaten nicht neben echten Einträgen landen
+- **Mutation-Fix:** `existing_games` wird als Kopie gebaut, damit die Aggregation nicht `vergangene` mit `naechste` erweitert
 
 ---
 

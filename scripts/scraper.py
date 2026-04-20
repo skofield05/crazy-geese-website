@@ -158,6 +158,8 @@ def scrape_standings(page):
                     lines = team_cell.split('\n')
                     kuerzel = lines[0].strip() if lines else ""
                     name = lines[1].strip() if len(lines) > 1 else team_cell
+                    if "Kutro Crazy Geese" in name:
+                        name = name.replace("Kutro Crazy Geese", TEAM_FULL_NAME)
 
                     wins = int(cells[2].inner_text().strip())
                     losses = int(cells[3].inner_text().strip())
@@ -470,8 +472,10 @@ def update_data():
 
     # Bestehende Daten laden
     data = load_data()
-    existing_games = data.get("spiele", {}).get("vergangene", [])
-    existing_games += data.get("spiele", {}).get("naechste", [])
+    existing_games = (
+        list(data.get("spiele", {}).get("vergangene", []))
+        + list(data.get("spiele", {}).get("naechste", []))
+    )
     print(f"\nBestehende Spiele in data.json: {len(existing_games)}")
 
     with sync_playwright() as p:
@@ -512,17 +516,38 @@ def update_data():
     vergangene = list(data.get("spiele", {}).get("vergangene", []))
     naechste = list(data.get("spiele", {}).get("naechste", []))
 
-    skipped_kutro = 0
     skipped_ghost = 0
+    normalized_count = 0
+
+    # Kanonische Teamnamen aus der aktuellen Tabelle als Source of Truth.
+    canonical_names = [t.get("name", "") for t in data.get("tabelle", {}).get("teams", []) if t.get("name")]
+
+    def normalize_team(name):
+        # 1. ABF-Datenbank fuehrt uns teils noch als "Kutro Crazy Geese".
+        if name and "Kutro Crazy Geese" in name:
+            return TEAM_FULL_NAME
+        if not name or name in canonical_names:
+            return name
+        # 2. Substring-Match (z.B. "Metrostars" -> "Vienna Metrostars 3")
+        for canonical in canonical_names:
+            if canonical and (canonical in name or name in canonical):
+                return canonical
+        # 3. Wort-Overlap (z.B. "Dirty Sox Graz" -> "Graz Dirty Sox")
+        name_words = set(name.lower().split())
+        best = None
+        best_overlap = 0
+        for canonical in canonical_names:
+            overlap = len(name_words & set(canonical.lower().split()))
+            if overlap > best_overlap and overlap >= 2:
+                best = canonical
+                best_overlap = overlap
+        return best or name
 
     for game in new_games:
-        heim = game.get("heim", "")
-        gast = game.get("gast", "")
-
-        # Filter: alte "Kutro Crazy Geese" Spiele ignorieren
-        if "Kutro" in heim or "Kutro" in gast:
-            skipped_kutro += 1
-            continue
+        heim = normalize_team(game.get("heim", ""))
+        gast = normalize_team(game.get("gast", ""))
+        if heim != game.get("heim", "") or gast != game.get("gast", ""):
+            normalized_count += 1
 
         # Konvertiere zu data.json Format
         formatted_game = {
@@ -572,8 +597,8 @@ def update_data():
     data["spiele"]["letztes_update"] = datetime.now().strftime("%Y-%m-%d")
 
     print(f"      Neue Spiele hinzugefügt: {added_count}")
-    if skipped_kutro:
-        print(f"      Ignoriert (Kutro): {skipped_kutro}")
+    if normalized_count:
+        print(f"      Teamnamen normalisiert (Kutro -> Rohrbach): {normalized_count}")
     if skipped_ghost:
         print(f"      Ignoriert (ohne Datum & Ergebnis): {skipped_ghost}")
     print(f"      Gesamt vergangene: {len(vergangene)}")
