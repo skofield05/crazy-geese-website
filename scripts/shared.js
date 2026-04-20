@@ -120,7 +120,7 @@ function renderGameCompact(game) {
     return `
       <div class="game-compact">
         <span class="game-date-compact">${formatDateShort(game.datum)}</span>
-        ${game.zeit ? `<span class="game-time-compact">${escapeHtml(game.zeit)}</span>` : ''}
+        <span class="game-time-compact">${game.zeit ? escapeHtml(game.zeit) : ''}</span>
         <span class="game-opponent">${label}</span>
         <span class="game-sport ${sport}">${sportTag}</span>
         <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
@@ -135,7 +135,7 @@ function renderGameCompact(game) {
   return `
     <div class="game-compact">
       <span class="game-date-compact">${formatDateShort(game.datum)}</span>
-      ${game.zeit ? `<span class="game-time-compact">${escapeHtml(game.zeit)}</span>` : ''}
+      <span class="game-time-compact">${game.zeit ? escapeHtml(game.zeit) : ''}</span>
       <span class="game-opponent">${opponent}</span>
       <span class="game-sport ${sport}">${sportTag}</span>
       <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
