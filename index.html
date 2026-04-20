@@ -265,8 +265,9 @@
       }
 
       const nextGamesEl = document.getElementById('next-games');
-      const shownIds = [nextGame, nextHomeGame].filter(Boolean).map(g => g.datum + g.zeit + g.sport);
-      const remaining = allGames.filter(g => !shownIds.includes(g.datum + g.zeit + g.sport)).slice(0, 4);
+      const gameKey = g => g.datum + '|' + (g.zeit || '') + '|' + g.sport;
+      const shownIds = [nextGame, nextHomeGame].filter(Boolean).map(gameKey);
+      const remaining = allGames.filter(g => !shownIds.includes(gameKey(g))).slice(0, 4);
       if (remaining.length > 0) {
         nextGamesEl.innerHTML = remaining.map(renderGameCompact).join('');
       } else {
