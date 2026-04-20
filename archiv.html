@@ -104,72 +104,35 @@
     <p>© <span id="year">2026</span> Rohrbach Crazy Geese</p>
   </footer>
 
+  <script src="scripts/shared.js?v=2026-04-20"></script>
   <script>
     async function loadArchiv() {
       try {
-        const response = await fetch('data/archiv/2025.json?v=' + Date.now());
-        const data = await response.json();
+        const data = await fetchJson('data/archiv/2025.json');
         renderArchiv(data);
       } catch (error) {
         console.error('Fehler:', error);
+        showError(document.getElementById('archiv-games-2025'), 'Archiv konnte nicht geladen werden.');
       }
     }
 
     function renderArchiv(data) {
-      // Tabelle
       const tbody = document.getElementById('archiv-standings-2025');
       tbody.innerHTML = data.tabelle.teams.map(team => `
-        <tr class="${team.kuerzel === 'CG' ? 'highlight' : ''}">
-          <td class="col-rank">${team.rang}</td>
-          <td class="col-team">${team.name}</td>
-          <td class="col-stat">${team.siege}</td>
-          <td class="col-stat">${team.niederlagen}</td>
+        <tr class="${isOurKuerzel(team.kuerzel) || isOurTeam(team.name) ? 'highlight' : ''}">
+          <td class="col-rank">${escapeHtml(team.rang)}</td>
+          <td class="col-team">${escapeHtml(team.name)}</td>
+          <td class="col-stat">${escapeHtml(team.siege)}</td>
+          <td class="col-stat">${escapeHtml(team.niederlagen)}</td>
         </tr>
       `).join('');
 
-      // Spiele
       const gamesDiv = document.getElementById('archiv-games-2025');
-      gamesDiv.innerHTML = data.spiele.map(renderGame).join('');
+      gamesDiv.innerHTML = data.spiele.map(g => renderGame(g)).join('');
     }
 
-    function renderGame(game) {
-      const isHome = game.heim.includes('Crazy Geese');
-      const hasResult = game.ergebnis_heim !== null;
-      const badge = isHome ? '<span class="game-badge home">HEIMSPIEL</span>' : '<span class="game-badge away">AUSWÄRTS</span>';
-
-      let resultClass = '';
-      if (hasResult) {
-        const ourScore = isHome ? game.ergebnis_heim : game.ergebnis_gast;
-        const theirScore = isHome ? game.ergebnis_gast : game.ergebnis_heim;
-        resultClass = ourScore > theirScore ? 'win' : (ourScore < theirScore ? 'loss' : 'tie');
-      }
-
-      return `
-        <div class="game-card ${resultClass}">
-          <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + game.zeit : ''} ${badge}</div>
-          <div class="game-matchup">
-            <span class="team ${isHome ? 'us' : ''}">${game.heim}</span>
-            <span class="vs">${hasResult ? game.ergebnis_heim + ':' + game.ergebnis_gast : 'vs'}</span>
-            <span class="team ${!isHome ? 'us' : ''}">${game.gast}</span>
-          </div>
-          ${game.phase ? `<div class="game-phase">${game.phase}</div>` : ''}
-        </div>
-      `;
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('de-AT', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
-    }
-
-    document.getElementById('year').textContent = new Date().getFullYear();
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-      const nav = document.querySelector('.nav');
-      nav.classList.toggle('open');
-      this.setAttribute('aria-expanded', nav.classList.contains('open'));
-    });
-
+    setFooterYear();
+    setupMobileMenu();
     loadArchiv();
   </script>
   <!-- Cloudflare Web Analytics -->

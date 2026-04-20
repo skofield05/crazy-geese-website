@@ -152,34 +152,34 @@
       <h2>Unsere Sponsoren & Partner</h2>
       <div class="sponsors-grid">
         <a href="http://www.krippl.at/" target="_blank" rel="noopener" class="sponsor-logo" title="KUTRO - Hauptsponsor">
-          <img src="img/sponsoren/kutro.png" alt="KUTRO">
+          <img loading="lazy" src="img/sponsoren/kutro.png" alt="KUTRO">
         </a>
         <a href="https://www.energy3000.com/de-de" target="_blank" rel="noopener" class="sponsor-logo" title="Energy3000">
-          <img src="img/sponsoren/energy3000.png" alt="Energy3000">
+          <img loading="lazy" src="img/sponsoren/energy3000.png" alt="Energy3000">
         </a>
         <a href="https://www.bank-bgld.at/" target="_blank" rel="noopener" class="sponsor-logo" title="Bank Burgenland">
-          <img src="img/sponsoren/bank-burgenland.jpg" alt="Bank Burgenland">
+          <img loading="lazy" src="img/sponsoren/bank-burgenland.jpg" alt="Bank Burgenland">
         </a>
         <a href="http://www.generali.at/" target="_blank" rel="noopener" class="sponsor-logo" title="Generali">
-          <img src="img/sponsoren/generali.jpg" alt="Generali">
+          <img loading="lazy" src="img/sponsoren/generali.jpg" alt="Generali">
         </a>
         <a href="http://www.pusitz-bau.at/" target="_blank" rel="noopener" class="sponsor-logo" title="Pusitz Bau">
-          <img src="img/sponsoren/pusitz-bau.jpg" alt="Pusitz Bau">
+          <img loading="lazy" src="img/sponsoren/pusitz-bau.jpg" alt="Pusitz Bau">
         </a>
         <a href="https://www.sipconnect.at/" target="_blank" rel="noopener" class="sponsor-logo" title="SIPconnect">
-          <img src="img/sponsoren/sipconnect.jpeg" alt="SIPconnect">
+          <img loading="lazy" src="img/sponsoren/sipconnect.jpeg" alt="SIPconnect">
         </a>
         <a href="https://www.dachdeckerei-ehrnhoefer.at/" target="_blank" rel="noopener" class="sponsor-logo" title="Dachdeckerei Ehrnhöfer">
-          <img src="img/sponsoren/ehrnhoefer.png" alt="Dachdeckerei Ehrnhöfer">
+          <img loading="lazy" src="img/sponsoren/ehrnhoefer.png" alt="Dachdeckerei Ehrnhöfer">
         </a>
         <a href="http://www.ar-teks.at/" target="_blank" rel="noopener" class="sponsor-logo" title="Ar-Teks">
-          <img src="img/sponsoren/arteks.png" alt="Ar-Teks">
+          <img loading="lazy" src="img/sponsoren/arteks.png" alt="Ar-Teks">
         </a>
         <a href="https://www.zeus-consulting.at/" target="_blank" rel="noopener" class="sponsor-logo" title="Zeus Consulting">
-          <img src="img/sponsoren/zeus.jpeg" alt="Zeus Consulting">
+          <img loading="lazy" src="img/sponsoren/zeus.jpeg" alt="Zeus Consulting">
         </a>
         <a href="https://fielders-choice.de" target="_blank" rel="noopener" class="sponsor-logo" title="Fielders Choice">
-          <img src="img/sponsoren/fielders-choice.png" alt="Fielders Choice">
+          <img loading="lazy" src="img/sponsoren/fielders-choice.png" alt="Fielders Choice">
         </a>
       </div>
     </section>
@@ -202,15 +202,17 @@
     </p>
   </footer>
 
+  <script src="scripts/shared.js?v=2026-04-20"></script>
   <script>
-    // Daten laden
     async function loadData() {
       try {
-        const response = await fetch('data/data.json?v=' + Date.now());
-        const data = await response.json();
+        const data = await fetchJson('data/data.json');
         renderPage(data);
       } catch (error) {
         console.error('Fehler beim Laden der Daten:', error);
+        showError(document.getElementById('next-games'), 'Spielplan konnte nicht geladen werden.');
+        document.getElementById('standings-body').innerHTML =
+          '<tr><td colspan="4" class="error-message" role="alert">⚠️ Tabelle konnte nicht geladen werden.</td></tr>';
       }
     }
 
@@ -218,20 +220,18 @@
       document.getElementById('season-badge').textContent = data.verein.saison;
       document.getElementById('table-phase').textContent = data.tabelle.phase;
 
-      // Standings
       const tbody = document.getElementById('standings-body');
       tbody.innerHTML = data.tabelle.teams.map(team => `
-        <tr class="${team.name.includes('Crazy Geese') ? 'highlight' : ''}">
-          <td class="col-rank">${team.rang}</td>
-          <td class="col-team">${team.name}</td>
-          <td class="col-stat">${team.siege}</td>
-          <td class="col-stat">${team.niederlagen}</td>
+        <tr class="${isOurTeam(team.name) ? 'highlight' : ''}">
+          <td class="col-rank">${escapeHtml(team.rang)}</td>
+          <td class="col-team">${escapeHtml(team.name)}</td>
+          <td class="col-stat">${escapeHtml(team.siege)}</td>
+          <td class="col-stat">${escapeHtml(team.niederlagen)}</td>
         </tr>
       `).join('');
 
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toLocaleDateString('en-CA');
 
-      // Baseball + Softball zusammenführen
       const baseballGames = (data.spiele.naechste || [])
         .filter(g => g.datum >= today)
         .map(g => ({ ...g, sport: 'baseball' }));
@@ -239,9 +239,8 @@
         .filter(t => t.datum >= today)
         .map(t => ({ ...t, sport: 'softball' }));
       const allGames = [...baseballGames, ...softballGames]
-        .sort((a, b) => (a.datum + (a.zeit || '')) .localeCompare(b.datum + (b.zeit || '')));
+        .sort((a, b) => (a.datum + (a.zeit || '')).localeCompare(b.datum + (b.zeit || '')));
 
-      // Highlight: Nächstes Spiel (egal welche Sportart)
       const nextGame = allGames[0];
       const nextGameCard = document.getElementById('next-game-card');
       if (nextGame) {
@@ -253,8 +252,7 @@
         nextGameCard.innerHTML = '<span class="highlight-label">Nächstes Spiel</span><p class="no-games">Saisonpause</p>';
       }
 
-      // Highlight: Nächstes Heimspiel
-      const nextHomeGame = allGames.find(g => g.ort && g.ort.toLowerCase().includes('rohrbach'));
+      const nextHomeGame = allGames.find(g => isHomeVenue(g.ort));
       const nextHomeCard = document.getElementById('next-home-card');
       if (nextHomeGame) {
         nextHomeCard.innerHTML = `
@@ -266,101 +264,18 @@
         nextHomeCard.innerHTML = '<span class="highlight-label">Nächstes Heimspiel</span><p class="no-games">Keine Heimspiele geplant</p>';
       }
 
-      // Weitere Spiele (ohne die beiden Highlights)
       const nextGamesEl = document.getElementById('next-games');
       const shownIds = [nextGame, nextHomeGame].filter(Boolean).map(g => g.datum + g.zeit + g.sport);
       const remaining = allGames.filter(g => !shownIds.includes(g.datum + g.zeit + g.sport)).slice(0, 4);
       if (remaining.length > 0) {
-        nextGamesEl.innerHTML = remaining.map(g => renderGameCompact(g)).join('');
+        nextGamesEl.innerHTML = remaining.map(renderGameCompact).join('');
       } else {
         nextGamesEl.innerHTML = '<p class="no-games">Keine weiteren Spiele</p>';
       }
-
-      document.getElementById('year').textContent = new Date().getFullYear();
     }
 
-    function renderHighlightGame(game) {
-      const sportTag = game.sport === 'softball' ? 'SOFTBALL' : 'BASEBALL';
-      const sportClass = game.sport === 'softball' ? 'softball' : 'baseball';
-      if (game.sport === 'softball') {
-        const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
-        const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
-        const homeAwayClass = isHomeGame ? 'home' : 'away';
-        return `
-          <span class="game-sport ${sportClass}">${sportTag}</span>
-          <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
-          <span class="highlight-date">${formatDateLong(game.datum)}</span>
-          ${game.zeit ? `<span class="highlight-time">${game.zeit} Uhr</span>` : ''}
-          <span class="highlight-opponent">${game.gegner || game.beschreibung || 'Softball'}</span>
-          ${game.ort ? `<span class="highlight-location">📍 ${game.ort}</span>` : ''}
-        `;
-      }
-      const isHome = game.heim.includes('Crazy Geese');
-      const opponent = isHome ? game.gast : game.heim;
-      return `
-        <span class="game-sport ${sportClass}">${sportTag}</span>
-        <span class="highlight-date">${formatDateLong(game.datum)}</span>
-        <span class="highlight-time">${game.zeit || ''} Uhr</span>
-        <span class="highlight-opponent">vs ${opponent}</span>
-        <span class="highlight-location">📍 ${game.ort || ''}</span>
-      `;
-    }
-
-    function renderGameCompact(game) {
-      const sportTag = game.sport === 'softball' ? 'SOFTBALL' : 'BASEBALL';
-      const sportClass = game.sport === 'softball' ? 'softball' : 'baseball';
-      if (game.sport === 'softball') {
-        const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
-        const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
-        const homeAwayClass = isHomeGame ? 'home' : 'away';
-        return `
-          <div class="game-compact">
-            <span class="game-date-compact">${formatDateShort(game.datum)}</span>
-            <span class="game-time-compact">${game.zeit || ''}</span>
-            <span class="game-opponent">${game.gegner || game.beschreibung || 'Softball'}</span>
-            <span class="game-sport ${sportClass}">${sportTag}</span>
-            <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
-            ${game.ort ? `<span class="game-location-compact">📍 ${game.ort}</span>` : ''}
-          </div>
-        `;
-      }
-      const isHome = game.heim.includes('Crazy Geese');
-      const opponent = isHome ? game.gast : game.heim;
-      const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
-      const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
-      const homeAwayClass = isHomeGame ? 'home' : 'away';
-
-      return `
-        <div class="game-compact">
-          <span class="game-date-compact">${formatDateShort(game.datum)}</span>
-          <span class="game-time-compact">${game.zeit || ''}</span>
-          <span class="game-opponent">${opponent}</span>
-          <span class="game-sport ${sportClass}">${sportTag}</span>
-          <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
-          ${game.ort ? `<span class="game-location-compact">📍 ${game.ort}</span>` : ''}
-        </div>
-      `;
-    }
-
-    function formatDateShort(dateStr) {
-      if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' });
-    }
-
-    function formatDateLong(dateStr) {
-      if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('de-AT', { weekday: 'long', day: '2-digit', month: 'long' });
-    }
-
-    // Mobile Menu
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-      const nav = document.querySelector('.nav');
-      nav.classList.toggle('open');
-      this.setAttribute('aria-expanded', nav.classList.contains('open'));
-    });
-
+    setFooterYear();
+    setupMobileMenu();
     loadData();
   </script>
   <!-- Cloudflare Web Analytics -->

@@ -109,22 +109,21 @@
     <p>© <span id="year">2026</span> Rohrbach Crazy Geese</p>
   </footer>
 
+  <script src="scripts/shared.js?v=2026-04-20"></script>
   <script>
     async function loadData() {
       try {
-        const response = await fetch('data/data.json?v=' + Date.now());
-        const data = await response.json();
+        const data = await fetchJson('data/data.json');
         renderPage(data);
       } catch (error) {
         console.error('Fehler:', error);
+        showError(document.getElementById('next-games'), 'Spiele konnten nicht geladen werden.');
       }
     }
 
     function renderPage(data) {
       document.getElementById('season').textContent = data.verein.saison;
-      document.getElementById('year').textContent = new Date().getFullYear();
 
-      // Next Games
       const nextGames = document.getElementById('next-games');
       if (data.spiele.naechste && data.spiele.naechste.length > 0) {
         nextGames.innerHTML = data.spiele.naechste.map((g, i) => renderGame(g, i === 0)).join('');
@@ -132,7 +131,6 @@
         nextGames.innerHTML = '<p class="no-games">Keine anstehenden Spiele</p>';
       }
 
-      // Past Games
       const pastGames = document.getElementById('past-games');
       if (data.spiele.vergangene && data.spiele.vergangene.length > 0) {
         pastGames.innerHTML = [...data.spiele.vergangene].reverse().map(g => renderGame(g)).join('');
@@ -141,49 +139,8 @@
       }
     }
 
-    function renderGame(game, isFeatured = false) {
-      const isHome = game.heim.includes('Crazy Geese');
-      const hasResult = game.ergebnis_heim !== null && game.ergebnis_heim !== undefined;
-      // Heimspiel nur wenn wirklich in Rohrbach
-      const isHomeGame = game.ort && game.ort.toLowerCase().includes('rohrbach');
-      const badge = isHomeGame ? '<span class="game-badge home">HEIMSPIEL</span>' : '<span class="game-badge away">AUSWÄRTS</span>';
-
-      let resultClass = '';
-      if (hasResult) {
-        const ourScore = isHome ? game.ergebnis_heim : game.ergebnis_gast;
-        const theirScore = isHome ? game.ergebnis_gast : game.ergebnis_heim;
-        resultClass = ourScore > theirScore ? 'win' : (ourScore < theirScore ? 'loss' : 'tie');
-      }
-
-      return `
-        <div class="game-card ${resultClass} ${isFeatured ? 'next-game-featured' : ''}" role="article" aria-label="${game.heim} gegen ${game.gast}">
-          <div class="game-card-header">
-            <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + game.zeit : ''}</div>
-            <div class="game-tags">${badge}</div>
-          </div>
-          <div class="game-matchup">
-            <span class="team ${isHome ? 'us' : ''}">${game.heim}</span>
-            <span class="vs">${hasResult ? game.ergebnis_heim + ':' + game.ergebnis_gast : 'vs'}</span>
-            <span class="team ${!isHome ? 'us' : ''}">${game.gast}</span>
-          </div>
-          ${game.ort ? `<div class="game-location">📍 ${game.ort}</div>` : ''}
-          ${game.phase ? `<div class="game-phase">${game.phase}</div>` : ''}
-        </div>
-      `;
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('de-AT', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
-    }
-
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-      const nav = document.querySelector('.nav');
-      nav.classList.toggle('open');
-      this.setAttribute('aria-expanded', nav.classList.contains('open'));
-    });
-
+    setFooterYear();
+    setupMobileMenu();
     loadData();
   </script>
   <!-- Cloudflare Web Analytics -->

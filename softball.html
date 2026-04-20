@@ -124,20 +124,13 @@
     <p>© <span id="year">2026</span> Rohrbach Crazy Geese</p>
   </footer>
 
+  <script src="scripts/shared.js?v=2026-04-20"></script>
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-      const nav = document.querySelector('.nav');
-      nav.classList.toggle('open');
-      this.setAttribute('aria-expanded', nav.classList.contains('open'));
-    });
-
     async function loadSoftballTermine() {
+      const container = document.getElementById('softball-termine');
       try {
-        const response = await fetch('data/data.json?v=' + Date.now());
-        const data = await response.json();
-        const container = document.getElementById('softball-termine');
-        const today = new Date().toISOString().split('T')[0];
+        const data = await fetchJson('data/data.json');
+        const today = new Date().toLocaleDateString('en-CA');
         const termine = (data.softball && data.softball.naechste_termine || [])
           .filter(t => t.datum >= today)
           .sort((a, b) => (a.datum + (a.zeit || '')).localeCompare(b.datum + (b.zeit || '')));
@@ -148,35 +141,32 @@
         }
 
         container.innerHTML = termine.map(t => {
-          const isHome = t.ort && t.ort.toLowerCase().includes('rohrbach');
+          const isHome = isHomeVenue(t.ort);
           const badge = isHome
             ? '<span class="game-badge home">HEIM</span>'
             : '<span class="game-badge away">AUSWÄRTS</span>';
-          const label = t.gegner || t.beschreibung || 'Softball Termin';
+          const label = escapeHtml(t.gegner || t.beschreibung || 'Softball Termin');
           return `
             <div class="game-card" role="article" aria-label="${label}">
               <div class="game-card-header">
-                <div class="game-date">${formatDate(t.datum)}${t.zeit ? ' • ' + t.zeit : ''}</div>
+                <div class="game-date">${formatDate(t.datum)}${t.zeit ? ' • ' + escapeHtml(t.zeit) : ''}</div>
                 <div class="game-tags">${badge}</div>
               </div>
               <div class="game-matchup">
                 <span class="team us">${label}</span>
               </div>
-              ${t.ort ? `<div class="game-location">📍 ${t.ort}</div>` : ''}
+              ${t.ort ? `<div class="game-location">📍 ${escapeHtml(t.ort)}</div>` : ''}
             </div>
           `;
         }).join('');
       } catch (error) {
         console.error('Fehler:', error);
+        showError(container, 'Termine konnten nicht geladen werden.');
       }
     }
 
-    function formatDate(dateStr) {
-      if (!dateStr) return '-';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('de-AT', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
-    }
-
+    setFooterYear();
+    setupMobileMenu();
     loadSoftballTermine();
   </script>
   <!-- Cloudflare Web Analytics -->

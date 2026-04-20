@@ -121,13 +121,10 @@
     <p>© <span id="year">2026</span> Rohrbach Crazy Geese</p>
   </footer>
 
+  <script src="scripts/shared.js?v=2026-04-20"></script>
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-      const nav = document.querySelector('.nav');
-      nav.classList.toggle('open');
-      this.setAttribute('aria-expanded', nav.classList.contains('open'));
-    });
+    setFooterYear();
+    setupMobileMenu();
   </script>
   <!-- Cloudflare Web Analytics -->
   <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "fa36618f3ac94932a361e46b5ccf4a03"}'></script>
