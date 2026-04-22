@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com; base-uri 'self'; form-action 'self'">
   <title>Kontakt – Rohrbach Crazy Geese</title>
   <meta name="description" content="Kontakt, Vereinsführung und Anfahrt zum Geese Ballpark">
   <link rel="canonical" href="https://crazy-geese.at/kontakt.html">
@@ -21,7 +22,7 @@
 </head>
 <body>
   <a href="#main-content" class="skip-link">Zum Inhalt springen</a>
-  <header class="header-bar" role="banner">
+  <header class="header-bar compact" role="banner">
     <div class="header-brand">
       <a href="index.html" class="brand-link">
         <img src="geese_logo.png" alt="Crazy Geese Logo" class="brand-logo">
@@ -29,29 +30,28 @@
           <span class="brand-name">Crazy Geese</span>
           <span class="brand-tagline">Baseball Landesliga Ost</span>
         </div>
-        <span class="brand-badge">🏆 Titelverteidiger</span>
       </a>
     </div>
 
     <div class="header-icons">
-      <a href="https://www.google.com/maps/place/Baseballfeld+der+Rohrbach+Crazy+Geese/@47.7094292,16.4454336,736m" target="_blank" rel="noopener" class="header-icon" title="Ballpark">
+      <a href="https://www.google.com/maps/place/Baseballfeld+der+Rohrbach+Crazy+Geese/@47.7094292,16.4454336,736m" target="_blank" rel="noopener" class="header-icon" title="Ballpark" aria-label="Ballpark auf Google Maps">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       </a>
-      <a href="https://www.facebook.com/pages/Crazy-Geese/106774436026973" target="_blank" rel="noopener" class="header-icon" title="Facebook">
+      <a href="https://www.facebook.com/pages/Crazy-Geese/106774436026973" target="_blank" rel="noopener" class="header-icon" title="Facebook" aria-label="Crazy Geese auf Facebook">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
       </a>
-      <a href="https://instagram.com/rohrbachcrazygeese" target="_blank" rel="noopener" class="header-icon" title="Instagram">
+      <a href="https://instagram.com/rohrbachcrazygeese" target="_blank" rel="noopener" class="header-icon" title="Instagram" aria-label="Crazy Geese auf Instagram">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/></svg>
       </a>
     </div>
 
     <nav class="nav" aria-label="Hauptnavigation">
       <a href="index.html" class="nav-link">Home</a>
+      <a href="blog.html" class="nav-link">Blog</a>
       <a href="baseball.html" class="nav-link">Baseball</a>
       <a href="softball.html" class="nav-link">Softball</a>
       <a href="nachwuchs.html" class="nav-link">Nachwuchs</a>
       <a href="kontakt.html" class="nav-link active" aria-current="page">Kontakt</a>
-      <a href="archiv.html" class="nav-link">Archiv</a>
       <a href="was-ist-baseball.html" class="nav-link nav-link-highlight">Was ist Baseball?</a>
     </nav>
     <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menü öffnen" aria-expanded="false">☰</button>
@@ -125,10 +125,10 @@
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.5"/></svg>
       </a>
     </div>
-    <p>© <span id="year">2026</span> Rohrbach Crazy Geese</p>
+    <p>© <span id="year">2026</span> Rohrbach Crazy Geese · <a href="archiv.html">Archiv</a></p>
   </footer>
 
-  <script src="scripts/shared.js?v=2026-04-20"></script>
+  <script src="scripts/shared.js?v=2026-04-22b"></script>
   <script>
     setFooterYear();
     setupMobileMenu();

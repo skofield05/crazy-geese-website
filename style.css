@@ -165,18 +165,6 @@ li {
   color: var(--color-text-muted);
 }
 
-.brand-badge {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: #1e2d4d;
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  padding: 6px 12px;
-  border-radius: 12px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
 .header-icons {
   display: flex;
   align-items: center;
@@ -187,7 +175,7 @@ li {
   color: var(--color-accent);
   padding: var(--space-sm);
   border-radius: 4px;
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -228,15 +216,16 @@ li {
   margin-left: auto;
 }
 
-.nav > .nav-link,
-.nav-dropdown > .nav-link {
+.nav > .nav-link {
   color: var(--color-accent);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-size: 0.95rem;
+  /* Fluide Schriftgroesse: skaliert zwischen ca. 13.6px (schmal) und 15.2px
+     (breit). JS packt den Rest via `.compact`, wenn selbst das nicht reicht. */
+  font-size: clamp(0.85rem, 0.6rem + 0.3vw, 0.95rem);
   padding: var(--space-lg) var(--space-md);
-  transition: all 0.2s;
+  transition: background 0.2s, color 0.2s;
   display: block;
 }
 
@@ -246,14 +235,17 @@ li {
   color: white;
 }
 
-/* Hervorgehobener Nav-Link (z.B. "Was ist Baseball?") */
+/* Hervorgehobener Nav-Link (z.B. "Was ist Baseball?").
+   Feste Margins (statt margin: auto) damit setupAdaptiveNav stabile
+   Messwerte via getComputedStyle bekommt. */
 .nav > .nav-link.nav-link-highlight {
   background: var(--color-red);
   color: white;
-  margin: auto var(--space-sm) auto var(--space-md);
+  margin: 0 var(--space-sm) 0 var(--space-md);
   padding: var(--space-sm) var(--space-lg);
   border-radius: 6px;
-  font-size: 0.85rem;
+  /* Fluide Schrift, bleibt proportional zu den anderen Nav-Links. */
+  font-size: clamp(0.78rem, 0.55rem + 0.25vw, 0.9rem);
   align-self: center;
 }
 
@@ -288,103 +280,48 @@ li {
   color: var(--color-win);
 }
 
-.nav-dropdown:hover > .nav-link {
-  background: var(--color-primary-light);
-  color: white;
+/* Navigation – Compact-Mode (Hamburger + Drawer):
+   - `.compact` ist der HTML-Default auf .header-bar (verhindert FOUC).
+   - scripts/shared.js entfernt .compact, wenn die Nav in einer Zeile passt.
+   - Ohne JS bleibt die Seite im compact-Mode – sichereres Fallback als
+     eine potentiell ueberlaufende Desktop-Nav.
+
+   Flex-Order: Brand (1) | Icons (2) | Hamburger (3)  <- Zeile 1
+               Nav (4, width:100%)                    <- Zeile 2 on open. */
+.header-bar.compact {
+  flex-wrap: wrap;
 }
 
-.nav-dropdown {
-  position: relative;
+.header-bar.compact .header-brand { order: 1; }
+.header-bar.compact .header-icons { order: 2; }
+.header-bar.compact .mobile-menu-btn {
+  display: block;
+  order: 3;
+  margin-left: auto;
 }
 
-.dropdown-menu {
+.header-bar.compact .nav {
+  order: 4;
   display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: var(--color-primary);
-  min-width: 200px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  border-radius: 0 0 4px 4px;
-  z-index: 101;
+  width: 100%;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border);
 }
 
-.nav-dropdown:hover .dropdown-menu {
-  display: block;
+.header-bar.compact .nav.open {
+  display: flex;
 }
 
-.dropdown-menu a {
-  display: block;
-  color: var(--color-accent);
-  padding: var(--space-sm) var(--space-lg);
-  font-size: 0.85rem;
-  transition: all 0.2s;
-  border-left: 3px solid transparent;
+.header-bar.compact .nav > .nav-link {
+  border-bottom: 1px solid var(--color-border);
 }
 
-.dropdown-menu a:hover {
-  background: var(--color-primary-light);
-  color: white;
-  border-left-color: var(--color-red);
-}
-
-/* Mobile Navigation */
-@media (max-width: 900px) {
-  .header-bar {
-    flex-wrap: wrap;
-  }
-
-  .mobile-menu-btn {
-    display: block;
-  }
-
-  .nav {
-    display: none;
-    width: 100%;
-    flex-direction: column;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .nav.open {
-    display: flex;
-  }
-
-  .nav > .nav-link {
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .nav-dropdown > .nav-link {
-    padding: var(--space-sm) var(--space-md);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .nav > .nav-link.nav-link-highlight {
-    margin: var(--space-sm) var(--space-md);
-    padding: var(--space-sm) var(--space-md);
-    border-bottom: none;
-    font-size: 0.95rem;
-    align-self: flex-start;
-  }
-
-  .dropdown-menu {
-    position: static;
-    box-shadow: none;
-    display: none;
-    background: var(--color-bg-card);
-  }
-
-  .nav-dropdown:hover .dropdown-menu,
-  .nav-dropdown:focus-within .dropdown-menu {
-    display: block;
-  }
-
-  .dropdown-menu a {
-    padding-left: var(--space-xl);
-  }
-
-  .brand-badge {
-    display: none;
-  }
+.header-bar.compact .nav > .nav-link.nav-link-highlight {
+  margin: var(--space-sm) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: none;
+  font-size: 0.95rem;
+  align-self: flex-start;
 }
 
 @media (max-width: 500px) {
@@ -1591,5 +1528,378 @@ footer {
   .billa-sticker {
     transition: none;
     animation: none;
+  }
+}
+
+/* ============================================
+   BLOG – Uebersicht & Artikel
+   ============================================ */
+
+.blog-list {
+  display: grid;
+  grid-template-columns: minmax(0, 560px);
+  gap: var(--space-lg);
+  justify-content: center;
+}
+
+@media (min-width: 760px) {
+  .blog-list {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 440px));
+  }
+}
+
+.blog-card {
+  background: var(--color-bg-card);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.blog-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-red);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.blog-card-link {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text);
+  height: 100%;
+}
+
+.blog-card-link:hover {
+  color: var(--color-text);
+}
+
+.blog-card-cover {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.blog-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s;
+}
+
+.blog-card:hover .blog-card-cover img {
+  transform: scale(1.03);
+}
+
+.blog-card-body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  flex: 1;
+}
+
+.blog-card-meta {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+.blog-card-category {
+  background: var(--color-primary);
+  color: var(--color-accent);
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.blog-card-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.03em;
+  margin: 0;
+  color: var(--color-text);
+  line-height: 1.15;
+}
+
+.blog-card-teaser {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.blog-card-more {
+  margin-top: auto;
+  color: #60a5fa;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ============================================
+   BLOG – Einzelartikel
+   ============================================ */
+
+.post {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-md);
+}
+
+.post-header {
+  margin-bottom: var(--space-xl);
+}
+
+.post-breadcrumb {
+  font-size: 0.9rem;
+  margin-bottom: var(--space-md);
+}
+
+.post-meta {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-sm);
+}
+
+.post-category {
+  background: var(--color-primary);
+  color: var(--color-accent);
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.post-header h1 {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-md);
+  line-height: 1.1;
+}
+
+@media (min-width: 700px) {
+  .post-header h1 {
+    font-size: 3rem;
+  }
+}
+
+.post-lead {
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  border-left: 4px solid var(--color-red);
+  padding-left: var(--space-md);
+}
+
+.post-body {
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.post-body p {
+  margin-bottom: var(--space-md);
+}
+
+.post-body strong {
+  color: var(--color-text);
+}
+
+.post-gallery {
+  margin-top: var(--space-2xl);
+}
+
+.post-gallery h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-lg);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+@media (min-width: 600px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.gallery-item {
+  all: unset;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--color-bg-card);
+  position: relative;
+  display: block;
+}
+
+.gallery-item:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s, filter 0.2s;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.post-external {
+  margin-top: var(--space-2xl);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-bg-card);
+  border-left: 4px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+.post-footer {
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.btn-primary {
+  background: var(--color-red);
+}
+
+.btn-primary:hover {
+  background: #c41010;
+  color: white;
+}
+
+/* ============================================
+   LIGHTBOX
+   ============================================ */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox-img {
+  max-width: 95vw;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-caption {
+  position: absolute;
+  bottom: var(--space-md);
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  padding: 0 var(--space-md);
+  opacity: 0.8;
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  font-family: var(--font-body);
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1);
+}
+
+.lightbox-close {
+  top: var(--space-md);
+  right: var(--space-md);
+}
+
+.lightbox-prev {
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.lightbox-prev:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-next {
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.lightbox-next:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+@media (max-width: 600px) {
+  .lightbox-prev,
+  .lightbox-next {
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
   }
 }

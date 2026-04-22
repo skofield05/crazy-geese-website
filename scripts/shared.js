@@ -1,5 +1,6 @@
 // Gemeinsame Funktionen fuer alle Seiten.
-// Wird von index.html, baseball.html, softball.html und archiv.html geladen.
+// Wird von allen HTML-Seiten geladen (index, baseball, softball, nachwuchs,
+// kontakt, archiv, was-ist-baseball, blog, posts/*).
 
 const OUR_TEAM_NAME = 'Crazy Geese';
 const OUR_TEAM_KUERZEL = 'CG';
@@ -45,12 +46,90 @@ function formatDateLong(dateStr) {
 function setupMobileMenu() {
   const btn = document.getElementById('mobile-menu-btn');
   if (!btn) return;
+  const nav = document.querySelector('.nav');
+  if (!nav) return;
+
   btn.addEventListener('click', function() {
-    const nav = document.querySelector('.nav');
-    if (!nav) return;
     nav.classList.toggle('open');
     this.setAttribute('aria-expanded', nav.classList.contains('open'));
   });
+
+  // Im Compact-Mode schliesst ein Link-Klick das Drawer-Menue.
+  nav.addEventListener('click', function(e) {
+    if (e.target.closest('.nav-link')) {
+      nav.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  setupAdaptiveNav();
+}
+
+/**
+ * Misst dynamisch, ob die Nav in einer Zeile neben dem Logo Platz hat.
+ * Wenn nicht: `.compact` auf die Header-Bar -> Hamburger-Modus.
+ * Wird bei Load, nach Font-Load und bei jedem Resize neu berechnet.
+ */
+function setupAdaptiveNav() {
+  const header = document.querySelector('.header-bar');
+  if (!header) return;
+  // Double-init-Guard: nur einmal pro Page verbinden.
+  if (header.dataset.adaptiveNav === 'on') return;
+  header.dataset.adaptiveNav = 'on';
+  const nav = header.querySelector('.nav');
+  const brand = header.querySelector('.header-brand');
+  if (!nav || !brand) return;
+
+  let rafId = null;
+
+  function measure() {
+    // Auf Desktop-Mode zuruecksetzen fuer ehrliche Messung
+    header.classList.remove('compact');
+    nav.classList.remove('open');
+    const btn = document.getElementById('mobile-menu-btn');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+
+    // Reflow erzwingen
+    void header.offsetWidth;
+
+    // Brand + optionale Icons + Nav-Kinder mit Margins summieren.
+    const brandW = brand.offsetWidth;
+    const icons = header.querySelector('.header-icons');
+    const iconsW = icons ? icons.offsetWidth : 0;
+
+    let navContentW = 0;
+    Array.from(nav.children).forEach(el => {
+      const s = window.getComputedStyle(el);
+      const ml = parseFloat(s.marginLeft) || 0;
+      const mr = parseFloat(s.marginRight) || 0;
+      navContentW += el.offsetWidth + ml + mr;
+    });
+
+    const hs = window.getComputedStyle(header);
+    const padLR = (parseFloat(hs.paddingLeft) || 0) + (parseFloat(hs.paddingRight) || 0);
+    const gap = parseFloat(hs.gap) || 16;
+
+    // Gaps zwischen Brand/Icons/Nav (maximal 2 in Desktop-Zeile).
+    const gapsBetween = gap * (icons ? 2 : 1);
+    const needed = brandW + iconsW + navContentW + gapsBetween;
+    const available = header.clientWidth - padLR;
+
+    if (needed > available) {
+      header.classList.add('compact');
+    }
+  }
+
+  function scheduleMeasure() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(measure);
+  }
+
+  measure();
+  // Nochmal messen, sobald Webfonts geladen sind (Nav-Breite aendert sich).
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(measure);
+  }
+  window.addEventListener('resize', scheduleMeasure);
 }
 
 function setFooterYear() {
@@ -59,7 +138,10 @@ function setFooterYear() {
 }
 
 async function fetchJson(path) {
-  const response = await fetch(path + '?v=' + Date.now());
+  // Kein Cache-Buster: GitHub Pages liefert ETag/Last-Modified, Browser macht
+  // 304-Requests. Bei Updates darf der CDN-Cache bis zu seiner TTL (Standard
+  // 10 min) veraltet bleiben – das ist fuer Vereinsdaten akzeptabel.
+  const response = await fetch(path);
   if (!response.ok) throw new Error('HTTP ' + response.status + ' beim Laden von ' + path);
   return await response.json();
 }
