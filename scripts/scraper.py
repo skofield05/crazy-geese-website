@@ -47,7 +47,25 @@ import json
 import re
 from datetime import datetime
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+
+
+def goto_with_retry(page, url, retries=3, **kwargs):
+    """
+    Wrapper um page.goto mit Retry bei TimeoutError.
+    GitHub Actions-Runner haben gelegentlich Netzwerkhänger – ein Blip
+    soll nicht den ganzen Cron-Job killen.
+    """
+    kwargs.setdefault("wait_until", "networkidle")
+    last_err = None
+    for attempt in range(1, retries + 1):
+        try:
+            return page.goto(url, **kwargs)
+        except PlaywrightTimeoutError as e:
+            last_err = e
+            print(f"      [RETRY {attempt}/{retries}] Timeout bei {url}")
+            page.wait_for_timeout(2000)
+    raise last_err
 
 # =============================================================================
 # KONFIGURATION
@@ -109,16 +127,23 @@ def game_exists(existing_games, new_game):
     return False
 
 
-def determine_phase(data):
-    """Bestimmt die aktuelle Saisonphase basierend auf dem Datum"""
-    today = datetime.now()
+def determine_phase():
+    """Bestimmt die aktuelle Saisonphase basierend auf dem Datum.
 
-    if today.month >= 10:
-        return "Endklassement"
-    elif today.month >= 4:
-        return "Regular Season"
-    else:
+    Heuristik pro Monat:
+      Jan–Mär   -> Vorsaison
+      Apr–Aug   -> Regular Season
+      Sep       -> Playoffs
+      Okt–Dez   -> Endklassement
+    """
+    month = datetime.now().month
+    if month <= 3:
         return "Vorsaison"
+    if month <= 8:
+        return "Regular Season"
+    if month == 9:
+        return "Playoffs"
+    return "Endklassement"
 
 
 # =============================================================================
@@ -136,7 +161,7 @@ def scrape_standings(page):
     print(f"\n[1/3] TABELLE")
     print(f"      URL: {ABF_STANDINGS}")
 
-    page.goto(ABF_STANDINGS, wait_until="networkidle")
+    goto_with_retry(page, ABF_STANDINGS)
     page.wait_for_timeout(2000)
 
     teams = []
@@ -209,7 +234,7 @@ def get_rounds_and_team_id(page):
         - rounds_dict: {"Regular Season": "4907", "Playoffs": "4908", ...}
         - team_id: "35667" (ID der Crazy Geese)
     """
-    page.goto(ABF_CALENDAR, wait_until="networkidle")
+    goto_with_retry(page, ABF_CALENDAR)
     page.wait_for_timeout(2000)
 
     rounds = {}
@@ -260,7 +285,7 @@ def scrape_games_from_calendar(page, rounds, team_id):
         url = f"{ABF_CALENDAR}?round={round_id}&team={team_id}"
         print(f"      Lade: {round_name}...")
 
-        page.goto(url, wait_until="networkidle")
+        goto_with_retry(page, url)
         page.wait_for_timeout(2000)
 
         body = page.inner_text("body")
@@ -294,6 +319,14 @@ def parse_games_from_calendar_text(body_text, phase):
     current_game = {}
     awaiting_gast = False
     awaiting_heim = False
+    awaiting_ort = False
+
+    score_rx = re.compile(r'^\d+\s*:\s*\d+$')
+    gast_markers = {'GAST', 'Gast', 'VISITOR'}
+    heim_markers = {'HEIM', 'Heim', 'HOME'}
+
+    def looks_like_kuerzel(s):
+        return len(s) <= 4 and s.isupper()
 
     for i, line in enumerate(lines):
         # Spielnummer
@@ -303,37 +336,43 @@ def parse_games_from_calendar_text(body_text, phase):
             current_game = {'spielnr': line, 'phase': phase}
             awaiting_gast = False
             awaiting_heim = False
-
-        # Ort
-        elif any(x in line for x in ['Ballpark', 'Cubsfield', 'Sportplatz']):
-            if 'ort' not in current_game:
-                current_game['ort'] = line
+            awaiting_ort = True
 
         # GAST marker
-        elif line in ['GAST', 'Gast', 'VISITOR']:
+        elif line in gast_markers:
             awaiting_gast = True
             awaiting_heim = False
+            awaiting_ort = False
 
         # HEIM marker
-        elif line in ['HEIM', 'Heim', 'HOME']:
+        elif line in heim_markers:
             awaiting_heim = True
             awaiting_gast = False
+            awaiting_ort = False
 
         # Score
-        elif re.match(r'^\d+\s*:\s*\d+$', line):
+        elif score_rx.match(line):
+            awaiting_ort = False
             scores = line.split(':')
             current_game['ergebnis_gast'] = int(scores[0].strip())
             current_game['ergebnis_heim'] = int(scores[1].strip())
 
+        # Ort: erste nicht-Marker-Zeile nach der Spielnummer, die nicht wie
+        # ein Teamkuerzel aussieht. Ersetzt die frühere Whitelist, damit neue
+        # Venues (Spenadlwiese, Freudenau, Beers Field, ...) nicht verloren gehen.
+        elif awaiting_ort and 'ort' not in current_game and not looks_like_kuerzel(line):
+            current_game['ort'] = line
+            awaiting_ort = False
+
         # Teamnamen (nach Kürzel)
         elif awaiting_gast and 'gast' not in current_game:
-            if len(line) <= 3 and line.isupper():
+            if looks_like_kuerzel(line):
                 current_game['gast_kuerzel'] = line
             elif len(line) > 3 and 'gast_kuerzel' in current_game:
                 current_game['gast'] = line
                 awaiting_gast = False
         elif awaiting_heim and 'heim' not in current_game:
-            if len(line) <= 3 and line.isupper():
+            if looks_like_kuerzel(line):
                 current_game['heim_kuerzel'] = line
             elif len(line) > 3 and 'heim_kuerzel' in current_game:
                 current_game['heim'] = line
@@ -376,7 +415,7 @@ def scrape_game_dates(page, games):
     print(f"\n[3/3] SPIELTAGE (Schedule)")
     print(f"      URL: {ABF_SCHEDULE}")
 
-    page.goto(ABF_SCHEDULE, wait_until="networkidle")
+    goto_with_retry(page, ABF_SCHEDULE)
     page.wait_for_timeout(3000)
 
     # Finde die Pfeil-Buttons im Datepicker
@@ -409,31 +448,37 @@ def scrape_game_dates(page, games):
     page.wait_for_timeout(1000)
 
     # Navigiere durch alle Spieltage
+    date_in_context_rx = re.compile(r'(\d{1,2})\.(\d{1,2})\.(\d{4})(?:,\s*(\d{1,2}:\d{2}))?')
+    time_rx = re.compile(r'(\d{1,2}:\d{2})')
+
     for click in range(60):  # Max 60 Spieltage
         page.wait_for_timeout(400)
         body = page.inner_text("body")
 
-        # Finde Datum auf der Seite
-        date_match = re.search(r'(\d{1,2})\.(\d{1,2})\.(\d{4}),\s*(\d{1,2}:\d{2})', body)
-        if date_match:
-            d, m, y, zeit = date_match.groups()
+        # Pro Spiel im Kontext-Fenster Datum + Zeit extrahieren – wichtig fuer
+        # Doppel-Spieltage wo Sa und So auf derselben Seite angezeigt werden.
+        for nr in target_numbers - found_numbers:
+            marker = f'{nr} -'
+            if marker not in body:
+                continue
+            pos = body.find(marker)
+            context = body[pos:pos + 600]
+            if TEAM_NAME not in context:
+                continue
+
+            date_match = date_in_context_rx.search(context)
+            if not date_match:
+                continue
+            d, m, y, zeit_from_date = date_match.group(1), date_match.group(2), date_match.group(3), date_match.group(4)
             datum = f"{y}-{m.zfill(2)}-{d.zfill(2)}"
 
-            # Suche welche unserer Spiele auf dieser Seite sind
-            for nr in target_numbers - found_numbers:
-                if f'{nr} -' in body:
-                    # Finde die Zeit für dieses spezifische Spiel
-                    pos = body.find(f'{nr} -')
-                    context = body[pos:pos+600]
+            time_match = time_rx.search(context)
+            game_zeit = (time_match.group(1) if time_match else zeit_from_date) or ''
 
-                    if TEAM_NAME in context:
-                        time_match = re.search(r'(\d{1,2}:\d{2})', context)
-                        game_zeit = time_match.group(1) if time_match else zeit
-
-                        game_lookup[nr]['datum'] = datum
-                        game_lookup[nr]['zeit'] = game_zeit
-                        found_numbers.add(nr)
-                        print(f"      {nr}: {datum} {game_zeit}")
+            game_lookup[nr]['datum'] = datum
+            game_lookup[nr]['zeit'] = game_zeit
+            found_numbers.add(nr)
+            print(f"      {nr}: {datum} {game_zeit}")
 
         # Fertig wenn alle gefunden
         if found_numbers == target_numbers:
@@ -488,7 +533,7 @@ def update_data():
             if teams:
                 data["tabelle"]["teams"] = teams
                 data["tabelle"]["stand"] = datetime.now().strftime("%Y-%m-%d")
-                data["tabelle"]["phase"] = determine_phase(data)
+                data["tabelle"]["phase"] = determine_phase()
 
             # 2. Runden und Team-ID holen
             print(f"\n[2/3] SPIELE")

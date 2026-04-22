@@ -1,0 +1,41 @@
+# Schema- und Asset-Check fuer data/data.json
+# Laeuft bei PRs und Pushes auf main – stellt sicher, dass Blog-Eintraege,
+# Spiele und referenzierte Assets konsistent sind, bevor sie live gehen.
+
+name: Validate Data
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - 'posts/**'
+      - 'img/blog/**'
+      - 'blog.html'
+      - 'scripts/validate_data.py'
+      - '.github/workflows/validate-data.yml'
+  pull_request:
+    paths:
+      - 'data/**'
+      - 'posts/**'
+      - 'img/blog/**'
+      - 'blog.html'
+      - 'scripts/validate_data.py'
+      - '.github/workflows/validate-data.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate data.json + verlinkte Assets
+        run: python scripts/validate_data.py

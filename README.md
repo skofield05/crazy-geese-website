@@ -1,91 +1,88 @@
-# 🪿 Rohrbach Crazy Geese – Website
+# Rohrbach Crazy Geese – Website
 
-Statische Vereinswebsite für die Crazy Geese Baseball, automatisch aktualisiert via GitHub Actions.
+Statische Vereinswebsite für die **Rohrbach Crazy Geese** – Baseball in der Landesliga Ost (Österreich).
 
-## Setup
+**Live:** https://crazy-geese.at
+**Hosting:** GitHub Pages · Cloudflare DNS/Analytics
+**Automation:** GitHub Actions (Scraper an Spieltagen, Daten-Validierung bei jedem PR)
 
-### 1. Repository erstellen
+## Seitenstruktur
 
-```bash
-# Neues Repo auf GitHub erstellen: crazy-geese-website
-# Dann lokal:
-git init
-git remote add origin https://github.com/DEIN-USERNAME/crazy-geese-website.git
-git add .
-git commit -m "Initial commit"
-git push -u origin main
-```
+| Datei | Inhalt |
+|-------|--------|
+| `index.html` | Landing Page – Spielplan, Tabelle, Mitmachen |
+| `baseball.html` | Training, alle Spiele, ICS-Kalender-Download |
+| `softball.html` | Slowpitch Softball, ABBQS-Termine |
+| `nachwuchs.html` | Kindertraining, Schulkooperationen |
+| `blog.html` + `posts/*.html` | News & Berichte |
+| `kontakt.html` | Kontakt, Vorstand, Ballpark-Anfahrt |
+| `archiv.html` | Saisonarchiv |
+| `was-ist-baseball.html` | Baseball-Erklärung für Einsteiger |
 
-### 2. GitHub Pages aktivieren
+## Daten
 
-1. Gehe zu **Settings → Pages**
-2. Source: **Deploy from a branch**
-3. Branch: **main** / **(root)**
-4. Save
+Alle Vereinsdaten liegen in `data/data.json`. Struktur:
+- `verein`, `kontakt`, `tabelle`, `spiele.{naechste,vergangene}`
+- `softball.naechste_termine`
+- `archiv.YYYY` (Archiv-Zeiger → `data/archiv/YYYY.json`)
+- `blog.posts`
 
-Die Seite ist dann unter `https://DEIN-USERNAME.github.io/crazy-geese-website/` erreichbar.
-
-### 3. Custom Domain (optional)
-
-Für `crazy-geese.at`:
-
-1. Erstelle eine Datei `CNAME` mit dem Inhalt: `crazy-geese.at`
-2. Bei deinem Domain-Provider: CNAME-Eintrag auf `DEIN-USERNAME.github.io` setzen
-
-## Dateien
-
-```
-├── index.html          # Hauptseite
-├── style.css           # Styling
-├── data/
-│   └── data.json       # Alle Vereinsdaten (wird automatisch aktualisiert)
-├── scripts/
-│   └── scraper.py      # ABF-Scraper
-└── .github/
-    └── workflows/
-        └── update-standings.yml  # Automatische Aktualisierung
-```
-
-## Daten anpassen
-
-Bearbeite `data/data.json`:
-
-- **Kontaktdaten**: Email, Adresse, Social Media
-- **Vereinsinfos**: Name, Liga, Saison
-
-## Automatische Updates
-
-Der GitHub Actions Workflow läuft automatisch:
-- **Sonntag 22:00** (nach den Spielen)
-- **Montag 08:00** (Backup)
-
-Manuell auslösen: **Actions → Update Standings → Run workflow**
+Die ICS-Kalender (`data/crazy-geese-*-2026.ics`) werden bei Spielplan-Änderungen manuell aktualisiert.
 
 ## Lokale Entwicklung
 
 ```bash
-# Einfacher Webserver
 python -m http.server 8000
-
-# Dann öffnen: http://localhost:8000
+# → http://localhost:8000
 ```
 
-## Scraper testen
+## Scraper
 
+Aktualisiert Tabelle + Spiele automatisch von der [Austrian Baseball Softball Federation](https://www.baseballsoftball.at). Läuft via GitHub Actions an allen Spieltagen (alle 3 Stunden 9–21 Uhr MESZ) plus Montag-Backup nach jedem Spieltag.
+
+Manuell:
 ```bash
 pip install playwright
 playwright install chromium
-
 python scripts/scraper.py
 ```
 
-## Saison-Update
-
-Für eine neue Saison die URLs in `scripts/scraper.py` anpassen:
-
-```python
-ABF_BASE = "https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026"
+Oder remote:
+```bash
+gh workflow run "Update Standings"
 ```
+
+## Blog-Workflow
+
+Neuen Beitrag anlegen: siehe [`CLAUDE.md#neuen-blogpost-anlegen`](CLAUDE.md). Kurz:
+1. `python scripts/optimize_blog_images.py --src ... --dst img/blog/<slug> --slug <slug>`
+2. `posts/<slug>.html` nach Vorlage
+3. Neuen Eintrag in `data/data.json` → `blog.posts`
+4. `sitemap.xml` ergänzen
+
+## Daten-Validator
+
+`scripts/validate_data.py` prüft JSON-Schema, Pflichtfelder, Datumsformat, Slug-Eindeutigkeit und ob referenzierte Assets existieren. Läuft automatisch bei jedem Push/PR auf relevante Pfade (`.github/workflows/validate-data.yml`).
+
+Manuell:
+```bash
+python scripts/validate_data.py
+```
+
+## Flyer
+
+A6-PDF fürs Ausdrucken:
+```bash
+pip install reportlab
+python generate-flyer.py
+# → flyer-a6.pdf
+```
+
+Der Flyer liest Heimspiele und Trainingszeiten aus `data/data.json`.
+
+## Dokumentation
+
+Die ausführliche technische Dokumentation (Architektur, Scraper-Details, Datenstruktur, Design-Entscheidungen, häufige Aufgaben) steht in [`CLAUDE.md`](CLAUDE.md).
 
 ---
 
