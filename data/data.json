@@ -26,7 +26,7 @@
   },
   "tabelle": {
     "stand": "2026-02-06",
-    "phase": "Grunddurchgang",
+    "phase": "Vorsaison",
     "teams": [
       {
         "rang": 1,
@@ -264,5 +264,19 @@
       "bilanz": "13-0-0",
       "datei": "archiv/2025.json"
     }
+  },
+  "blog": {
+    "posts": [
+      {
+        "slug": "schulcup-mattersburg-2026-04",
+        "url": "posts/schulcup-mattersburg-2026-04.html",
+        "titel": "Baseball-Schulcup an der NMS Mattersburg",
+        "datum": "2026-04-22",
+        "kategorie": "Nachwuchs",
+        "teaser": "Am 17.04.2026 gastierten die Crazy Geese an der Neuen Mittelschule Mattersburg – drei erste und drei zweite Klassen spielten bei traumhaftem Wetter ihren Schulcup aus.",
+        "cover": "img/blog/schulcup-mattersburg-2026-04/schulcup-mattersburg-01-thumb.jpg",
+        "cover_alt": "Kinder beim Baseball-Schulcup an der NMS Mattersburg"
+      }
+    ]
   }
 }

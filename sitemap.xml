@@ -31,6 +31,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://crazy-geese.at/blog.html</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://crazy-geese.at/posts/schulcup-mattersburg-2026-04.html</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://crazy-geese.at/archiv.html</loc>
     <lastmod>2026-04-20</lastmod>
     <priority>0.5</priority>
