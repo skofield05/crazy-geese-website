@@ -44,18 +44,25 @@ Website für den Baseballverein **Rohrbach Crazy Geese** (crazy-geese.at), spiel
 Statische Website, gehostet auf GitHub Pages. Keine Datenbank, kein Backend.
 
 ```
-index.html           → Landing Page (Spielplan, Tabelle, Mitmachen)
-baseball.html        → Baseball-Seite (Training, alle Spiele, ICS-Download)
-softball.html        → Slowpitch Softball
-nachwuchs.html       → Kindertraining & Schulkooperationen
-kontakt.html         → Kontakt, Vorstand, Ballpark
-archiv.html          → Saisonarchiv (2025)
-style.css            → Styling (CSS Variables, responsive, barrierefrei)
-data/data.json       → Alle Daten (Tabelle, Spiele, Kontakt, Softball)
-data/*.ics           → Kalender-Dateien (alle Spiele + nur Heimspiele)
-scripts/scraper.py   → Python Scraper für automatische Updates
-geese_logo.png       → Vereinslogo (Header, Favicon, Hero-Hintergrund)
-.github/workflows/   → GitHub Actions (Scraper an Spieltagen)
+index.html                          → Landing Page (Spielplan, Tabelle, Mitmachen)
+baseball.html                       → Baseball-Seite (Training, alle Spiele, ICS-Download)
+softball.html                       → Slowpitch Softball
+nachwuchs.html                      → Kindertraining & Schulkooperationen
+kontakt.html                        → Kontakt, Vorstand, Ballpark
+archiv.html                         → Saisonarchiv (2025)
+blog.html                           → Blog-Übersicht (rendert data.blog.posts)
+posts/<slug>.html                   → Einzelne Blogbeiträge
+was-ist-baseball.html               → Erklär-Seite
+style.css                           → Styling (CSS Variables, responsive, barrierefrei)
+data/data.json                      → Alle Daten (Tabelle, Spiele, Kontakt, Softball, Blog)
+data/*.ics                          → Kalender-Dateien (alle Spiele + nur Heimspiele)
+scripts/scraper.py                  → Python Scraper für automatische Updates
+scripts/shared.js                   → Gemeinsame JS-Helpers (escapeHtml, fetchJson, Render)
+scripts/lightbox.js                 → Wiederverwendbare Lightbox für Blog-Galerien
+scripts/optimize_blog_images.py     → Einmal-Helper für Blog-Bildaufbereitung
+img/blog/<slug>/                    → Aufbereitete Blog-Bilder (full + thumb)
+geese_logo.png                      → Vereinslogo (Header, Favicon, Hero-Hintergrund)
+.github/workflows/                  → GitHub Actions (Scraper an Spieltagen)
 ```
 
 ### Landing Page (index.html)
@@ -77,7 +84,8 @@ geese_logo.png       → Vereinslogo (Header, Favicon, Hero-Hintergrund)
   "tabelle": { "phase", "teams": [...] },
   "spiele": { "naechste": [...], "vergangene": [...] },
   "softball": { "naechste_termine": [] },
-  "archiv": { "2025": { "ergebnis", "bilanz", "datei" } }
+  "archiv": { "2025": { "ergebnis", "bilanz", "datei" } },
+  "blog": { "posts": [ { "slug", "url", "titel", "datum", "kategorie", "teaser", "cover", "cover_alt" } ] }
 }
 ```
 
@@ -260,6 +268,41 @@ In `data/data.json` → `spiele.vergangene`:
 }
 ```
 
+### Neuen Blogpost anlegen
+
+1. **Bilder aufbereiten:** Quellbilder (z.B. aus WhatsApp) in einen beliebigen Ordner legen, dann:
+   ```bash
+   python scripts/optimize_blog_images.py \
+     --src "<Quellordner>" \
+     --dst "img/blog/<slug>" \
+     --slug <slug-kurzform>
+   ```
+   Erzeugt zu jedem Bild eine `-<nn>.jpg` (max. 1600px, Lightbox) und `-<nn>-thumb.jpg` (max. 800px, Galerie-Kachel). Slug ohne Datum, z.B. `schulcup-mattersburg`.
+
+2. **Artikel-HTML anlegen:** `posts/<slug>.html` – als Vorlage den bestehenden Artikel kopieren. Wichtige Stellen:
+   - `<title>`, `<meta description>`, Canonical, OG-Tags, `article:published_time`
+   - `IMG_BASE`, `TOTAL`, `slug`-Präfix im Bildpfad im inline-Script anpassen
+   - `aria-current="page"` auf dem Blog-Nav-Link lassen
+
+3. **data.json erweitern:** Neuen Eintrag in `blog.posts` (neueste zuerst):
+   ```json
+   {
+     "slug": "schulcup-mattersburg-2026-04",
+     "url": "posts/schulcup-mattersburg-2026-04.html",
+     "titel": "Baseball-Schulcup an der NMS Mattersburg",
+     "datum": "2026-04-22",
+     "kategorie": "Nachwuchs",
+     "teaser": "…",
+     "cover": "img/blog/<slug>/<slug>-01-thumb.jpg",
+     "cover_alt": "…"
+   }
+   ```
+   `blog.html` sortiert automatisch nach `datum` absteigend.
+
+4. **Sitemap erweitern:** `sitemap.xml` um `blog.html` (bei Erstanlage) und `posts/<slug>.html` ergänzen.
+
+5. **Smoke-Test:** Lokal `python -m http.server` im Repo-Root, dann Artikel + Galerie + Lightbox im Browser durchklicken (Prev/Next/ESC/Swipe).
+
 ---
 
 ## Wichtige Pfade
@@ -274,6 +317,9 @@ In `data/data.json` → `spiele.vergangene`:
 | Vereinsregisterauszug | `Vereinsregisterauszug_CrazyGeese_2025.pdf` (nicht im Repo) |
 | Logo | `geese_logo.png` |
 | ICS-Kalender | `data/crazy-geese-*-2026.ics` |
+| Blog-Artikel | `posts/<slug>.html` |
+| Blog-Bilder | `img/blog/<slug>/` (full + thumb) |
+| Blog-Helpers | `scripts/lightbox.js`, `scripts/optimize_blog_images.py` |
 
 ---
 
@@ -286,6 +332,25 @@ In `data/data.json` → `spiele.vergangene`:
 ---
 
 ## Changelog
+
+### 2026-04-22
+- Blog-Bereich eingeführt: `blog.html` als Übersicht (rendert `data.blog.posts`), `posts/<slug>.html` für Einzelartikel
+- Erster Artikel: Baseball-Schulcup an der NMS Mattersburg
+- Wiederverwendbare Lightbox (`scripts/lightbox.js`) mit Keyboard-Nav (←/→/ESC) und Swipe-Gesten
+- Bilder-Pipeline: `scripts/optimize_blog_images.py` (Full 1600px + Thumb 800px mit progressive JPEG)
+- Navigation: Blog-Link an zweiter Stelle (nach Home) auf allen 9 Seiten
+- Neu: `scripts/validate_data.py` – Schema- und Asset-Check für `data/data.json`
+- Neuer Workflow `.github/workflows/validate-data.yml`: validiert `data.json` bei jedem Push auf `main` und jedem PR
+- Mobile-Responsiveness-Test um `blog.html`, `was-ist-baseball.html` und den Artikel erweitert
+- Scraper robuster: Retry-Wrapper um jeden `page.goto` (3 Versuche bei TimeoutError), Datum pro Spiel aus Kontext-Fenster (statt globalem Body-Match), Ort-Erkennung via `awaiting_ort`-State statt Whitelist, `determine_phase` dead parameter entfernt
+- Flyer (`generate-flyer.py`) liest Heimspiele jetzt aus `data/data.json` (kein Hardcoding), Trainingszeiten laut CLAUDE.md, „US-Coach"-Zeile entfernt, dead code aufgeräumt
+- Schema.org JSON-LD: `SportsClub` statisch auf Landing Page, `SportsEvent[]` dynamisch auf `baseball.html`
+- CSP-Meta-Tag auf allen 9 Seiten (nur self + Cloudflare Analytics + Google Fonts + YouTube-Embed)
+- YouTube-Iframe auf `youtube-nocookie.com` umgestellt, `allow`-Permissions reduziert
+- Navigation komplett überarbeitet: Brand-Badge aus HTML entfernt, „Archiv" aus Top-Nav in den Footer verschoben, Social-Media-Icons im Header behalten, fluide Schrift via `clamp()`, adaptive Nav via `setupAdaptiveNav()` in `shared.js` (misst Nav-Breite, schaltet auf Hamburger-Modus wenn's nicht passt), `.compact` als HTML-Default gegen FOUC
+- Lightbox mit Fokus-Trap (Tab bleibt in Close/Prev/Next) und `inert` auf Siblings
+- `shared.js`: Kein Cache-Bust-Param mehr auf `fetchJson` (GitHub Pages ETag reicht), Header-Kommentar aktualisiert, Close-on-Link-Click auf Drawer-Nav
+- `README.md` komplett überarbeitet – Seitenstruktur, Blog-Workflow, Validator-Nutzung
 
 ### 2026-04-09
 - Komplettes Website-Update für Saison 2026
