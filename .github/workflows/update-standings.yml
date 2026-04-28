@@ -1,6 +1,10 @@
 # GitHub Actions Workflow
 # Aktualisiert die Vereinsdaten automatisch von der ABF-Seite
-# Saison 2026 - Läuft nur an Spieltagen
+# Saison 2026 - Läuft an Spieltagen + Folgetagen
+#
+# Saison Mai–Sep ist immer MESZ (UTC+2):
+#   Spieltag 18:00–23:00 MESZ -> 16:00–21:00 UTC (6 Läufe pro Spieltag)
+#   Folgetag 06:00–10:00 MESZ -> 04:00–08:00 UTC (5 Läufe pro Folgetag)
 
 name: Update Standings
 
@@ -8,35 +12,30 @@ on:
   # Manueller Trigger (für Tests)
   workflow_dispatch:
 
-  # Automatisch an Spieltagen (alle 3 Stunden von 9-21 Uhr MESZ)
-  # MESZ = UTC+2, also 9:00 MESZ = 07:00 UTC
   schedule:
-    # Spieltag 1: 03.05.2026 (Sonntag)
-    - cron: '0 7,10,13,16,19 3 5 *'
-    # Spieltag 2: 16.05.2026 (Samstag)
-    - cron: '0 7,10,13,16,19 16 5 *'
-    # Spieltag 3: 23.05.2026 (Samstag)
-    - cron: '0 7,10,13,16,19 23 5 *'
-    # Spieltag 4: 13.06.2026 (Samstag)
-    - cron: '0 7,10,13,16,19 13 6 *'
-    # Spieltag 5: 20.06.2026 (Samstag)
-    - cron: '0 7,10,13,16,19 20 6 *'
-    # Spieltag 6: 19.07.2026 (Sonntag)
-    - cron: '0 7,10,13,16,19 19 7 *'
-    # Spieltag 7: 02.08.2026 (Sonntag)
-    - cron: '0 7,10,13,16,19 2 8 *'
-    # Spieltag 8: 15.08.2026 (Samstag)
-    - cron: '0 7,10,13,16,19 15 8 *'
-    # Playoffs 1. Wochenende: 05.-06.09.2026
-    - cron: '0 7,10,13,16,19 5-6 9 *'
-    # Playoffs 2. Wochenende: 12.-13.09.2026
-    - cron: '0 7,10,13,16,19 12-13 9 *'
-    # Backup: Montag nach Spieltagen
-    - cron: '0 6 4,17,24 5 1'
-    - cron: '0 6 14,21 6 1'
-    - cron: '0 6 20 7 1'
-    - cron: '0 6 3,16 8 1'
-    - cron: '0 6 7,14 9 1'
+    # === SPIELTAG: stündlich 18–23 MESZ (= 16–21 UTC) ===
+    # Spieltage 03.05., 16.05., 23.05.
+    - cron: '0 16-21 3,16,23 5 *'
+    # Spieltage 13.06., 20.06.
+    - cron: '0 16-21 13,20 6 *'
+    # Spieltag 19.07.
+    - cron: '0 16-21 19 7 *'
+    # Spieltage 02.08., 15.08.
+    - cron: '0 16-21 2,15 8 *'
+    # Playoffs 05./06./12./13.09.
+    - cron: '0 16-21 5,6,12,13 9 *'
+
+    # === FOLGETAG: stündlich 06–10 MESZ (= 04–08 UTC) ===
+    # nach 03.05. (-> 04.05.), nach 16.05. (-> 17.05.), nach 23.05. (-> 24.05.)
+    - cron: '0 4-8 4,17,24 5 *'
+    # nach 13.06. (-> 14.06.), nach 20.06. (-> 21.06.)
+    - cron: '0 4-8 14,21 6 *'
+    # nach 19.07. (-> 20.07.)
+    - cron: '0 4-8 20 7 *'
+    # nach 02.08. (-> 03.08.), nach 15.08. (-> 16.08.)
+    - cron: '0 4-8 3,16 8 *'
+    # nach Playoffs (-> 07.09., 14.09.)
+    - cron: '0 4-8 7,14 9 *'
 
 # WICHTIG: Schreibrechte für git push
 permissions:
