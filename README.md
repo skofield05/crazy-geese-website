@@ -69,17 +69,6 @@ Manuell:
 python scripts/validate_data.py
 ```
 
-## Flyer
-
-A6-PDF fürs Ausdrucken:
-```bash
-pip install reportlab
-python generate-flyer.py
-# → flyer-a6.pdf
-```
-
-Der Flyer liest Heimspiele und Trainingszeiten aus `data/data.json`.
-
 ## Dokumentation
 
 Die ausführliche technische Dokumentation (Architektur, Scraper-Details, Datenstruktur, Design-Entscheidungen, häufige Aufgaben) steht in [`CLAUDE.md`](CLAUDE.md).
