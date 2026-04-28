@@ -260,10 +260,14 @@ def _check_spiele(spiele: object, errors: list[str], warnings: list[str]) -> Non
 
 
 def _check_ics_sync(spiele: object, errors: list[str], warnings: list[str]) -> None:
-    """Pruefe, ob beide ICS-Dateien zu den Spielen in data.json passen."""
+    """Pruefe, ob beide ICS-Dateien zu den zukuenftigen Spielen passen.
+
+    Vergangene Spiele werden bewusst NICHT in die ICS aufgenommen
+    (Termin-Kalender, keine Historie), also nur 'naechste' cross-checken.
+    """
     if not isinstance(spiele, dict):
         return
-    games = list(spiele.get("naechste", [])) + list(spiele.get("vergangene", []))
+    games = list(spiele.get("naechste", []))
     if not games:
         return
 

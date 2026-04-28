@@ -44,9 +44,11 @@ def main() -> int:
         print(f"FAIL: data.json nicht lesbar: {e}", file=sys.stderr)
         return 1
 
-    games = list(data.get("spiele", {}).get("vergangene", [])) + list(
-        data.get("spiele", {}).get("naechste", [])
-    )
+    # Nur zukuenftige Spiele in den Kalender. data.spiele.naechste enthaelt
+    # alle ab heute (Re-Split im Scraper bewegt vergangene Spiele in
+    # spiele.vergangene). Vergangene Spiele in einem Termin-Kalender bringen
+    # Kalender-Apps nur durcheinander.
+    games = list(data.get("spiele", {}).get("naechste", []))
     games = [g for g in games if g.get("datum") and g.get("zeit") and g.get("heim") and g.get("gast")]
     games.sort(key=lambda g: (g["datum"], g["zeit"]))
 
