@@ -75,6 +75,12 @@ def goto_with_retry(page, url, retries=3, **kwargs):
 TEAM_NAME = "Crazy Geese"
 TEAM_FULL_NAME = "Rohrbach Crazy Geese"
 
+# Mapping ABF-Phasen -> Konvention in data.json. Bestand verwendet
+# "Grunddurchgang" statt ABFs "Regular Season".
+PHASE_MAP = {
+    "Regular Season": "Grunddurchgang",
+}
+
 # Dateipfade
 SCRIPT_DIR = Path(__file__).parent
 DATA_FILE = SCRIPT_DIR.parent / "data" / "data.json"
@@ -615,6 +621,9 @@ def update_data():
         nr_match = spielnr_rx.match(game.get("spielnr", "") or "")
         spielnr = nr_match.group(1) if nr_match else None
 
+        raw_phase = game.get("phase", "")
+        phase = PHASE_MAP.get(raw_phase, raw_phase or "Grunddurchgang")
+
         formatted_game = {
             "spielnr": spielnr,
             "datum": game.get("datum", ""),
@@ -624,16 +633,12 @@ def update_data():
             "ergebnis_heim": game.get("ergebnis_heim"),
             "ergebnis_gast": game.get("ergebnis_gast"),
             "ort": game.get("ort", ""),
-            "phase": game.get("phase", "Regular Season"),
+            "phase": phase,
         }
 
-        # Filter: Geisterdaten ohne Datum und ohne Ergebnis
-        if not formatted_game["datum"] and formatted_game.get("ergebnis_heim") is None:
-            skipped_ghost += 1
-            continue
-
-        # ABF zeigt fuer ungespielte Spiele 0:0 als Platzhalter. Ergebnis nur
-        # uebernehmen wenn das Spiel in der Vergangenheit liegt.
+        # ABF zeigt fuer ungespielte Spiele 0:0 als Platzhalter. Ergebnis erst
+        # neutralisieren, dann Geist-Check – sonst rutscht ein "0:0 ohne Datum"
+        # am Geist-Filter vorbei und landet datums- und ergebnislos im JSON.
         game_in_past = False
         if formatted_game["datum"]:
             try:
@@ -645,6 +650,10 @@ def update_data():
         if not game_in_past:
             formatted_game["ergebnis_heim"] = None
             formatted_game["ergebnis_gast"] = None
+
+        if not formatted_game["datum"] and formatted_game.get("ergebnis_heim") is None:
+            skipped_ghost += 1
+            continue
 
         existing = find_existing_game(all_games, formatted_game)
         if existing is not None:
