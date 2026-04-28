@@ -45,6 +45,7 @@ LETZTE AKTUALISIERUNG: 2026-02-06
 
 import json
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
@@ -80,6 +81,23 @@ TEAM_FULL_NAME = "Rohrbach Crazy Geese"
 PHASE_MAP = {
     "Regular Season": "Grunddurchgang",
 }
+
+# ABF schreibt Teamnamen zwischen Tabelle und Kalender-Sicht uneinheitlich
+# ("Dirty Sox Graz" vs. "Graz Dirty Sox", "Metrostars" vs. "Vienna Metrostars 3"
+# u.a.). Wir zentralisieren die kanonische Form, damit Tabelle und Spiele
+# denselben Wortlaut benutzen.
+TEAM_NAME_OVERRIDES = {
+    "Kutro Crazy Geese": TEAM_FULL_NAME,
+    "Dirty Sox Graz": "Graz Dirty Sox",
+    "Metrostars": "Vienna Metrostars 3",
+}
+
+
+def canonical_team_name(name):
+    """Wendet TEAM_NAME_OVERRIDES an. Unbekannte Namen bleiben unveraendert."""
+    if not name:
+        return name
+    return TEAM_NAME_OVERRIDES.get(name.strip(), name)
 
 # Dateipfade
 SCRIPT_DIR = Path(__file__).parent
@@ -172,54 +190,93 @@ def determine_phase():
 def scrape_standings(page):
     """
     Scraped die Tabelle von der ABF Standings-Seite.
-    Die Seite rendert serverseitig, daher einfacher Zugriff.
+
+    Robust gegen Markup-Aenderungen: liest die Header-Zeile, ermittelt fuer
+    jede Spalte (#, Mannschaft, W, L, T) den Index, und greift die Datenzeilen
+    ueber diese dynamische Map zu. Frueher waren die Indizes hartkodiert –
+    ABF hat das Markup inzwischen verschoben (Logo-Spalte vor Mannschaft).
 
     Returns:
-        Liste von Team-Dictionaries mit: rang, name, kuerzel, siege, niederlagen, unentschieden
+        Liste von Team-Dicts: rang, name, kuerzel, siege, niederlagen, unentschieden
     """
     print(f"\n[1/3] TABELLE")
     print(f"      URL: {ABF_STANDINGS}")
 
-    goto_with_retry(page, ABF_STANDINGS)
-    page.wait_for_timeout(2000)
+    # /standings macht nach dem initialen Load noch eine Client-Side-Navigation
+    # (eingebettete React-Komponente). Wir laden mit domcontentloaded und
+    # warten dann gezielt auf das Tabellen-Element, statt auf networkidle.
+    goto_with_retry(page, ABF_STANDINGS, wait_until="domcontentloaded")
+    try:
+        page.wait_for_selector("table.standings-print", timeout=15000)
+    except PlaywrightTimeoutError:
+        print("      [WARNUNG] standings-print-Tabelle nicht gefunden – Markup geaendert?")
+    page.wait_for_timeout(1000)
 
     teams = []
+    # ABF: <table class="table table-hover standings-print">. Mehrere Tabellen
+    # pro Seite (Regular Season + Platzierungsrunde) – wir nehmen die erste
+    # nicht-leere.
+    tables = page.query_selector_all("table.standings-print") or page.query_selector_all("table")
 
-    # Suche nach Tabellen
-    tables = page.query_selector_all("table")
-
+    # Heuristisches Parsing: Header hat 7 Spalten (#, Mannschaft, W, L, T, PCT, GB),
+    # Body hat 8 (zusaetzliche Logo-Spalte vor Mannschaft) – Indices passen nicht
+    # 1:1. Stattdessen suchen wir die "Team-Cell" (mehrzeilig: Kuerzel + Name) und
+    # nehmen die folgenden 3 Cells als W/L/T. Das ist robust gegen Layout-Aenderungen.
     for table in tables:
-        rows = table.query_selector_all("tbody tr")
+        body_rows = table.query_selector_all("tbody tr") or table.query_selector_all("tr")
 
-        for row in rows:
+        for row in body_rows:
             cells = row.query_selector_all("td")
-            if len(cells) >= 5:
-                try:
-                    rang_text = cells[0].inner_text().strip()
-                    rang = int(rang_text) if rang_text.isdigit() else 0
+            if len(cells) < 4:
+                continue
 
-                    team_cell = cells[1].inner_text().strip()
-                    lines = team_cell.split('\n')
-                    kuerzel = lines[0].strip() if lines else ""
-                    name = lines[1].strip() if len(lines) > 1 else team_cell
-                    if "Kutro Crazy Geese" in name:
-                        name = name.replace("Kutro Crazy Geese", TEAM_FULL_NAME)
-
-                    wins = int(cells[2].inner_text().strip())
-                    losses = int(cells[3].inner_text().strip())
-                    ties = int(cells[4].inner_text().strip()) if len(cells) > 4 else 0
-
-                    if rang > 0 and name:
-                        teams.append({
-                            "rang": rang,
-                            "name": name,
-                            "kuerzel": kuerzel,
-                            "siege": wins,
-                            "niederlagen": losses,
-                            "unentschieden": ties
-                        })
-                except (ValueError, IndexError):
+            # Team-Cell: erste Zelle mit Kuerzel\nName (zwei nicht-leere Zeilen)
+            team_idx = None
+            for i, c in enumerate(cells):
+                text = c.inner_text().strip()
+                if "\n" not in text:
                     continue
+                lines = [l.strip() for l in text.split("\n") if l.strip()]
+                if len(lines) >= 2:
+                    team_idx = i
+                    break
+
+            if team_idx is None or team_idx + 3 >= len(cells):
+                continue
+
+            team_text = cells[team_idx].inner_text().strip()
+            lines = [l.strip() for l in team_text.split("\n") if l.strip()]
+            kuerzel = lines[0]
+            name = canonical_team_name(lines[1])
+
+            try:
+                wins = int(cells[team_idx + 1].inner_text().strip() or 0)
+                losses = int(cells[team_idx + 2].inner_text().strip() or 0)
+                ties = int(cells[team_idx + 3].inner_text().strip() or 0)
+            except ValueError:
+                continue
+
+            # Rang: erste numerische Cell vor der Team-Cell. Wenn keine: Vorsaison.
+            rang = 0
+            for i in range(team_idx):
+                t = cells[i].inner_text().strip()
+                if t.isdigit():
+                    rang = int(t)
+                    break
+            if rang == 0:
+                rang = 1  # Vorsaison: alle Teams gleichauf
+
+            teams.append({
+                "rang": rang,
+                "name": name,
+                "kuerzel": kuerzel,
+                "siege": wins,
+                "niederlagen": losses,
+                "unentschieden": ties,
+            })
+
+        if teams:  # erste passende Tabelle reicht
+            break
 
     # Duplikate entfernen
     seen = set()
@@ -230,8 +287,6 @@ def scrape_standings(page):
             unique_teams.append(team)
 
     print(f"      Gefunden: {len(unique_teams)} Teams")
-
-    # Zeige Crazy Geese Position
     cg = next((t for t in unique_teams if TEAM_NAME in t["name"]), None)
     if cg:
         print(f"      {TEAM_FULL_NAME}: Platz {cg['rang']} ({cg['siege']}W-{cg['niederlagen']}L)")
@@ -542,6 +597,14 @@ def update_data():
     )
     print(f"\nBestehende Spiele in data.json: {len(existing_games)}")
 
+    # Fehler werden gesammelt und am Ende mit Exit-Code 1 ausgegeben, damit
+    # GitHub Actions den Job rot faerbt und der Maintainer eine Notification
+    # bekommt. data.json wird trotzdem gespeichert – mit den Daten, die wir
+    # bekommen haben (oft sind das immer noch Updates, z.B. Spiele wenn nur
+    # die Tabelle scheitert).
+    scrape_errors = []
+    new_games = []
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
@@ -553,21 +616,34 @@ def update_data():
                 data["tabelle"]["teams"] = teams
                 data["tabelle"]["stand"] = datetime.now().strftime("%Y-%m-%d")
                 data["tabelle"]["phase"] = determine_phase()
+            else:
+                scrape_errors.append(
+                    "Tabelle: 0 Teams gefunden. ABF-Markup vermutlich geaendert; "
+                    "Selektor und heuristisches Parsing in scrape_standings() pruefen."
+                )
 
             # 2. Runden und Team-ID holen
             print(f"\n[2/3] SPIELE")
             rounds, team_id = get_rounds_and_team_id(page)
 
             if not team_id:
-                print("      [FEHLER] Team-ID nicht gefunden!")
-                return
+                scrape_errors.append(
+                    f"Team-ID fuer '{TEAM_NAME}' nicht im Calendar-Dropdown gefunden. "
+                    f"Saison-URL pruefen ({ABF_BASE})."
+                )
+            else:
+                # 3. Spiele aus Kalender holen
+                new_games = scrape_games_from_calendar(page, rounds, team_id)
 
-            # 3. Spiele aus Kalender holen
-            new_games = scrape_games_from_calendar(page, rounds, team_id)
+                if rounds and not new_games:
+                    scrape_errors.append(
+                        f"Spiele: 0 Treffer in {len(rounds)} Runde(n) trotz vorhandener "
+                        f"Team-ID. ABF-Kalender-Markup vermutlich geaendert."
+                    )
 
-            # 4. Spieltage holen
-            if new_games:
-                new_games = scrape_game_dates(page, new_games)
+                # 4. Spieltage holen
+                if new_games:
+                    new_games = scrape_game_dates(page, new_games)
 
         finally:
             browser.close()
@@ -590,16 +666,16 @@ def update_data():
     canonical_names = [t.get("name", "") for t in data.get("tabelle", {}).get("teams", []) if t.get("name")]
 
     def normalize_team(name):
-        # 1. ABF-Datenbank fuehrt uns teils noch als "Kutro Crazy Geese".
-        if name and "Kutro Crazy Geese" in name:
-            return TEAM_FULL_NAME
+        # 1. Hartes Override-Mapping zuerst (deckt "Kutro -> Rohrbach",
+        #    "Dirty Sox Graz -> Graz Dirty Sox", "Metrostars -> Vienna Metrostars 3").
+        name = canonical_team_name(name)
         if not name or name in canonical_names:
             return name
-        # 2. Substring-Match (z.B. "Metrostars" -> "Vienna Metrostars 3")
+        # 2. Substring-Match (Fallback fuer noch nicht gemappte Varianten)
         for canonical in canonical_names:
             if canonical and (canonical in name or name in canonical):
                 return canonical
-        # 3. Wort-Overlap (z.B. "Dirty Sox Graz" -> "Graz Dirty Sox")
+        # 3. Wort-Overlap-Heuristik
         name_words = set(name.lower().split())
         best = None
         best_overlap = 0
@@ -757,6 +833,17 @@ def update_data():
     print(f"  - Vergangene: {len(vergangene)}")
     print(f"  - Nächste: {len(naechste)}")
     print("=" * 60)
+
+    if scrape_errors:
+        print("\n" + "!" * 60)
+        print("FEHLER BEIM SCRAPING – Workflow scheitert mit Exit-Code 1")
+        print("!" * 60)
+        for err in scrape_errors:
+            print(f"  - {err}")
+        print("\nMaintainer-Hinweis: data.json wurde mit dem aktuellen Stand")
+        print("gespeichert (oft sind das vorherige Werte). Bitte ABF-Markup")
+        print("pruefen und Selektoren in scripts/scraper.py anpassen.")
+        sys.exit(1)
 
 
 # =============================================================================

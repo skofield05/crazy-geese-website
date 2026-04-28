@@ -64,16 +64,22 @@ jobs:
       - name: Run Scraper
         run: python scripts/scraper.py
 
+      - name: Regenerate ICS
+        # Laeuft nur, wenn der Scraper erfolgreich durchgelaufen ist (Default).
+        # Hat der Scraper exit 1 wegen Markup-Bruch, wird hier abgebrochen,
+        # damit wir nicht ICS aus halbgaren Daten regenerieren.
+        run: python scripts/generate_ics.py
+
       - name: Check for Changes
         id: changes
         run: |
-          git diff --quiet data/data.json || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet data/data.json data/crazy-geese-*.ics || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit and Push
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add data/data.json
+          git add data/data.json data/crazy-geese-*.ics
           git commit -m "Update Standings $(date +'%Y-%m-%d %H:%M')"
           git push

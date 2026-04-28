@@ -56,7 +56,9 @@ was-ist-baseball.html               → Erklär-Seite
 style.css                           → Styling (CSS Variables, responsive, barrierefrei)
 data/data.json                      → Alle Daten (Tabelle, Spiele, Kontakt, Softball, Blog)
 data/*.ics                          → Kalender-Dateien (alle Spiele + nur Heimspiele)
-scripts/scraper.py                  → Python Scraper für automatische Updates
+scripts/scraper.py                  → Python Scraper für automatische Updates (ABF -> data.json)
+scripts/generate_ics.py             → Regeneriert beide ICS aus data.json
+scripts/validate_data.py            → Schema-Check (Pflichtfelder, Eindeutigkeit, ICS-Sync)
 scripts/shared.js                   → Gemeinsame JS-Helpers (escapeHtml, fetchJson, Render)
 scripts/lightbox.js                 → Wiederverwendbare Lightbox für Blog-Galerien
 scripts/optimize_blog_images.py     → Einmal-Helper für Blog-Bildaufbereitung
@@ -208,10 +210,17 @@ gh workflow run "Update Standings"
 ## Kalender-Dateien (ICS)
 
 Zwei ICS-Dateien für Kalender-Import:
-- `data/crazy-geese-alle-spiele-2026.ics` – Alle 16 Spiele
-- `data/crazy-geese-heimspiele-2026.ics` – Nur 6 Heimspiele
+- `data/crazy-geese-alle-spiele-2026.ics` – Alle Spiele
+- `data/crazy-geese-heimspiele-2026.ics` – Nur Spiele am Geese Ballpark, Rohrbach
 
-Download-Buttons auf `baseball.html`. Bei Spielplan-Änderungen müssen die ICS-Dateien manuell aktualisiert werden.
+Beide werden von `scripts/generate_ics.py` aus `data/data.json` regeneriert (im Workflow nach jedem Scraper-Lauf, lokal nach manuellen Änderungen). Konventionen:
+
+- SUMMARY: `GAST vs HEIM` (Baseball-Konvention)
+- Suffix `(HEIM)` wenn Crazy Geese formal heim und Spielort in Rohrbach
+- Suffix `(in Rohrbach)` wenn Crazy Geese formal Gast aber Spielort Rohrbach
+- UID stabil als `cg-YYYY-MM-DD-HHMM@crazy-geese.at`
+
+Download-Buttons auf `baseball.html`.
 
 ---
 
@@ -250,6 +259,14 @@ In `data/data.json` → `softball.naechste_termine`:
 ```
 
 Erscheinen automatisch auf der Landing Page mit SOFTBALL-Tag.
+
+### ICS-Dateien regenerieren
+
+```bash
+python scripts/generate_ics.py
+```
+
+Liest `data/data.json` und schreibt beide ICS-Dateien neu. Wird im `update-standings.yml`-Workflow automatisch nach dem Scraper aufgerufen.
 
 ### Manuell Spiel eintragen
 
@@ -334,6 +351,12 @@ In `data/data.json` → `spiele.vergangene`:
 ## Changelog
 
 ### 2026-04-28
+- Code-Review-Folgearbeiten: Tabellen-Scraper repariert (ABF-Markup hat sich geaendert, scrape_standings parst nun heuristisch ueber die Team-Cell statt fester Indices), `TEAM_NAME_OVERRIDES` zentralisiert kanonische Teamnamen ("Dirty Sox Graz" -> "Graz Dirty Sox" etc.) damit Tabelle und Spiele konsistent sind
+- Scraper hat jetzt Failure-Detection: bei 0 Teams oder 0 Spielen exit 1, GitHub Actions schlaegt Alarm
+- Neuer Generator `scripts/generate_ics.py` regeneriert beide ICS-Dateien aus `data.json` (laeuft im Workflow nach `scraper.py`); ICS-Suffix-Logik (HEIM/in Rohrbach/leer) zentral implementiert
+- `scripts/validate_data.py` deutlich erweitert: pruefte vorher nur blog+spiele(datum/heim/gast), jetzt auch verein, kontakt, tabelle, softball, eindeutige spielnr, Ergebnis-Konsistenz und ICS-Cross-Check (DTSTART-Set in JSON vs. ICS)
+- Cache-Buster fuer `shared.js` auf `?v=2026-04-28` angehoben (alle 9 HTML-Files)
+- Flyer-Generator (`generate-flyer.py` + `flyer-a6.pdf`) entfernt – wird nicht mehr gebraucht
 - Spielplan: 23.05. nach Rohrbach verlegt (Doppelheader gegen Danube Titans 11:00 + Vienna Lawnmowers 16:00, vorher 13:30 in Stockerau). `data/data.json` und beide ICS aktualisiert
 - Baseball-Konvention "Gast zuerst" durchgezogen: `renderGame()` (`scripts/shared.js`) tauscht Heim/Gast in der Game-Card und stellt Score auf `gast:heim` um; Schema.org `SportsEvent.name` auf `${gast} vs ${heim}`; alle ICS-`SUMMARY` umgedreht
 - ICS-Suffix-Konvention: `(HEIM)` für formal-Heim in Rohrbach, `(in Rohrbach)` für formal-Auswärts mit Spielort Rohrbach, sonst kein Suffix

@@ -41,7 +41,7 @@ DTSTART;TZID=Europe/Vienna:20260523T110000
 DTEND;TZID=Europe/Vienna:20260523T133000
 SUMMARY:⚾ Crazy Geese vs Danube Titans (in Rohrbach)
 LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nSpielort verlegt nach Rohrbach
+DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nSpielort verlegt nach Rohrbach – Eintritt frei!
 UID:cg-2026-05-23-1100@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
@@ -49,7 +49,7 @@ DTSTART;TZID=Europe/Vienna:20260523T160000
 DTEND;TZID=Europe/Vienna:20260523T183000
 SUMMARY:⚾ Crazy Geese vs Vienna Lawnmowers (in Rohrbach)
 LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nSpielort verlegt nach Rohrbach
+DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nSpielort verlegt nach Rohrbach – Eintritt frei!
 UID:cg-2026-05-23-1600@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT

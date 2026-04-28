@@ -25,13 +25,29 @@
     }
   },
   "tabelle": {
-    "stand": "2026-02-06",
-    "phase": "Vorsaison",
+    "stand": "2026-04-28",
+    "phase": "Regular Season",
     "teams": [
+      {
+        "rang": 1,
+        "name": "Vienna Bucks",
+        "kuerzel": "BU",
+        "siege": 0,
+        "niederlagen": 0,
+        "unentschieden": 0
+      },
       {
         "rang": 1,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
+        "siege": 0,
+        "niederlagen": 0,
+        "unentschieden": 0
+      },
+      {
+        "rang": 1,
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
         "siege": 0,
         "niederlagen": 0,
         "unentschieden": 0
@@ -54,14 +70,6 @@
       },
       {
         "rang": 1,
-        "name": "Vienna Bucks",
-        "kuerzel": "BU",
-        "siege": 0,
-        "niederlagen": 0,
-        "unentschieden": 0
-      },
-      {
-        "rang": 1,
         "name": "Vienna Metrostars 3",
         "kuerzel": "MS",
         "siege": 0,
@@ -78,16 +86,8 @@
       },
       {
         "rang": 1,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
-        "siege": 0,
-        "niederlagen": 0,
-        "unentschieden": 0
-      },
-      {
-        "rang": 1,
         "name": "Schremser Beers 2",
-        "kuerzel": "B2",
+        "kuerzel": "SB",
         "siege": 0,
         "niederlagen": 0,
         "unentschieden": 0

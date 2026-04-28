@@ -27,7 +27,7 @@ Alle Vereinsdaten liegen in `data/data.json`. Struktur:
 - `archiv.YYYY` (Archiv-Zeiger → `data/archiv/YYYY.json`)
 - `blog.posts`
 
-Die ICS-Kalender (`data/crazy-geese-*-2026.ics`) werden bei Spielplan-Änderungen manuell aktualisiert.
+Die ICS-Kalender (`data/crazy-geese-*-2026.ics`) werden von `scripts/generate_ics.py` aus `data.json` regeneriert (im Workflow nach jedem Scraper-Lauf, lokal nach manuellen Änderungen).
 
 ## Lokale Entwicklung
 
@@ -62,7 +62,7 @@ Neuen Beitrag anlegen: siehe [`CLAUDE.md#neuen-blogpost-anlegen`](CLAUDE.md). Ku
 
 ## Daten-Validator
 
-`scripts/validate_data.py` prüft JSON-Schema, Pflichtfelder, Datumsformat, Slug-Eindeutigkeit und ob referenzierte Assets existieren. Läuft automatisch bei jedem Push/PR auf relevante Pfade (`.github/workflows/validate-data.yml`).
+`scripts/validate_data.py` prüft JSON-Schema, Pflichtfelder, Datumsformat, Slug-Eindeutigkeit, eindeutige Spielnummern, Ergebnis-Konsistenz und ob ICS und data.json synchron sind (Cross-Check über DTSTART). Läuft automatisch bei jedem Push/PR auf relevante Pfade (`.github/workflows/validate-data.yml`).
 
 Manuell:
 ```bash
