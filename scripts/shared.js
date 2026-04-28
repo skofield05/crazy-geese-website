@@ -168,21 +168,22 @@ function renderGame(game, isFeatured) {
 
   const heim = escapeHtml(game.heim);
   const gast = escapeHtml(game.gast);
+  // Baseball-Konvention: Gast links, Heim rechts. Score "gast:heim".
   const score = hasResult
-    ? escapeHtml(game.ergebnis_heim) + ':' + escapeHtml(game.ergebnis_gast)
+    ? escapeHtml(game.ergebnis_gast) + ':' + escapeHtml(game.ergebnis_heim)
     : 'vs';
   const featuredClass = isFeatured ? 'next-game-featured' : '';
 
   return `
-    <div class="game-card ${resultClass} ${featuredClass}" role="article" aria-label="${heim} gegen ${gast}">
+    <div class="game-card ${resultClass} ${featuredClass}" role="article" aria-label="${gast} bei ${heim}">
       <div class="game-card-header">
         <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + escapeHtml(game.zeit) : ''}</div>
         <div class="game-tags">${badge}</div>
       </div>
       <div class="game-matchup">
-        <span class="team ${isHome ? 'us' : ''}">${heim}</span>
-        <span class="vs">${score}</span>
         <span class="team ${!isHome ? 'us' : ''}">${gast}</span>
+        <span class="vs">${score}</span>
+        <span class="team ${isHome ? 'us' : ''}">${heim}</span>
       </div>
       ${game.ort ? `<div class="game-location">📍 ${escapeHtml(game.ort)}</div>` : ''}
       ${game.phase ? `<div class="game-phase">${escapeHtml(game.phase)}</div>` : ''}

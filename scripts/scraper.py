@@ -104,27 +104,40 @@ def save_data(data):
     print(f"[OK] Daten gespeichert: {DATA_FILE}")
 
 
-def game_exists(existing_games, new_game):
+def find_existing_game(existing_games, new_game):
     """
-    Prüft ob ein Spiel bereits existiert (Duplikat-Vermeidung).
-    - Haben beide ein Datum: Match auf (datum, heim, gast).
-    - Fehlt mind. einem das Datum: Match nur auf (heim, gast) – damit
-      Geisterdaten ohne Datum nicht als "neues" Spiel neben dem echten
-      Eintrag landen.
+    Sucht ein bestehendes Spiel, das zu new_game gehoert. Gibt das Dict
+    zurueck (mutierbar – Caller updated direkt) oder None.
+
+    Match-Reihenfolge:
+      1. spielnr (eindeutig pro Liga, bleibt auch bei Verlegung gleich)
+      2. (heim, gast). Bei mehreren Kandidaten: gleiches Datum bevorzugt.
+         Wenn nicht aufloesbar, kein Match (→ neues Spiel).
+
+    Hintergrund: ABF kann Termine/Orte aendern, ohne dass das Spiel "neu" ist.
+    Match per spielnr toleriert solche Aenderungen; Fallback per (heim, gast)
+    deckt Bestandsspiele ab, die noch keine spielnr im JSON haben.
     """
-    for game in existing_games:
-        if game.get("heim") != new_game.get("heim"):
-            continue
-        if game.get("gast") != new_game.get("gast"):
-            continue
-        new_date = new_game.get("datum") or ""
-        old_date = game.get("datum") or ""
-        if new_date and old_date:
-            if new_date == old_date:
-                return True
-        else:
-            return True
-    return False
+    new_spielnr = new_game.get("spielnr")
+    if new_spielnr:
+        for g in existing_games:
+            if g.get("spielnr") == new_spielnr:
+                return g
+
+    candidates = [
+        g for g in existing_games
+        if g.get("heim") == new_game.get("heim")
+        and g.get("gast") == new_game.get("gast")
+    ]
+    if len(candidates) == 1:
+        return candidates[0]
+    if len(candidates) > 1:
+        new_datum = new_game.get("datum")
+        if new_datum:
+            for c in candidates:
+                if c.get("datum") == new_datum:
+                    return c
+    return None
 
 
 def determine_phase():
@@ -553,18 +566,21 @@ def update_data():
         finally:
             browser.close()
 
-    # 5. Neue Spiele filtern (keine Duplikate)
+    # 5. Spiele mergen: bestehende updaten (Verlegungen!), neue hinzufuegen
     print(f"\n[MERGE]")
     added_count = 0
-    today = datetime.now().date()
-
-    vergangene = list(data.get("spiele", {}).get("vergangene", []))
-    naechste = list(data.get("spiele", {}).get("naechste", []))
-
+    updated_count = 0
     skipped_ghost = 0
     normalized_count = 0
+    today = datetime.now().date()
 
-    # Kanonische Teamnamen aus der aktuellen Tabelle als Source of Truth.
+    # Arbeite auf flacher Liste-Kopie. Die Dict-Objekte sind shared mit
+    # data["spiele"][...], Mutationen wirken automatisch durch.
+    all_games = (
+        list(data.get("spiele", {}).get("vergangene", []))
+        + list(data.get("spiele", {}).get("naechste", []))
+    )
+
     canonical_names = [t.get("name", "") for t in data.get("tabelle", {}).get("teams", []) if t.get("name")]
 
     def normalize_team(name):
@@ -588,14 +604,19 @@ def update_data():
                 best_overlap = overlap
         return best or name
 
+    spielnr_rx = re.compile(r'(#\d+)')
+
     for game in new_games:
         heim = normalize_team(game.get("heim", ""))
         gast = normalize_team(game.get("gast", ""))
         if heim != game.get("heim", "") or gast != game.get("gast", ""):
             normalized_count += 1
 
-        # Konvertiere zu data.json Format
+        nr_match = spielnr_rx.match(game.get("spielnr", "") or "")
+        spielnr = nr_match.group(1) if nr_match else None
+
         formatted_game = {
+            "spielnr": spielnr,
             "datum": game.get("datum", ""),
             "zeit": game.get("zeit", ""),
             "heim": heim,
@@ -603,7 +624,7 @@ def update_data():
             "ergebnis_heim": game.get("ergebnis_heim"),
             "ergebnis_gast": game.get("ergebnis_gast"),
             "ort": game.get("ort", ""),
-            "phase": game.get("phase", "Regular Season")
+            "phase": game.get("phase", "Regular Season"),
         }
 
         # Filter: Geisterdaten ohne Datum und ohne Ergebnis
@@ -611,37 +632,98 @@ def update_data():
             skipped_ghost += 1
             continue
 
-        # Prüfe ob Spiel bereits existiert
-        all_existing = vergangene + naechste
-        if game_exists(all_existing, formatted_game):
+        # ABF zeigt fuer ungespielte Spiele 0:0 als Platzhalter. Ergebnis nur
+        # uebernehmen wenn das Spiel in der Vergangenheit liegt.
+        game_in_past = False
+        if formatted_game["datum"]:
+            try:
+                game_in_past = (
+                    datetime.strptime(formatted_game["datum"], "%Y-%m-%d").date() <= today
+                )
+            except ValueError:
+                pass
+        if not game_in_past:
+            formatted_game["ergebnis_heim"] = None
+            formatted_game["ergebnis_gast"] = None
+
+        existing = find_existing_game(all_games, formatted_game)
+        if existing is not None:
+            # phase nicht antasten – kann user-curated sein
+            # ("Grunddurchgang" statt ABFs "Regular Season").
+            changes = []
+
+            # spielnr: persistenter Schluessel, immer (re-)setzen
+            new_nr = formatted_game.get("spielnr")
+            if new_nr and existing.get("spielnr") != new_nr:
+                changes.append(f"spielnr: {existing.get('spielnr')!r}->{new_nr!r}")
+                existing["spielnr"] = new_nr
+
+            # datum, zeit: ABF ist authoritativ
+            datum_or_zeit_changed = False
+            for key in ("datum", "zeit"):
+                new_val = formatted_game.get(key)
+                if not new_val:
+                    continue
+                if existing.get(key) != new_val:
+                    changes.append(f"{key}: {existing.get(key)!r}->{new_val!r}")
+                    existing[key] = new_val
+                    datum_or_zeit_changed = True
+
+            # ort: nur bei Verlegungs-Signal (datum/zeit hat sich geaendert).
+            # Sonst behalten wir den oft user-gepflegten Wortlaut, statt ihn
+            # bei jedem Lauf auf die ABF-Schreibweise zu normalisieren
+            # ("Wien" -> "Vienna" o.ae.).
+            if datum_or_zeit_changed:
+                new_ort = formatted_game.get("ort")
+                if new_ort and existing.get("ort") != new_ort:
+                    changes.append(f"ort: {existing.get('ort')!r}->{new_ort!r}")
+                    existing["ort"] = new_ort
+
+            # Ergebnis: ABF ist authoritativ (Platzhalter 0:0 ist oben gefiltert)
+            for key in ("ergebnis_heim", "ergebnis_gast"):
+                new_val = formatted_game.get(key)
+                if new_val is None:
+                    continue
+                if existing.get(key) != new_val:
+                    changes.append(f"{key}: {existing.get(key)!r}->{new_val!r}")
+                    existing[key] = new_val
+
+            if changes:
+                updated_count += 1
+                label = existing.get("spielnr") or f"{existing.get('heim')} vs {existing.get('gast')}"
+                print(f"      ~ UPD {label}: {', '.join(changes)}")
             continue
 
-        # Sortiere in vergangene/nächste
-        if formatted_game["datum"]:
-            game_date = datetime.strptime(formatted_game["datum"], "%Y-%m-%d").date()
-            if game_date < today:
-                vergangene.append(formatted_game)
-            else:
-                naechste.append(formatted_game)
-        else:
-            # Ohne Datum: Wenn Ergebnis vorhanden = vergangen
-            if formatted_game.get("ergebnis_heim") is not None:
-                vergangene.append(formatted_game)
-            else:
-                naechste.append(formatted_game)
-
+        all_games.append(formatted_game)
         added_count += 1
-        print(f"      + NEU: {formatted_game['gast']} @ {formatted_game['heim']} ({formatted_game['datum']})")
+        print(f"      + NEU: {gast} @ {heim} ({formatted_game['datum']})")
 
-    # Sortiere nach Datum
-    vergangene.sort(key=lambda x: x.get("datum", "9999"))
-    naechste.sort(key=lambda x: x.get("datum", "9999"))
+    # Re-Split nach datum / Ergebnis (datum-Aenderungen koennen ein Spiel
+    # zwischen 'vergangene' und 'naechste' wandern lassen).
+    vergangene = []
+    naechste = []
+    for g in all_games:
+        if g.get("datum"):
+            try:
+                game_date = datetime.strptime(g["datum"], "%Y-%m-%d").date()
+            except ValueError:
+                naechste.append(g)
+                continue
+            (vergangene if game_date < today else naechste).append(g)
+        elif g.get("ergebnis_heim") is not None:
+            vergangene.append(g)
+        else:
+            naechste.append(g)
+
+    vergangene.sort(key=lambda x: (x.get("datum", "9999"), x.get("zeit", "")))
+    naechste.sort(key=lambda x: (x.get("datum", "9999"), x.get("zeit", "")))
 
     data["spiele"]["vergangene"] = vergangene
     data["spiele"]["naechste"] = naechste
     data["spiele"]["letztes_update"] = datetime.now().strftime("%Y-%m-%d")
 
     print(f"      Neue Spiele hinzugefügt: {added_count}")
+    print(f"      Aktualisiert: {updated_count}")
     if normalized_count:
         print(f"      Teamnamen normalisiert (Kutro -> Rohrbach): {normalized_count}")
     if skipped_ghost:

@@ -149,7 +149,7 @@
           const ev = {
             '@context': 'https://schema.org',
             '@type': 'SportsEvent',
-            name: `${g.heim} vs ${g.gast}`,
+            name: `${g.gast} vs ${g.heim}`,
             startDate: startDate,
             sport: 'Baseball',
             homeTeam: { '@type': 'SportsTeam', name: g.heim },
@@ -160,7 +160,7 @@
           };
           if (g.ort) ev.location = { '@type': 'Place', name: g.ort };
           if (g.ergebnis_heim !== null && g.ergebnis_heim !== undefined) {
-            ev.description = `Ergebnis: ${g.ergebnis_heim}:${g.ergebnis_gast}`;
+            ev.description = `Ergebnis: ${g.ergebnis_gast}:${g.ergebnis_heim}`;
           }
           return ev;
         });
