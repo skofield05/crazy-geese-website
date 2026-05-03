@@ -25,19 +25,27 @@
     }
   },
   "tabelle": {
-    "stand": "2026-04-28",
+    "stand": "2026-05-03",
     "phase": "Regular Season",
     "teams": [
       {
         "rang": 1,
         "name": "Vienna Bucks",
         "kuerzel": "BU",
-        "siege": 0,
+        "siege": 2,
         "niederlagen": 0,
         "unentschieden": 0
       },
       {
-        "rang": 1,
+        "rang": 2,
+        "name": "Vienna Lawnmowers",
+        "kuerzel": "LM",
+        "siege": 1,
+        "niederlagen": 1,
+        "unentschieden": 0
+      },
+      {
+        "rang": 3,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
         "siege": 0,
@@ -45,7 +53,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 1,
+        "rang": 3,
         "name": "Graz Dirty Sox",
         "kuerzel": "DS",
         "siege": 0,
@@ -53,7 +61,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 1,
+        "rang": 3,
         "name": "Danube Titans",
         "kuerzel": "DT",
         "siege": 0,
@@ -61,15 +69,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 1,
-        "name": "Vienna Lawnmowers",
-        "kuerzel": "LM",
-        "siege": 0,
-        "niederlagen": 0,
-        "unentschieden": 0
-      },
-      {
-        "rang": 1,
+        "rang": 3,
         "name": "Vienna Metrostars 3",
         "kuerzel": "MS",
         "siege": 0,
@@ -77,7 +77,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 1,
+        "rang": 3,
         "name": "Woodquarter Red Devils",
         "kuerzel": "RD",
         "siege": 0,
@@ -85,7 +85,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 1,
+        "rang": 3,
         "name": "Schremser Beers 2",
         "kuerzel": "SB",
         "siege": 0,
@@ -93,17 +93,17 @@
         "unentschieden": 0
       },
       {
-        "rang": 1,
+        "rang": 9,
         "name": "Tulln Ravens",
         "kuerzel": "TR",
         "siege": 0,
-        "niederlagen": 0,
+        "niederlagen": 2,
         "unentschieden": 0
       }
     ]
   },
   "spiele": {
-    "letztes_update": "2026-04-28",
+    "letztes_update": "2026-05-03",
     "naechste": [
       {
         "datum": "2026-05-03",
