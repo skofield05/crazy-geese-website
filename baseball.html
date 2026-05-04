@@ -63,17 +63,31 @@
       <p>Landesliga Ost – Saison <span id="season">2026</span></p>
     </section>
 
-    <section class="section">
-      <h2>Training</h2>
-      <div class="info-card">
-        <p><strong>Wann:</strong> Sonntag ab 15:00 Uhr, Mittwoch ab 18:00 Uhr (Pitcher/Catcher)</p>
-        <p><strong>Wo:</strong> Geese Ballpark, Rohrbach bei Mattersburg</p>
-        <p><strong>Ausrüstung:</strong> Wird vom Verein gestellt</p>
-        <p class="highlight-text">Keine Voranmeldung nötig – einfach vorbeikommen!</p>
-      </div>
-    </section>
-
     <section id="alle-spiele" class="section section-highlight">
+      <h2>⚾ Tabelle</h2>
+      <p class="table-phase" id="table-phase">Vorsaison</p>
+      <div class="table-container">
+        <table class="standings" aria-label="Baseball Landesliga Ost Tabelle">
+          <thead>
+            <tr>
+              <th class="col-rank">#</th>
+              <th class="col-team">Team</th>
+              <th class="col-stat">W</th>
+              <th class="col-stat">L</th>
+              <th class="col-stat" title="Win-Prozentsatz">PCT</th>
+              <th class="col-stat" title="Games Behind">GB</th>
+            </tr>
+          </thead>
+          <tbody id="standings-body">
+            <!-- Wird per JS befüllt -->
+          </tbody>
+        </table>
+      </div>
+      <p class="data-source">
+        Quelle: <a href="https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026" target="_blank" rel="noopener">ABF</a>
+      </p>
+
+      <h2 class="spiele-heading">Alle Spiele</h2>
       <div class="calendar-download">
         <p>Spiele direkt in deinen Kalender importieren:</p>
         <div class="calendar-buttons">
@@ -82,45 +96,24 @@
         </div>
       </div>
 
-      <div class="spiele-tabelle-grid">
-        <div class="spiele-col">
-          <h2>Alle Spiele</h2>
+      <h3>Kommende Spiele</h3>
+      <div class="games-list" id="next-games">
+        <!-- Wird per JS befüllt -->
+      </div>
 
-          <h3>Kommende Spiele</h3>
-          <div class="games-list" id="next-games">
-            <!-- Wird per JS befüllt -->
-          </div>
+      <h3>Spielergebnisse</h3>
+      <div class="games-list" id="past-games">
+        <!-- Wird per JS befüllt -->
+      </div>
+    </section>
 
-          <h3>Spielergebnisse</h3>
-          <div class="games-list" id="past-games">
-            <!-- Wird per JS befüllt -->
-          </div>
-        </div>
-
-        <aside class="tabelle-col">
-          <h2>⚾ Tabelle</h2>
-          <p class="table-phase" id="table-phase">Vorsaison</p>
-          <div class="table-container">
-            <table class="standings" aria-label="Baseball Landesliga Ost Tabelle">
-              <thead>
-                <tr>
-                  <th class="col-rank">#</th>
-                  <th class="col-team">Team</th>
-                  <th class="col-stat">W</th>
-                  <th class="col-stat">L</th>
-                  <th class="col-stat" title="Win-Prozentsatz">PCT</th>
-                  <th class="col-stat" title="Games Behind">GB</th>
-                </tr>
-              </thead>
-              <tbody id="standings-body">
-                <!-- Wird per JS befüllt -->
-              </tbody>
-            </table>
-          </div>
-          <p class="data-source">
-            Quelle: <a href="https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026" target="_blank" rel="noopener">ABF</a>
-          </p>
-        </aside>
+    <section class="section">
+      <h2>Training</h2>
+      <div class="info-card">
+        <p><strong>Wann:</strong> Sonntag ab 15:00 Uhr, Mittwoch ab 18:00 Uhr (Pitcher/Catcher)</p>
+        <p><strong>Wo:</strong> Geese Ballpark, Rohrbach bei Mattersburg</p>
+        <p><strong>Ausrüstung:</strong> Wird vom Verein gestellt</p>
+        <p class="highlight-text">Keine Voranmeldung nötig – einfach vorbeikommen!</p>
       </div>
     </section>
 

@@ -582,35 +582,11 @@ li {
   border: 1px solid var(--color-border);
 }
 
-/* Layout fuer baseball.html: Spiele links, Tabelle rechts.
-   Mobile: stacked. Desktop: 2/1-Verhaeltnis (Spielsicht braucht mehr Platz). */
-.spiele-tabelle-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-xl);
-  margin-top: var(--space-lg);
-}
-
-@media (min-width: 900px) {
-  .spiele-tabelle-grid {
-    grid-template-columns: 2fr 1fr;
-    align-items: start;
-  }
-  .spiele-tabelle-grid .tabelle-col {
-    position: sticky;
-    top: var(--space-lg);
-  }
-}
-
-.spiele-tabelle-grid .tabelle-col {
-  background: rgba(22, 27, 34, 0.6);
-  border-radius: 8px;
-  padding: var(--space-lg);
-  border: 1px solid var(--color-border);
-}
-
-.spiele-tabelle-grid .tabelle-col h2 {
-  margin-top: 0;
+/* baseball.html: Tabelle und Spielplan stehen volle Breite untereinander
+   (frueheres Side-by-Side war auf normalen Notebook-Breiten zu gestaucht).
+   Etwas Abstand zwischen Tabelle und der Spielplan-Ueberschrift. */
+.spiele-heading {
+  margin-top: var(--space-2xl);
 }
 
 .spielplan-card h2,
