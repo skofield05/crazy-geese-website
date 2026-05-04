@@ -17,18 +17,20 @@ Quelle: https://www.crazy-geese.at
 
 ---
 
-## Vereinsführung / Vorstand
+## Vereinsführung / Vorstand (Stand 2018, historisch)
 
-| Name | Funktion | Telefon | Email |
-|------|----------|---------|-------|
-| Thomas Soffried | Obmann | 0676/43 51 164 | thomas.soffried@crazy-geese.at |
-| Daniel Horky | Obmann Stellvertreter | — | softball@crazy-geese.at |
-| Christian Suchard | Kassier | 0676/35 08 279 | c.suchard@crazy-geese.at |
-| Robert Kutrowatz | Kassier Stellvertreter | — | kutro13@icloud.com |
-| Peter Moser | Schriftführer | 0680/40 33 664 | p.moser@crazy-geese.at |
-| Jürgen Schneeberger | Pressereferent, Schriftführer Stellv. | 0676/54 46 247 | schneeberger24@gmail.com |
-| Jörg Dorner | Jugendkoordinator | — | joergdorner@gmx.net |
-| Thomas Pusitz | Rechnungsprüfer | — | — |
+| Name | Funktion |
+|------|----------|
+| Thomas Soffried | Obmann |
+| Daniel Horky | Obmann Stellvertreter |
+| Christian Suchard | Kassier |
+| Robert Kutrowatz | Kassier Stellvertreter |
+| Peter Moser | Schriftführer |
+| Jürgen Schneeberger | Pressereferent, Schriftführer Stellv. |
+| Jörg Dorner | Jugendkoordinator |
+| Thomas Pusitz | Rechnungsprüfer |
+
+*Hinweis: Aktueller Vorstand siehe `CLAUDE.md` bzw. Vereinsregisterauszug 2025. Telefonnummern und private Mailadressen wurden 2026-05-04 aus diesem Backup entfernt (sind nicht für ein öffentliches Repo gedacht).*
 
 ---
 
@@ -70,7 +72,7 @@ Quelle: https://www.crazy-geese.at
 
 ### Trainer
 - **Nachwuchs-Coach:** Joey Vickery
-- **Nachwuchs-Koordinator:** Jörg Dorner (joergdorner@gmx.net)
+- **Nachwuchs-Koordinator:** Jörg Dorner
 - Training durch staatlich ausgebildete und geprüfte Übungsleiter und Instruktoren
 - US-amerikanischer Head-Coach dabei (teilweise auf Englisch)
 
@@ -80,7 +82,7 @@ Quelle: https://www.crazy-geese.at
 - Für alle Altersgruppen (Volksschule bis Oberstufe)
 - Für Mädchen und Jungen
 - Einzel-Schnupperstunden oder regelmäßige Trainings möglich
-- **Kontakt für Lehrer:** joergdorner@gmx.net
+- **Kontakt für Lehrer:** Jörg Dorner (siehe aktuelle Kontaktdaten in `data.json`)
 
 ---
 

@@ -56,17 +56,19 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install playwright
+          pip install -r requirements.txt
           playwright install chromium
           playwright install-deps
 
       - name: Run Scraper
         run: python scripts/scraper.py
 
+      - name: Validate data.json
+        # Gate: Wenn der Scraper kaputtes JSON geschrieben hat, hier abbrechen,
+        # bevor ICS regeneriert oder committet wird.
+        run: python scripts/validate_data.py
+
       - name: Regenerate ICS
-        # Laeuft nur, wenn der Scraper erfolgreich durchgelaufen ist (Default).
-        # Hat der Scraper exit 1 wegen Markup-Bruch, wird hier abgebrochen,
-        # damit wir nicht ICS aus halbgaren Daten regenerieren.
         run: python scripts/generate_ics.py
 
       - name: Check for Changes

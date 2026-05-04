@@ -63,9 +63,20 @@ function setupLightbox(gridId, images) {
     render();
   }
 
+  // Defensive: nur Pfade unter / oder explizite http(s)-URLs zulassen.
+  // Verhindert "javascript:" / "data:text/html" o.ae., falls images[] mal
+  // aus weniger vertrauenswuerdiger Quelle kommt (data.json, Drittanbieter).
+  function isSafeImageUrl(url) {
+    if (typeof url !== 'string' || !url) return false;
+    if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../')) return true;
+    if (/^https?:\/\//i.test(url)) return true;
+    // Relative Pfade ohne fuehrenden Slash (z.B. "img/blog/...") akzeptieren
+    return !/^[a-z][a-z0-9+.-]*:/i.test(url);
+  }
+
   function render() {
     const item = images[currentIndex];
-    img.src = item.full;
+    img.src = isSafeImageUrl(item.full) ? item.full : '';
     img.alt = item.caption || '';
     caption.textContent = item.caption || '';
   }

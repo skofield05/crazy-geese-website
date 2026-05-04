@@ -29,7 +29,12 @@ ICS_ALL = REPO_ROOT / "data" / "crazy-geese-alle-spiele-2026.ics"
 ICS_HOME = REPO_ROOT / "data" / "crazy-geese-heimspiele-2026.ics"
 
 REQUIRED_POST_FIELDS = ("slug", "url", "titel", "datum")
-REQUIRED_GAME_FIELDS = ("datum", "heim", "gast")
+# Hart erforderlich. spielnr ist die stabile ABF-ID, ohne sie laufen wir
+# in Re-Scrape-Duplikate und ICS-UID-Drift.
+REQUIRED_GAME_FIELDS = ("datum", "heim", "gast", "spielnr")
+# Weich – nur Warnung, weil die ABF-Daten gelegentlich ohne Ort kommen
+# und der Maintainer das hinterher auffuellen muss.
+RECOMMENDED_GAME_FIELDS = ("zeit", "ort", "phase")
 TIME_RX = re.compile(r"^\d{2}:\d{2}$")
 HOME_VENUE_KEYWORD = "Geese Ballpark"
 TEAM_NAME = "Crazy Geese"
@@ -81,8 +86,8 @@ def _check_verein(verein: object, errors: list[str], warnings: list[str]) -> Non
         if not verein.get(field):
             errors.append(f"verein.{field} fehlt oder ist leer.")
     saison = verein.get("saison")
-    if saison and not re.match(r"^\d{4}$", str(saison)):
-        warnings.append(f"verein.saison '{saison}' – erwarte 4-stelliges Jahr.")
+    if saison and not re.match(r"^(19|20)\d{2}$", str(saison)):
+        warnings.append(f"verein.saison '{saison}' – erwarte plausibles 4-stelliges Jahr (19xx/20xx).")
 
 
 def _check_kontakt(kontakt: object, errors: list[str], warnings: list[str]) -> None:
@@ -226,6 +231,9 @@ def _check_spiele(spiele: object, errors: list[str], warnings: list[str]) -> Non
             for field in REQUIRED_GAME_FIELDS:
                 if not g.get(field):
                     errors.append(f"{where}.{field} fehlt.")
+            for field in RECOMMENDED_GAME_FIELDS:
+                if not g.get(field):
+                    warnings.append(f"{where}.{field} fehlt (empfohlen).")
 
             datum = g.get("datum")
             if datum and not _is_valid_date(datum):
@@ -308,10 +316,11 @@ def _check_one_ics(
         errors.append(f"{label}-ICS hat extra Event {dt} (nicht in data.json).")
 
     # UID-Eindeutigkeit
-    uids = re.findall(r"UID:(\S+)", text)
-    dups = {u for u in uids if uids.count(u) > 1}
-    for u in sorted(dups):
-        errors.append(f"{label}-ICS hat doppelte UID: {u}.")
+    from collections import Counter
+    uid_counts = Counter(re.findall(r"UID:(\S+)", text))
+    for u, n in sorted(uid_counts.items()):
+        if n > 1:
+            errors.append(f"{label}-ICS hat doppelte UID: {u} ({n}x).")
 
 
 if __name__ == "__main__":

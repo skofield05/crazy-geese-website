@@ -1,0 +1,7 @@
+# Runtime dependencies fuer scripts/scraper.py
+# Wird von .github/workflows/update-standings.yml installiert.
+#
+# Optionale Dev-Tools (Bilder-Pipeline) werden nicht hier gepinnt:
+#   - Pillow: nur lokal fuer scripts/optimize_blog_images.py noetig
+
+playwright==1.57.0

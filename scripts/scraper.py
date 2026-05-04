@@ -48,7 +48,13 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from playwright.sync_api import sync_playwright, Error as PlaywrightError, TimeoutError as PlaywrightTimeoutError
+
+# Spiel-Datumsvergleiche müssen in Wiener Lokalzeit laufen, nicht UTC.
+# Sonst landen Spiele am späten Abend MESZ in der falschen Tagesbucket,
+# weil GitHub-Runner in UTC laufen.
+TZ_VIENNA = ZoneInfo("Europe/Vienna")
 
 # Lokales Modul (gleicher Ordner)
 sys.path.insert(0, str(Path(__file__).parent))
@@ -177,7 +183,7 @@ def determine_phase():
       Sep       -> Playoffs
       Okt–Dez   -> Endklassement
     """
-    month = datetime.now().month
+    month = datetime.now(TZ_VIENNA).month
     if month <= 3:
         return "Vorsaison"
     if month <= 8:
@@ -795,7 +801,7 @@ def update_data():
     print("=" * 60)
     print("ABF SCRAPER - Rohrbach Crazy Geese")
     print("=" * 60)
-    print(f"Zeitpunkt: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Zeitpunkt: {datetime.now(TZ_VIENNA).strftime('%Y-%m-%d %H:%M:%S')} (Wien)")
     print(f"Datenquelle: {ABF_BASE}")
 
     # Bestehende Daten laden
@@ -819,9 +825,9 @@ def update_data():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-
         try:
+            page = browser.new_page()
+
             # 1. Tabelle scrapen (ABF primaer)
             abf_teams = scrape_standings(page)
 
@@ -860,7 +866,7 @@ def update_data():
     teams = _resolve_standings(abf_teams, mets_teams, data, scrape_errors)
     if teams:
         data["tabelle"]["teams"] = teams
-        data["tabelle"]["stand"] = datetime.now().strftime("%Y-%m-%d")
+        data["tabelle"]["stand"] = datetime.now(TZ_VIENNA).strftime("%Y-%m-%d")
         data["tabelle"]["phase"] = determine_phase()
 
     # Spiele: ABF bevorzugen, Metrostars als Fallback. Bei beiden vorhanden:
@@ -873,7 +879,7 @@ def update_data():
     updated_count = 0
     skipped_ghost = 0
     normalized_count = 0
-    today = datetime.now().date()
+    today = datetime.now(TZ_VIENNA).date()
 
     # Arbeite auf flacher Liste-Kopie. Die Dict-Objekte sind shared mit
     # data["spiele"][...], Mutationen wirken automatisch durch.
@@ -1024,7 +1030,7 @@ def update_data():
 
     data["spiele"]["vergangene"] = vergangene
     data["spiele"]["naechste"] = naechste
-    data["spiele"]["letztes_update"] = datetime.now().strftime("%Y-%m-%d")
+    data["spiele"]["letztes_update"] = datetime.now(TZ_VIENNA).strftime("%Y-%m-%d")
 
     print(f"      Neue Spiele hinzugefügt: {added_count}")
     print(f"      Aktualisiert: {updated_count}")

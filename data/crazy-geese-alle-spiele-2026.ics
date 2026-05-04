@@ -10,7 +10,7 @@ DTEND;TZID=Europe/Vienna:20260516T133000
 SUMMARY:⚾ Schremser Beers 2 vs Crazy Geese (HEIM)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-2026-05-16-1100@crazy-geese.at
+UID:cg-13@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260516T160000
@@ -18,7 +18,7 @@ DTEND;TZID=Europe/Vienna:20260516T183000
 SUMMARY:⚾ Graz Dirty Sox vs Crazy Geese (HEIM)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-2026-05-16-1600@crazy-geese.at
+UID:cg-15@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260523T110000
@@ -26,7 +26,7 @@ DTEND;TZID=Europe/Vienna:20260523T133000
 SUMMARY:⚾ Crazy Geese vs Danube Titans (in Rohrbach)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nSpielort verlegt nach Rohrbach – Eintritt frei!
-UID:cg-2026-05-23-1100@crazy-geese.at
+UID:cg-16@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260523T160000
@@ -34,7 +34,7 @@ DTEND;TZID=Europe/Vienna:20260523T183000
 SUMMARY:⚾ Crazy Geese vs Vienna Lawnmowers (in Rohrbach)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nSpielort verlegt nach Rohrbach – Eintritt frei!
-UID:cg-2026-05-23-1600@crazy-geese.at
+UID:cg-17@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260613T110000
@@ -42,7 +42,7 @@ DTEND;TZID=Europe/Vienna:20260613T133000
 SUMMARY:⚾ Danube Titans vs Crazy Geese (HEIM)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-2026-06-13-1100@crazy-geese.at
+UID:cg-28@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260613T160000
@@ -50,7 +50,7 @@ DTEND;TZID=Europe/Vienna:20260613T183000
 SUMMARY:⚾ Vienna Metrostars 3 vs Crazy Geese (HEIM)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-2026-06-13-1600@crazy-geese.at
+UID:cg-30@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260620T133000
@@ -58,7 +58,7 @@ DTEND;TZID=Europe/Vienna:20260620T160000
 SUMMARY:⚾ Tulln Ravens vs Crazy Geese
 LOCATION:Sox Field\, Graz
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-2026-06-20-1330@crazy-geese.at
+UID:cg-35@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260620T160000
@@ -66,7 +66,7 @@ DTEND;TZID=Europe/Vienna:20260620T183000
 SUMMARY:⚾ Crazy Geese vs Graz Dirty Sox
 LOCATION:Sox Field\, Graz
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-2026-06-20-1600@crazy-geese.at
+UID:cg-36@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260719T110000
@@ -74,7 +74,7 @@ DTEND;TZID=Europe/Vienna:20260719T133000
 SUMMARY:⚾ Crazy Geese vs Vienna Metrostars 3
 LOCATION:Freudenau\, Wien
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-2026-07-19-1100@crazy-geese.at
+UID:cg-52@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260719T133000
@@ -82,7 +82,7 @@ DTEND;TZID=Europe/Vienna:20260719T160000
 SUMMARY:⚾ Crazy Geese vs Tulln Ravens
 LOCATION:Freudenau\, Wien
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-2026-07-19-1330@crazy-geese.at
+UID:cg-53@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260802T110000
@@ -90,7 +90,7 @@ DTEND;TZID=Europe/Vienna:20260802T133000
 SUMMARY:⚾ Crazy Geese vs Schremser Beers 2
 LOCATION:Beers Field\, Schrems
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-2026-08-02-1100@crazy-geese.at
+UID:cg-61@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260802T133000
@@ -98,7 +98,7 @@ DTEND;TZID=Europe/Vienna:20260802T160000
 SUMMARY:⚾ Crazy Geese vs Woodquarter Red Devils
 LOCATION:Beers Field\, Schrems
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-2026-08-02-1330@crazy-geese.at
+UID:cg-62@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260815T110000
@@ -106,7 +106,7 @@ DTEND;TZID=Europe/Vienna:20260815T133000
 SUMMARY:⚾ Vienna Bucks vs Crazy Geese (HEIM)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-2026-08-15-1100@crazy-geese.at
+UID:cg-67@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260815T160000
@@ -114,6 +114,6 @@ DTEND;TZID=Europe/Vienna:20260815T183000
 SUMMARY:⚾ Vienna Lawnmowers vs Crazy Geese (HEIM)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-2026-08-15-1600@crazy-geese.at
+UID:cg-69@crazy-geese.at
 END:VEVENT
 END:VCALENDAR

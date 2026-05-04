@@ -337,6 +337,9 @@ In `data/data.json` → `spiele.vergangene`:
 | Blog-Artikel | `posts/<slug>.html` |
 | Blog-Bilder | `img/blog/<slug>/` (full + thumb) |
 | Blog-Helpers | `scripts/lightbox.js`, `scripts/optimize_blog_images.py` |
+| Page-Bootstraps | `scripts/page-<name>.js` (index, baseball, blog, archiv, softball), `scripts/post-<slug>.js` |
+| Metrostars-Fallback | `scripts/metrostars.py` (HTTP-only Backup-Datenquelle, vom Scraper importiert) |
+| Python-Deps | `requirements.txt` (Playwright, gepinnt) |
 
 ---
 
@@ -349,6 +352,18 @@ In `data/data.json` → `spiele.vergangene`:
 ---
 
 ## Changelog
+
+### 2026-05-04
+- **Security/CSP-Haertung:** `'unsafe-inline'` aus `script-src` und `style-src` der CSP entfernt (alle 9 HTML-Files konsistent). Dazu pro Seite ein per-page Bootstrap nach `scripts/page-<name>.js` ausgelagert (`page-index`, `page-baseball`, `page-blog`, `page-archiv`, `page-softball`, `post-schulcup-mattersburg`); einfache Seiten (kontakt, nachwuchs, was-ist-baseball) brauchen keinen eigenen Bootstrap mehr, weil `shared.js` jetzt am Ende `setFooterYear()` + `setupMobileMenu()` selbst aufruft (idempotent via `dataset.menuInit`-Guard). Eine letzte Inline-`style=`-Stelle in `nachwuchs.html` durch `.schule-interesse`-Klasse ersetzt
+- **Workflow als Gate:** `update-standings.yml` ruft `validate_data.py` jetzt zwischen Scraper und ICS-Regenerierung auf — bei kaputten Daten wird nicht mehr committet. Dependencies via neuer `requirements.txt` (Playwright auf 1.57.0 gepinnt) statt `pip install playwright` ohne Pin
+- **Validator schaerfer:** `REQUIRED_GAME_FIELDS` jetzt `(datum, heim, gast, spielnr)` (vorher ohne `spielnr`); `RECOMMENDED_GAME_FIELDS` (`zeit, ort, phase`) als Warnung. Saison-Regex `^(19|20)\d{2}$`. UID-Duplikat-Check auf `Counter` (O(n))
+- **Scraper-Fixes:** `datetime.now()` durchgaengig auf `Europe/Vienna` umgestellt (GitHub-Runner laufen UTC -> Spielzeitvergleiche standen halbtags falsch). Browser-Lifecycle: `browser.new_page()` jetzt im `try`-Block, damit `finally browser.close()` auch bei `new_page()`-Failures greift
+- **ICS UID stabilisiert:** UIDs basieren jetzt auf `spielnr` (`cg-<spielnr>@crazy-geese.at`) statt Datum+Zeit — Termin-Verlegungen werden von Kalender-Apps als Update erkannt, nicht als neues Event. Fallback auf altes Schema nur ohne `spielnr`. Beide ICS-Files regeneriert
+- **Lightbox haerter:** URL-Validierung in `lightbox.js render()` — `javascript:`/`data:`-URIs werden durch `isSafeImageUrl()` blockiert, falls images aus weniger vertrauenswuerdiger Quelle kommen
+- **A11y:** `<h1>` (visually-hidden) auf `index.html` ergaenzt — Heading-Hierarchie war broken. `prefers-reduced-motion` jetzt komplett (globaler Reset auf `*` plus explizit `.hero-logo-bg`); vorher liefen `.hero-logo-pulse` und andere Animationen weiter
+- **Privacy:** Telefonnummern und private @gmail/@gmx/@icloud-Adressen aus `data/alte-website-infos.md` redigiert — gehoeren nicht in ein oeffentliches Repo
+- **Aufraeumen:** `scripts/download_images.py` geloescht (Einmal-Backup, hat seinen Job getan, Bilder liegen schon in `data/alte-website-bilder/`). `metrostars.py` als HTTP-Fallback im Scraper jetzt in den "Wichtige Pfade"-Tabelle dokumentiert
+- Cache-Buster aller `shared.js`/`lightbox.js`-Verweise auf `?v=2026-05-04`
 
 ### 2026-04-28
 - Code-Review-Folgearbeiten: Tabellen-Scraper repariert (ABF-Markup hat sich geaendert, scrape_standings parst nun heuristisch ueber die Team-Cell statt fester Indices), `TEAM_NAME_OVERRIDES` zentralisiert kanonische Teamnamen ("Dirty Sox Graz" -> "Graz Dirty Sox" etc.) damit Tabelle und Spiele konsistent sind

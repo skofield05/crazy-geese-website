@@ -1622,9 +1622,22 @@ footer {
     scroll-behavior: auto;
   }
 
+  /* Globaler Reset: alle Animationen und Uebergaenge weitestgehend
+     ausblenden. Die Selektor-spezifischen Regeln darunter sind explizit
+     fuer eigene @keyframes (hero-logo-pulse, billa-bounce, ...). */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
   .game-card,
   .slide,
-  .billa-sticker {
+  .billa-sticker,
+  .hero-logo-bg {
     transition: none;
     animation: none;
   }
@@ -2001,4 +2014,26 @@ footer {
     height: 36px;
     font-size: 1.5rem;
   }
+}
+
+/* Sektion "Schule kontaktieren" auf nachwuchs.html – ersetzt vormals
+   Inline-Style margin-top, damit CSP keine 'unsafe-inline' fuer Styles
+   mehr zulassen muss. */
+.schule-interesse {
+  margin-top: var(--space-lg);
+}
+
+/* Screenreader-only: visuell versteckt, aber fuer Assistive Tech sichtbar.
+   Genutzt fuer das semantisch noetige h1 auf der Landing Page, das im
+   Layout durch die Highlight-Karten/Spielplan-Grid uebernommen wird. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

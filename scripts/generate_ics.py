@@ -10,8 +10,10 @@ Konventionen:
       "(in Rohrbach)" -> Crazy Geese sind formal Gast, Spielort aber Rohrbach
       kein Suffix     -> alle anderen
   - DESCRIPTION enthaelt die Phase und ggf. den Heim-Hinweis.
-  - UID-Schema: cg-YYYY-MM-DD-HHMM@crazy-geese.at (stabil, bleibt zwischen
-    Laeufen gleich, damit Kalender-Apps Updates erkennen).
+  - UID-Schema: cg-<spielnr>@crazy-geese.at (z.B. "cg-1234@crazy-geese.at").
+    spielnr ist die stabile ABF-ID; damit erkennen Kalender-Apps Termin-
+    Verlegungen als Update statt als neues Event. Nur bei fehlender spielnr
+    fallback auf altes Schema cg-YYYY-MM-DD-HHMM@crazy-geese.at.
 
 Nutzung (aus dem Repo-Root):
     python scripts/generate_ics.py
@@ -108,7 +110,14 @@ def _event(game: dict) -> dict:
     start = datetime.datetime.strptime(f"{datum} {zeit}", "%Y-%m-%d %H:%M")
     end = start + datetime.timedelta(hours=2, minutes=30)
 
-    uid = f"cg-{datum}-{zeit.replace(':', '')}@crazy-geese.at"
+    # UID stabil ueber Verlegungen: spielnr ist die ABF-ID, die bleibt gleich
+    # auch wenn Datum/Zeit/Ort sich aendern. Fallback nur fuer Spiele die
+    # (entgegen validate_data.py) keine spielnr haben.
+    spielnr = (game.get("spielnr") or "").lstrip("#").strip()
+    if spielnr:
+        uid = f"cg-{spielnr}@crazy-geese.at"
+    else:
+        uid = f"cg-{datum}-{zeit.replace(':', '')}@crazy-geese.at"
 
     return {
         "dtstart": start.strftime("%Y%m%dT%H%M%S"),

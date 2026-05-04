@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com; base-uri 'self'; form-action 'self'">
   <title>Blog – Rohrbach Crazy Geese</title>
   <meta name="description" content="News und Berichte der Rohrbach Crazy Geese – Baseball, Nachwuchs und Schulkooperationen.">
   <link rel="canonical" href="https://crazy-geese.at/blog.html">
@@ -84,55 +84,7 @@
   </footer>
 
   <script src="scripts/shared.js?v=2026-05-04"></script>
-  <script>
-    setFooterYear();
-    setupMobileMenu();
-
-    async function loadBlog() {
-      const list = document.getElementById('blog-list');
-      try {
-        const data = await fetchJson('data/data.json');
-        const posts = (data.blog && data.blog.posts) || [];
-        if (posts.length === 0) {
-          list.innerHTML = '<p class="no-games">Noch keine Beiträge.</p>';
-          return;
-        }
-        const sorted = [...posts].sort((a, b) => (b.datum || '').localeCompare(a.datum || ''));
-        list.innerHTML = sorted.map(renderPost).join('');
-      } catch (err) {
-        console.error(err);
-        showError(list, 'Beiträge konnten nicht geladen werden.');
-      }
-    }
-
-    function renderPost(post) {
-      const url = escapeHtml(post.url);
-      const title = escapeHtml(post.titel);
-      const date = post.datum ? formatDateLong(post.datum) : '';
-      const category = escapeHtml(post.kategorie || '');
-      const teaser = escapeHtml(post.teaser || '');
-      const cover = post.cover ? escapeHtml(post.cover) : '';
-      const coverAlt = escapeHtml(post.cover_alt || post.titel || '');
-      return `
-        <article class="blog-card">
-          <a href="${url}" class="blog-card-link">
-            ${cover ? `<div class="blog-card-cover"><img src="${cover}" alt="${coverAlt}" loading="lazy" decoding="async"></div>` : ''}
-            <div class="blog-card-body">
-              <p class="blog-card-meta">
-                ${date ? `<time datetime="${escapeHtml(post.datum)}">${date}</time>` : ''}
-                ${category ? `<span class="blog-card-category">${category}</span>` : ''}
-              </p>
-              <h2 class="blog-card-title">${title}</h2>
-              ${teaser ? `<p class="blog-card-teaser">${teaser}</p>` : ''}
-              <span class="blog-card-more">Weiterlesen →</span>
-            </div>
-          </a>
-        </article>
-      `;
-    }
-
-    loadBlog();
-  </script>
+  <script src="scripts/page-blog.js?v=2026-05-04"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "fa36618f3ac94932a361e46b5ccf4a03"}'></script>
   <!-- End Cloudflare Web Analytics -->

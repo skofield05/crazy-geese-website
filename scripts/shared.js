@@ -1,6 +1,11 @@
 // Gemeinsame Funktionen fuer alle Seiten.
 // Wird von allen HTML-Seiten geladen (index, baseball, softball, nachwuchs,
 // kontakt, archiv, was-ist-baseball, blog, posts/*).
+//
+// Auto-Init am Ende der Datei: setFooterYear() + setupMobileMenu() laufen
+// automatisch, damit Seiten ohne eigene Render-Logik (kontakt, nachwuchs,
+// was-ist-baseball) keinen eigenen Bootstrap-Script brauchen. Seiten mit
+// eigener Logik laden zusaetzlich scripts/page-<name>.js.
 
 const OUR_TEAM_NAME = 'Crazy Geese';
 const OUR_TEAM_KUERZEL = 'CG';
@@ -46,6 +51,8 @@ function formatDateLong(dateStr) {
 function setupMobileMenu() {
   const btn = document.getElementById('mobile-menu-btn');
   if (!btn) return;
+  if (btn.dataset.menuInit === 'on') return;
+  btn.dataset.menuInit = 'on';
   const nav = document.querySelector('.nav');
   if (!nav) return;
 
@@ -290,3 +297,11 @@ function renderHighlightGame(game) {
     ${game.ort ? `<span class="highlight-location">📍 ${escapeHtml(game.ort)}</span>` : ''}
   `;
 }
+
+// ----------------------------------------------------------------------------
+// Auto-Init: laeuft sobald shared.js eingebunden wird. Da alle <script>-Tags
+// im <body>-Footer stehen, ist das DOM zu diesem Zeitpunkt geparst.
+// Idempotent dank header.dataset.adaptiveNav-Guard in setupAdaptiveNav().
+// ----------------------------------------------------------------------------
+setFooterYear();
+setupMobileMenu();

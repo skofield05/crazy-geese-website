@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com; base-uri 'self'; form-action 'self'">
   <title>Baseball-Schulcup an der NMS Mattersburg – Rohrbach Crazy Geese</title>
   <meta name="description" content="Bericht vom Baseball-Schulcup an der Neuen Mittelschule Mattersburg am 17.04.2026 – drei erste und drei zweite Klassen, Teamgeist und spannende Spiele.">
   <link rel="canonical" href="https://crazy-geese.at/posts/schulcup-mattersburg-2026-04.html">
@@ -123,31 +123,8 @@
   </footer>
 
   <script src="../scripts/shared.js?v=2026-05-04"></script>
-  <script src="../scripts/lightbox.js?v=2026-04-22b"></script>
-  <script>
-    setFooterYear();
-    setupMobileMenu();
-
-    const IMG_BASE = '../img/blog/schulcup-mattersburg-2026-04/';
-    const TOTAL = 9;
-    const images = Array.from({ length: TOTAL }, (_, i) => {
-      const n = String(i + 1).padStart(2, '0');
-      return {
-        thumb: `${IMG_BASE}schulcup-mattersburg-${n}-thumb.jpg`,
-        full: `${IMG_BASE}schulcup-mattersburg-${n}.jpg`,
-        caption: `Schulcup Mattersburg – Bild ${i + 1} von ${TOTAL}`
-      };
-    });
-
-    const grid = document.getElementById('gallery-grid');
-    grid.innerHTML = images.map((img, i) => `
-      <button type="button" class="gallery-item" data-index="${i}" aria-label="Bild ${i + 1} öffnen">
-        <img src="${img.thumb}" alt="${img.caption}" loading="lazy" decoding="async">
-      </button>
-    `).join('');
-
-    setupLightbox('gallery-grid', images);
-  </script>
+  <script src="../scripts/lightbox.js?v=2026-05-04"></script>
+  <script src="../scripts/post-schulcup-mattersburg.js?v=2026-05-04"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "fa36618f3ac94932a361e46b5ccf4a03"}'></script>
   <!-- End Cloudflare Web Analytics -->

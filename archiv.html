@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://cloudflareinsights.com https://static.cloudflareinsights.com; base-uri 'self'; form-action 'self'">
   <title>Archiv – Rohrbach Crazy Geese</title>
   <meta name="description" content="Archiv vergangener Saisons der Rohrbach Crazy Geese">
   <link rel="canonical" href="https://crazy-geese.at/archiv.html">
@@ -107,45 +107,7 @@
   </footer>
 
   <script src="scripts/shared.js?v=2026-05-04"></script>
-  <script>
-    async function loadArchiv() {
-      try {
-        const data = await fetchJson('data/archiv/2025.json');
-        renderArchiv(data);
-      } catch (error) {
-        console.error('Fehler:', error);
-        showError(document.getElementById('archiv-games-2025'), 'Archiv konnte nicht geladen werden.');
-      }
-    }
-
-    function renderArchiv(data) {
-      const tbody = document.getElementById('archiv-standings-2025');
-      const teams = data.tabelle.teams || [];
-      const leader = teams.reduce((best, t) => {
-        if (!best) return t;
-        const bd = (Number(best.siege) || 0) - (Number(best.niederlagen) || 0);
-        const td = (Number(t.siege) || 0) - (Number(t.niederlagen) || 0);
-        return td > bd ? t : best;
-      }, null);
-      tbody.innerHTML = teams.map(team => `
-        <tr class="${isOurKuerzel(team.kuerzel) || isOurTeam(team.name) ? 'highlight' : ''}">
-          <td class="col-rank">${escapeHtml(team.rang)}</td>
-          <td class="col-team">${escapeHtml(team.name)}</td>
-          <td class="col-stat">${escapeHtml(team.siege)}</td>
-          <td class="col-stat">${escapeHtml(team.niederlagen)}</td>
-          <td class="col-stat">${computePCT(team)}</td>
-          <td class="col-stat">${computeGB(team, leader)}</td>
-        </tr>
-      `).join('');
-
-      const gamesDiv = document.getElementById('archiv-games-2025');
-      gamesDiv.innerHTML = data.spiele.map(g => renderGame(g)).join('');
-    }
-
-    setFooterYear();
-    setupMobileMenu();
-    loadArchiv();
-  </script>
+  <script src="scripts/page-archiv.js?v=2026-05-04"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "fa36618f3ac94932a361e46b5ccf4a03"}'></script>
   <!-- End Cloudflare Web Analytics -->
