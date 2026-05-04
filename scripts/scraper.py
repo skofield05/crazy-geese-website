@@ -592,33 +592,70 @@ def _resolve_standings(abf_teams, mets_teams, data, scrape_errors):
     """
     Entscheidet, welche Tabellen-Daten in data.json wandern.
 
-    Strategie:
-      - ABF lieferte Teams        -> die nutzen, Metrostars als Verify (Diff-Warn)
-      - ABF leer, Metrostars hat  -> Metrostars als Fallback nutzen
-      - Beide leer                -> Fehler sammeln, alte Tabelle bleibt
+    Strategie "mehr Spiele = aktueller":
+      Pro Quelle das Total aller absolvierten Spiele (sum W+L) berechnen,
+      die Quelle mit mehr Total gewinnt. ABF bei Gleichstand (kanonische
+      Quelle, sollten dann ohnehin identisch sein). Hintergrund: wenn ABF
+      einen Spieltag noch nicht eingetragen hat, Metrostars aber schon,
+      wuerde 'ABF immer primaer' veraltete Records reinschreiben.
+
+    Edge-Cases:
+      - Nur eine Quelle hat Daten -> die nutzen.
+      - Beide leer                -> Fehler sammeln, alte Tabelle bleibt.
+
+    Bei beiden Quellen: Diff-Warnung in jedem Fall (auch bei selbem Total).
+    Kuerzel werden ergaenzt, falls die gewaehlte Quelle keine liefert
+    (Metrostars hat keine).
     """
+    if abf_teams and mets_teams:
+        for d in _diff_standings(abf_teams, mets_teams):
+            print(f"      [DIVERGENZ] {d}")
+
+        abf_total = sum(_team_games(t) for t in abf_teams)
+        mets_total = sum(_team_games(t) for t in mets_teams)
+        if mets_total > abf_total:
+            print(f"      [WAEHLE METROSTARS] {mets_total} Total-Spiele vs ABF {abf_total} – "
+                  "Metrostars ist aktueller.")
+            _ensure_kuerzel(mets_teams, [abf_teams, data.get("tabelle", {}).get("teams", [])])
+            return mets_teams
+        return abf_teams
+
     if abf_teams:
-        if mets_teams:
-            for d in _diff_standings(abf_teams, mets_teams):
-                print(f"      [DIVERGENZ] {d}")
         return abf_teams
 
     if mets_teams:
         print(f"      [FALLBACK] ABF-Tabelle leer – nutze Metrostars ({len(mets_teams)} Teams)")
-        # Metrostars liefert keine Kuerzel – aus bestehender data.json uebernehmen
-        existing_kuerzel = {
-            t.get("name"): t.get("kuerzel", "")
-            for t in data.get("tabelle", {}).get("teams", [])
-        }
-        for t in mets_teams:
-            if not t.get("kuerzel"):
-                t["kuerzel"] = existing_kuerzel.get(t["name"], "")
+        _ensure_kuerzel(mets_teams, [data.get("tabelle", {}).get("teams", [])])
         return mets_teams
 
     scrape_errors.append(
         "Tabelle: weder ABF noch Metrostars haben Teams zurueckgegeben."
     )
     return []
+
+
+def _team_games(team):
+    """Total absolvierte Spiele = Siege + Niederlagen (Unentschieden zaehlen mit)."""
+    return (
+        (team.get("siege") or 0)
+        + (team.get("niederlagen") or 0)
+        + (team.get("unentschieden") or 0)
+    )
+
+
+def _ensure_kuerzel(teams, fallback_lists):
+    """Fuellt fehlende kuerzel-Felder aus den ersten Lookup-Listen, die was haben."""
+    lookups = []
+    for src in fallback_lists:
+        lookups.append({t.get("name"): t.get("kuerzel", "") for t in src if t.get("name")})
+    for t in teams:
+        if t.get("kuerzel"):
+            continue
+        for lk in lookups:
+            k = lk.get(t["name"])
+            if k:
+                t["kuerzel"] = k
+                break
 
 
 def _diff_standings(abf_teams, mets_teams):
@@ -648,12 +685,22 @@ def _resolve_games(abf_games, mets_games, rounds, scrape_errors):
     Entscheidet, welche Spiele-Daten in den Merge-Pipeline-Schritt gehen.
 
     Strategie:
-      - ABF lieferte Spiele          -> die nutzen, Ergebnisse verifizieren
-      - ABF leer (aber Runden offen) -> Fallback Metrostars + Fehler-Hinweis
-      - Beide leer                   -> Fehler sammeln, leere Liste zurueck
+      - ABF lieferte Spiele -> ABF nutzen, ABER pro Spiel das Ergebnis von
+        Metrostars uebernehmen, wenn ABF noch keins hat. Hintergrund:
+        ABFs 0:0-Platzhalter fuer ungespielte Spiele wird zwar vom Scraper
+        gefiltert, aber Metrostars hat manchmal das echte Ergebnis bevor
+        ABF es eintraegt – damit fuellen wir solche Luecken. Bei beidseitigem
+        Ergebnis und Diff: Warnung loggen.
+      - ABF leer            -> Metrostars als Fallback (mit Errorhinweis,
+        falls Runden vorhanden waren).
+      - Beide leer          -> Fehler sammeln, leere Liste zurueck.
     """
     if abf_games:
         if mets_games:
+            filled = _fill_results_from(abf_games, mets_games)
+            if filled:
+                print(f"      [METROSTARS-FILL] {filled} Spielergebnisse von Metrostars "
+                      f"uebernommen (ABF hatte noch keins).")
             for d in _diff_game_results(abf_games, mets_games):
                 print(f"      [DIVERGENZ] {d}")
         return abf_games
@@ -672,6 +719,29 @@ def _resolve_games(abf_games, mets_games, rounds, scrape_errors):
         "Spiele: weder ABF noch Metrostars haben Spiele zurueckgegeben."
     )
     return []
+
+
+def _fill_results_from(target_games, source_games):
+    """
+    Fuer jedes target-Spiel ohne Ergebnis: schaue im source nach (Match per
+    datum/heim/gast) und uebernimm dort das Ergebnis. Mutiert target_games
+    in-place. Returns Anzahl der aufgefuellten Spiele.
+    """
+    source_by_key = {
+        (g.get("datum"), g.get("heim"), g.get("gast")): g
+        for g in source_games
+        if g.get("ergebnis_heim") is not None
+    }
+    filled = 0
+    for tg in target_games:
+        if tg.get("ergebnis_heim") is not None:
+            continue
+        sg = source_by_key.get((tg.get("datum"), tg.get("heim"), tg.get("gast")))
+        if sg:
+            tg["ergebnis_heim"] = sg["ergebnis_heim"]
+            tg["ergebnis_gast"] = sg["ergebnis_gast"]
+            filled += 1
+    return filled
 
 
 def _diff_game_results(abf_games, mets_games):
