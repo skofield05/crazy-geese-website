@@ -5,22 +5,6 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:Crazy Geese – Alle Spiele 2026
 X-WR-TIMEZONE:Europe/Vienna
 BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260503T133000
-DTEND;TZID=Europe/Vienna:20260503T160000
-SUMMARY:⚾ Woodquarter Red Devils vs Crazy Geese
-LOCATION:Sportzentrum Spenadlwiese\, Wien
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-2026-05-03-1330@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260503T160000
-DTEND;TZID=Europe/Vienna:20260503T183000
-SUMMARY:⚾ Crazy Geese vs Vienna Bucks
-LOCATION:Sportzentrum Spenadlwiese\, Wien
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-2026-05-03-1600@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260516T110000
 DTEND;TZID=Europe/Vienna:20260516T133000
 SUMMARY:⚾ Schremser Beers 2 vs Crazy Geese (HEIM)

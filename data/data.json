@@ -25,43 +25,43 @@
     }
   },
   "tabelle": {
-    "stand": "2026-05-03",
+    "stand": "2026-05-04",
     "phase": "Regular Season",
     "teams": [
       {
         "rang": 1,
-        "name": "Vienna Bucks",
-        "kuerzel": "BU",
+        "name": "Vienna Metrostars 3",
+        "kuerzel": "MS",
         "siege": 2,
         "niederlagen": 0,
         "unentschieden": 0
       },
       {
         "rang": 2,
-        "name": "Vienna Lawnmowers",
-        "kuerzel": "LM",
-        "siege": 1,
+        "name": "Rohrbach Crazy Geese",
+        "kuerzel": "CG",
+        "siege": 2,
+        "niederlagen": 0,
+        "unentschieden": 0
+      },
+      {
+        "rang": 3,
+        "name": "Vienna Bucks",
+        "kuerzel": "BU",
+        "siege": 3,
         "niederlagen": 1,
         "unentschieden": 0
       },
       {
-        "rang": 3,
-        "name": "Rohrbach Crazy Geese",
-        "kuerzel": "CG",
-        "siege": 0,
-        "niederlagen": 0,
+        "rang": 4,
+        "name": "Vienna Lawnmowers",
+        "kuerzel": "LM",
+        "siege": 2,
+        "niederlagen": 2,
         "unentschieden": 0
       },
       {
-        "rang": 3,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
-        "siege": 0,
-        "niederlagen": 0,
-        "unentschieden": 0
-      },
-      {
-        "rang": 3,
+        "rang": 5,
         "name": "Danube Titans",
         "kuerzel": "DT",
         "siege": 0,
@@ -69,33 +69,33 @@
         "unentschieden": 0
       },
       {
-        "rang": 3,
-        "name": "Vienna Metrostars 3",
-        "kuerzel": "MS",
+        "rang": 6,
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
         "siege": 0,
         "niederlagen": 0,
         "unentschieden": 0
       },
       {
-        "rang": 3,
-        "name": "Woodquarter Red Devils",
-        "kuerzel": "RD",
+        "rang": 7,
+        "name": "Tulln Ravens",
+        "kuerzel": "TR",
         "siege": 0,
-        "niederlagen": 0,
+        "niederlagen": 2,
         "unentschieden": 0
       },
       {
-        "rang": 3,
+        "rang": 8,
         "name": "Schremser Beers 2",
         "kuerzel": "SB",
         "siege": 0,
-        "niederlagen": 0,
+        "niederlagen": 2,
         "unentschieden": 0
       },
       {
         "rang": 9,
-        "name": "Tulln Ravens",
-        "kuerzel": "TR",
+        "name": "Woodquarter Red Devils",
+        "kuerzel": "RD",
         "siege": 0,
         "niederlagen": 2,
         "unentschieden": 0
@@ -103,26 +103,8 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-05-03",
+    "letztes_update": "2026-05-04",
     "naechste": [
-      {
-        "datum": "2026-05-03",
-        "zeit": "13:30",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Woodquarter Red Devils",
-        "ort": "Sportzentrum Spenadlwiese, Wien",
-        "phase": "Grunddurchgang",
-        "spielnr": "#5"
-      },
-      {
-        "datum": "2026-05-03",
-        "zeit": "16:00",
-        "heim": "Vienna Bucks",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Sportzentrum Spenadlwiese, Wien",
-        "phase": "Grunddurchgang",
-        "spielnr": "#6"
-      },
       {
         "datum": "2026-05-16",
         "zeit": "11:00",
@@ -250,7 +232,30 @@
         "spielnr": "#69"
       }
     ],
-    "vergangene": []
+    "vergangene": [
+      {
+        "datum": "2026-05-03",
+        "zeit": "13:30",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Woodquarter Red Devils",
+        "ergebnis_heim": 10,
+        "ergebnis_gast": 4,
+        "ort": "Sportzentrum Spenadlwiese, Wien",
+        "phase": "Grunddurchgang",
+        "spielnr": "#5"
+      },
+      {
+        "datum": "2026-05-03",
+        "zeit": "16:00",
+        "heim": "Vienna Bucks",
+        "gast": "Rohrbach Crazy Geese",
+        "ergebnis_heim": 11,
+        "ergebnis_gast": 18,
+        "ort": "Sportzentrum Spenadlwiese, Wien",
+        "phase": "Grunddurchgang",
+        "spielnr": "#6"
+      }
+    ]
   },
   "softball": {
     "naechste_termine": [
