@@ -48,7 +48,11 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+from playwright.sync_api import sync_playwright, Error as PlaywrightError, TimeoutError as PlaywrightTimeoutError
+
+# Lokales Modul (gleicher Ordner)
+sys.path.insert(0, str(Path(__file__).parent))
+from metrostars import scrape_standings_metrostars, scrape_games_metrostars
 
 
 def goto_with_retry(page, url, retries=3, **kwargs):
@@ -209,14 +213,26 @@ def scrape_standings(page):
     try:
         page.wait_for_selector("table.standings-print", timeout=15000)
     except PlaywrightTimeoutError:
-        print("      [WARNUNG] standings-print-Tabelle nicht gefunden – Markup geaendert?")
+        # Frueher Ausstieg: ohne Tabelle braucht der nachfolgende
+        # query_selector_all gar nicht erst zu laufen – die React-App
+        # navigiert oft genau dann nochmal weg, was den Execution-Context
+        # zerstoert (Run #22 / 2026-05-04 06:42 UTC). Caller faellt auf
+        # Metrostars zurueck.
+        print("      [WARNUNG] standings-print-Tabelle nicht gefunden – ABF lieferte "
+              "keine Tabelle aus. Fallback auf Metrostars folgt.")
+        return []
     page.wait_for_timeout(1000)
 
     teams = []
     # ABF: <table class="table table-hover standings-print">. Mehrere Tabellen
     # pro Seite (Regular Season + Platzierungsrunde) – wir nehmen die erste
     # nicht-leere.
-    tables = page.query_selector_all("table.standings-print") or page.query_selector_all("table")
+    try:
+        tables = page.query_selector_all("table.standings-print") or page.query_selector_all("table")
+    except PlaywrightError as e:
+        print(f"      [WARNUNG] query_selector_all warf {type(e).__name__} – "
+              "vermutlich Late-Navigation der React-App. Fallback auf Metrostars folgt.")
+        return []
 
     # Heuristisches Parsing: Header hat 7 Spalten (#, Mannschaft, W, L, T, PCT, GB),
     # Body hat 8 (zusaetzliche Logo-Spalte vor Mannschaft) – Indices passen nicht
@@ -569,6 +585,129 @@ def scrape_game_dates(page, games):
 
 
 # =============================================================================
+# QUELLEN-RESOLVE: ABF + METROSTARS
+# =============================================================================
+
+def _resolve_standings(abf_teams, mets_teams, data, scrape_errors):
+    """
+    Entscheidet, welche Tabellen-Daten in data.json wandern.
+
+    Strategie:
+      - ABF lieferte Teams        -> die nutzen, Metrostars als Verify (Diff-Warn)
+      - ABF leer, Metrostars hat  -> Metrostars als Fallback nutzen
+      - Beide leer                -> Fehler sammeln, alte Tabelle bleibt
+    """
+    if abf_teams:
+        if mets_teams:
+            for d in _diff_standings(abf_teams, mets_teams):
+                print(f"      [DIVERGENZ] {d}")
+        return abf_teams
+
+    if mets_teams:
+        print(f"      [FALLBACK] ABF-Tabelle leer – nutze Metrostars ({len(mets_teams)} Teams)")
+        # Metrostars liefert keine Kuerzel – aus bestehender data.json uebernehmen
+        existing_kuerzel = {
+            t.get("name"): t.get("kuerzel", "")
+            for t in data.get("tabelle", {}).get("teams", [])
+        }
+        for t in mets_teams:
+            if not t.get("kuerzel"):
+                t["kuerzel"] = existing_kuerzel.get(t["name"], "")
+        return mets_teams
+
+    scrape_errors.append(
+        "Tabelle: weder ABF noch Metrostars haben Teams zurueckgegeben."
+    )
+    return []
+
+
+def _diff_standings(abf_teams, mets_teams):
+    """Vergleicht W/L pro Team und liefert menschenlesbare Diff-Strings."""
+    abf_by_name = {t["name"]: t for t in abf_teams}
+    mets_by_name = {t["name"]: t for t in mets_teams}
+    diffs = []
+    for name in sorted(set(abf_by_name) | set(mets_by_name)):
+        a = abf_by_name.get(name)
+        m = mets_by_name.get(name)
+        if a and not m:
+            diffs.append(f"'{name}': ABF hat, Metrostars nicht.")
+            continue
+        if m and not a:
+            diffs.append(f"'{name}': Metrostars hat, ABF nicht.")
+            continue
+        if a["siege"] != m["siege"] or a["niederlagen"] != m["niederlagen"]:
+            diffs.append(
+                f"'{name}': ABF {a['siege']}-{a['niederlagen']} vs "
+                f"Metrostars {m['siege']}-{m['niederlagen']}"
+            )
+    return diffs
+
+
+def _resolve_games(abf_games, mets_games, rounds, scrape_errors):
+    """
+    Entscheidet, welche Spiele-Daten in den Merge-Pipeline-Schritt gehen.
+
+    Strategie:
+      - ABF lieferte Spiele          -> die nutzen, Ergebnisse verifizieren
+      - ABF leer (aber Runden offen) -> Fallback Metrostars + Fehler-Hinweis
+      - Beide leer                   -> Fehler sammeln, leere Liste zurueck
+    """
+    if abf_games:
+        if mets_games:
+            for d in _diff_game_results(abf_games, mets_games):
+                print(f"      [DIVERGENZ] {d}")
+        return abf_games
+
+    if mets_games:
+        if rounds:
+            scrape_errors.append(
+                f"Spiele: 0 Treffer in {len(rounds)} ABF-Runde(n) – nutze "
+                f"Metrostars-Fallback. ABF-Kalender-Markup vermutlich geaendert."
+            )
+        else:
+            print(f"      [FALLBACK] ABF-Spiele leer – nutze Metrostars ({len(mets_games)} Spiele)")
+        return mets_games
+
+    scrape_errors.append(
+        "Spiele: weder ABF noch Metrostars haben Spiele zurueckgegeben."
+    )
+    return []
+
+
+def _diff_game_results(abf_games, mets_games):
+    """
+    Vergleicht Ergebnisse fuer Spiele, die in beiden Quellen vorkommen.
+    Match per (datum, heim, gast) – Teamnamen sind beide kanonisiert.
+    """
+    abf_by_key = {}
+    for g in abf_games:
+        if g.get("datum") and g.get("heim") and g.get("gast"):
+            abf_by_key[(g["datum"], g["heim"], g["gast"])] = g
+
+    diffs = []
+    for mg in mets_games:
+        key = (mg.get("datum"), mg.get("heim"), mg.get("gast"))
+        ag = abf_by_key.get(key)
+        if not ag:
+            continue  # Spiel nicht in ABF – kein Verify moeglich, kein Diff
+        a_h, a_g = ag.get("ergebnis_heim"), ag.get("ergebnis_gast")
+        m_h, m_g = mg.get("ergebnis_heim"), mg.get("ergebnis_gast")
+        # Beide haben Ergebnis: vergleichen
+        if a_h is not None and m_h is not None and (a_h != m_h or a_g != m_g):
+            diffs.append(
+                f"{key[0]} {key[1]} vs {key[2]}: "
+                f"ABF {a_h}-{a_g} vs Metrostars {m_h}-{m_g}"
+            )
+        # Nur einer hat Ergebnis: Hinweis (kein Fehler – kann timing sein)
+        elif (a_h is None) != (m_h is None):
+            who = "ABF" if a_h is not None else "Metrostars"
+            diffs.append(
+                f"{key[0]} {key[1]} vs {key[2]}: nur {who} hat Ergebnis"
+            )
+    return diffs
+
+
+# =============================================================================
 # HAUPTFUNKTION
 # =============================================================================
 
@@ -603,24 +742,18 @@ def update_data():
     # bekommen haben (oft sind das immer noch Updates, z.B. Spiele wenn nur
     # die Tabelle scheitert).
     scrape_errors = []
-    new_games = []
+    abf_teams = []
+    abf_games = []
+    rounds = []
+    team_id = None
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
         try:
-            # 1. Tabelle scrapen
-            teams = scrape_standings(page)
-            if teams:
-                data["tabelle"]["teams"] = teams
-                data["tabelle"]["stand"] = datetime.now().strftime("%Y-%m-%d")
-                data["tabelle"]["phase"] = determine_phase()
-            else:
-                scrape_errors.append(
-                    "Tabelle: 0 Teams gefunden. ABF-Markup vermutlich geaendert; "
-                    "Selektor und heuristisches Parsing in scrape_standings() pruefen."
-                )
+            # 1. Tabelle scrapen (ABF primaer)
+            abf_teams = scrape_standings(page)
 
             # 2. Runden und Team-ID holen
             print(f"\n[2/3] SPIELE")
@@ -633,20 +766,36 @@ def update_data():
                 )
             else:
                 # 3. Spiele aus Kalender holen
-                new_games = scrape_games_from_calendar(page, rounds, team_id)
+                abf_games = scrape_games_from_calendar(page, rounds, team_id)
 
-                if rounds and not new_games:
-                    scrape_errors.append(
-                        f"Spiele: 0 Treffer in {len(rounds)} Runde(n) trotz vorhandener "
-                        f"Team-ID. ABF-Kalender-Markup vermutlich geaendert."
-                    )
-
-                # 4. Spieltage holen
-                if new_games:
-                    new_games = scrape_game_dates(page, new_games)
+                # 4. Spieltage holen (echte Spieltage von /schedule-and-results)
+                if abf_games:
+                    abf_games = scrape_game_dates(page, abf_games)
 
         finally:
             browser.close()
+
+    # Metrostars-Statistikseite als Fallback und Verifizierung.
+    # Reine HTTP-Quelle, kein Browser noetig – funktioniert auch wenn ABF
+    # gerade kaputt ist (Run #22 / 2026-05-04 06:42 UTC).
+    print(f"\n[FALLBACK/VERIFY] viennametrostars.at")
+    mets_teams = scrape_standings_metrostars(canonicalize=canonical_team_name)
+    mets_games = scrape_games_metrostars(canonicalize=canonical_team_name, team_filter=TEAM_NAME)
+    if mets_teams:
+        print(f"      Metrostars-Tabelle: {len(mets_teams)} Teams")
+    if mets_games:
+        print(f"      Metrostars-Spiele:  {len(mets_games)}")
+
+    # Tabelle: ABF bevorzugen, Metrostars als Fallback. Bei Disagreement warnen.
+    teams = _resolve_standings(abf_teams, mets_teams, data, scrape_errors)
+    if teams:
+        data["tabelle"]["teams"] = teams
+        data["tabelle"]["stand"] = datetime.now().strftime("%Y-%m-%d")
+        data["tabelle"]["phase"] = determine_phase()
+
+    # Spiele: ABF bevorzugen, Metrostars als Fallback. Bei beiden vorhanden:
+    # Ergebnis-Verify gegen Metrostars (Datum-/Team-Match).
+    new_games = _resolve_games(abf_games, mets_games, rounds, scrape_errors)
 
     # 5. Spiele mergen: bestehende updaten (Verlegungen!), neue hinzufuegen
     print(f"\n[MERGE]")
