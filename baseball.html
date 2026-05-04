@@ -74,7 +74,6 @@
     </section>
 
     <section id="alle-spiele" class="section section-highlight">
-      <h2>Alle Spiele</h2>
       <div class="calendar-download">
         <p>Spiele direkt in deinen Kalender importieren:</p>
         <div class="calendar-buttons">
@@ -83,14 +82,45 @@
         </div>
       </div>
 
-      <h3>Kommende Spiele</h3>
-      <div class="games-list" id="next-games">
-        <!-- Wird per JS befüllt -->
-      </div>
+      <div class="spiele-tabelle-grid">
+        <div class="spiele-col">
+          <h2>Alle Spiele</h2>
 
-      <h3>Spielergebnisse</h3>
-      <div class="games-list" id="past-games">
-        <!-- Wird per JS befüllt -->
+          <h3>Kommende Spiele</h3>
+          <div class="games-list" id="next-games">
+            <!-- Wird per JS befüllt -->
+          </div>
+
+          <h3>Spielergebnisse</h3>
+          <div class="games-list" id="past-games">
+            <!-- Wird per JS befüllt -->
+          </div>
+        </div>
+
+        <aside class="tabelle-col">
+          <h2>⚾ Tabelle</h2>
+          <p class="table-phase" id="table-phase">Vorsaison</p>
+          <div class="table-container">
+            <table class="standings" aria-label="Baseball Landesliga Ost Tabelle">
+              <thead>
+                <tr>
+                  <th class="col-rank">#</th>
+                  <th class="col-team">Team</th>
+                  <th class="col-stat">W</th>
+                  <th class="col-stat">L</th>
+                  <th class="col-stat" title="Win-Prozentsatz">PCT</th>
+                  <th class="col-stat" title="Games Behind">GB</th>
+                </tr>
+              </thead>
+              <tbody id="standings-body">
+                <!-- Wird per JS befüllt -->
+              </tbody>
+            </table>
+          </div>
+          <p class="data-source">
+            Quelle: <a href="https://www.baseballsoftball.at/de/events/baseball-landesliga-ost-2026" target="_blank" rel="noopener">ABF</a>
+          </p>
+        </aside>
       </div>
     </section>
 
@@ -137,6 +167,26 @@
       } else {
         pastGames.innerHTML = '<p class="no-games">Noch keine Spiele in dieser Saison</p>';
       }
+
+      // Tabelle (gleich wie auf der Startseite, mit PCT/GB)
+      document.getElementById('table-phase').textContent = data.tabelle.phase;
+      const teams = data.tabelle.teams || [];
+      const leader = teams.reduce((best, t) => {
+        if (!best) return t;
+        const bd = (Number(best.siege) || 0) - (Number(best.niederlagen) || 0);
+        const td = (Number(t.siege) || 0) - (Number(t.niederlagen) || 0);
+        return td > bd ? t : best;
+      }, null);
+      document.getElementById('standings-body').innerHTML = teams.map(team => `
+        <tr class="${isOurTeam(team.name) ? 'highlight' : ''}">
+          <td class="col-rank">${escapeHtml(team.rang)}</td>
+          <td class="col-team">${escapeHtml(team.name)}</td>
+          <td class="col-stat">${escapeHtml(team.siege)}</td>
+          <td class="col-stat">${escapeHtml(team.niederlagen)}</td>
+          <td class="col-stat">${computePCT(team)}</td>
+          <td class="col-stat">${computeGB(team, leader)}</td>
+        </tr>
+      `).join('');
 
       injectEventSchema([...(data.spiele.naechste || []), ...(data.spiele.vergangene || [])]);
     }
