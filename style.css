@@ -1021,6 +1021,39 @@ li {
   text-align: center;
 }
 
+/* Prominentes Ergebnis fuer absolvierte Spiele.
+   Score-Klassen: score-win / score-loss / score-tie. */
+.game-matchup .score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  min-width: 4.5rem;
+  text-align: center;
+  padding: 2px 10px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.game-matchup .score-win {
+  background: var(--color-win);
+  color: white;
+}
+
+.game-matchup .score-loss {
+  background: var(--color-loss);
+  color: white;
+}
+
+.game-matchup .score-tie {
+  background: var(--color-tie);
+  color: var(--color-bg);
+}
+
+.game-card.next-game-featured .game-matchup .score {
+  font-size: 2rem;
+}
+
 .game-location {
   margin-top: var(--space-sm);
   font-size: 0.95rem;
@@ -1064,6 +1097,32 @@ li {
 
 .game-badge.away {
   background: var(--color-text-muted);
+  color: var(--color-bg);
+}
+
+/* W/L/T-Badge fuer absolvierte Spiele. Rund, klein, links neben dem
+   HEIM/AUSWAERTS-Tag. */
+.game-badge.result-win,
+.game-badge.result-loss,
+.game-badge.result-tie {
+  min-width: 1.7rem;
+  text-align: center;
+  font-size: 0.85rem;
+  padding: 3px 8px;
+}
+
+.game-badge.result-win {
+  background: var(--color-win);
+  color: white;
+}
+
+.game-badge.result-loss {
+  background: var(--color-loss);
+  color: white;
+}
+
+.game-badge.result-tie {
+  background: var(--color-tie);
   color: var(--color-bg);
 }
 

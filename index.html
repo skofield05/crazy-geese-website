@@ -152,6 +152,8 @@
                   <th class="col-team">Team</th>
                   <th class="col-stat">W</th>
                   <th class="col-stat">L</th>
+                  <th class="col-stat" title="Win-Prozentsatz">PCT</th>
+                  <th class="col-stat" title="Games Behind (Spiele Rueckstand auf den Spitzenreiter)">GB</th>
                 </tr>
               </thead>
               <tbody id="standings-body">
@@ -165,6 +167,15 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- LETZTE ERGEBNISSE -->
+    <section class="section section-results" id="letzte-ergebnisse" hidden>
+      <h2>Letzte Ergebnisse</h2>
+      <div class="games-list" id="last-results">
+        <!-- Wird per JS befüllt -->
+      </div>
+      <a href="baseball.html#alle-spiele" class="show-all-link">Alle Spielergebnisse →</a>
     </section>
 
     <!-- MITMACHEN TEASER -->
@@ -245,7 +256,7 @@
     </p>
   </footer>
 
-  <script src="scripts/shared.js?v=2026-04-28"></script>
+  <script src="scripts/shared.js?v=2026-05-04"></script>
   <script>
     async function loadData() {
       try {
@@ -255,7 +266,7 @@
         console.error('Fehler beim Laden der Daten:', error);
         showError(document.getElementById('next-games'), 'Spielplan konnte nicht geladen werden.');
         document.getElementById('standings-body').innerHTML =
-          '<tr><td colspan="4" class="error-message" role="alert">⚠️ Tabelle konnte nicht geladen werden.</td></tr>';
+          '<tr><td colspan="6" class="error-message" role="alert">⚠️ Tabelle konnte nicht geladen werden.</td></tr>';
       }
     }
 
@@ -264,12 +275,23 @@
       document.getElementById('table-phase').textContent = data.tabelle.phase;
 
       const tbody = document.getElementById('standings-body');
-      tbody.innerHTML = data.tabelle.teams.map(team => `
+      // Spitzenreiter fuer GB-Berechnung: hoechste W - L. Bei Gleichstand
+      // egal, welcher genommen wird – beide haben GB 0.
+      const teams = data.tabelle.teams || [];
+      const leader = teams.reduce((best, t) => {
+        if (!best) return t;
+        const bd = (Number(best.siege) || 0) - (Number(best.niederlagen) || 0);
+        const td = (Number(t.siege) || 0) - (Number(t.niederlagen) || 0);
+        return td > bd ? t : best;
+      }, null);
+      tbody.innerHTML = teams.map(team => `
         <tr class="${isOurTeam(team.name) ? 'highlight' : ''}">
           <td class="col-rank">${escapeHtml(team.rang)}</td>
           <td class="col-team">${escapeHtml(team.name)}</td>
           <td class="col-stat">${escapeHtml(team.siege)}</td>
           <td class="col-stat">${escapeHtml(team.niederlagen)}</td>
+          <td class="col-stat">${computePCT(team)}</td>
+          <td class="col-stat">${computeGB(team, leader)}</td>
         </tr>
       `).join('');
 
@@ -315,6 +337,18 @@
         nextGamesEl.innerHTML = remaining.map(renderGameCompact).join('');
       } else {
         nextGamesEl.innerHTML = '<p class="no-games">Keine weiteren Spiele</p>';
+      }
+
+      // Letzte 2 absolvierte Spiele (neueste zuerst). Nur einblenden, wenn
+      // ueberhaupt was zu zeigen ist.
+      const past = (data.spiele.vergangene || [])
+        .slice()
+        .sort((a, b) => (b.datum + (b.zeit || '')).localeCompare(a.datum + (a.zeit || '')))
+        .slice(0, 2);
+      const lastResultsSection = document.getElementById('letzte-ergebnisse');
+      if (past.length > 0) {
+        document.getElementById('last-results').innerHTML = past.map(g => renderGame(g)).join('');
+        lastResultsSection.hidden = false;
       }
     }
 

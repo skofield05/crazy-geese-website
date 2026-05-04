@@ -79,6 +79,8 @@
                 <th class="col-team">Team</th>
                 <th class="col-stat">W</th>
                 <th class="col-stat">L</th>
+                <th class="col-stat" title="Win-Prozentsatz">PCT</th>
+                <th class="col-stat" title="Games Behind">GB</th>
               </tr>
             </thead>
             <tbody id="archiv-standings-2025"></tbody>
@@ -104,7 +106,7 @@
     <p>© <span id="year">2026</span> Rohrbach Crazy Geese</p>
   </footer>
 
-  <script src="scripts/shared.js?v=2026-04-28"></script>
+  <script src="scripts/shared.js?v=2026-05-04"></script>
   <script>
     async function loadArchiv() {
       try {
@@ -118,12 +120,21 @@
 
     function renderArchiv(data) {
       const tbody = document.getElementById('archiv-standings-2025');
-      tbody.innerHTML = data.tabelle.teams.map(team => `
+      const teams = data.tabelle.teams || [];
+      const leader = teams.reduce((best, t) => {
+        if (!best) return t;
+        const bd = (Number(best.siege) || 0) - (Number(best.niederlagen) || 0);
+        const td = (Number(t.siege) || 0) - (Number(t.niederlagen) || 0);
+        return td > bd ? t : best;
+      }, null);
+      tbody.innerHTML = teams.map(team => `
         <tr class="${isOurKuerzel(team.kuerzel) || isOurTeam(team.name) ? 'highlight' : ''}">
           <td class="col-rank">${escapeHtml(team.rang)}</td>
           <td class="col-team">${escapeHtml(team.name)}</td>
           <td class="col-stat">${escapeHtml(team.siege)}</td>
           <td class="col-stat">${escapeHtml(team.niederlagen)}</td>
+          <td class="col-stat">${computePCT(team)}</td>
+          <td class="col-stat">${computeGB(team, leader)}</td>
         </tr>
       `).join('');
 

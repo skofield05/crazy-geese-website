@@ -155,15 +155,25 @@ function renderGame(game, isFeatured) {
   const isHome = isOurTeam(game.heim);
   const hasResult = game.ergebnis_heim !== null && game.ergebnis_heim !== undefined;
   const isHomeGame = isHomeVenue(game.ort);
-  const badge = isHomeGame
+  const venueBadge = isHomeGame
     ? '<span class="game-badge home">HEIMSPIEL</span>'
     : '<span class="game-badge away">AUSWÄRTS</span>';
 
   let resultClass = '';
+  let resultBadge = '';
   if (hasResult) {
     const ourScore = isHome ? game.ergebnis_heim : game.ergebnis_gast;
     const theirScore = isHome ? game.ergebnis_gast : game.ergebnis_heim;
-    resultClass = ourScore > theirScore ? 'win' : (ourScore < theirScore ? 'loss' : 'tie');
+    if (ourScore > theirScore) {
+      resultClass = 'win';
+      resultBadge = '<span class="game-badge result-win" aria-label="Sieg">W</span>';
+    } else if (ourScore < theirScore) {
+      resultClass = 'loss';
+      resultBadge = '<span class="game-badge result-loss" aria-label="Niederlage">L</span>';
+    } else {
+      resultClass = 'tie';
+      resultBadge = '<span class="game-badge result-tie" aria-label="Unentschieden">T</span>';
+    }
   }
 
   const heim = escapeHtml(game.heim);
@@ -173,22 +183,45 @@ function renderGame(game, isFeatured) {
     ? escapeHtml(game.ergebnis_gast) + ':' + escapeHtml(game.ergebnis_heim)
     : 'vs';
   const featuredClass = isFeatured ? 'next-game-featured' : '';
+  const scoreClass = hasResult ? 'score score-' + resultClass : 'vs';
 
   return `
     <div class="game-card ${resultClass} ${featuredClass}" role="article" aria-label="${gast} bei ${heim}">
       <div class="game-card-header">
         <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + escapeHtml(game.zeit) : ''}</div>
-        <div class="game-tags">${badge}</div>
+        <div class="game-tags">${resultBadge}${venueBadge}</div>
       </div>
       <div class="game-matchup">
         <span class="team ${!isHome ? 'us' : ''}">${gast}</span>
-        <span class="vs">${score}</span>
+        <span class="${scoreClass}">${score}</span>
         <span class="team ${isHome ? 'us' : ''}">${heim}</span>
       </div>
       ${game.ort ? `<div class="game-location">📍 ${escapeHtml(game.ort)}</div>` : ''}
       ${game.phase ? `<div class="game-phase">${escapeHtml(game.phase)}</div>` : ''}
     </div>
   `;
+}
+
+// Tabellen-Helpers: PCT (Win-Pct) und GB (Games Behind) clientseitig berechnen,
+// damit die data.json-Schemata schlank bleiben.
+function computePCT(team) {
+  const w = Number(team.siege) || 0;
+  const l = Number(team.niederlagen) || 0;
+  const total = w + l;
+  if (total === 0) return '-';
+  return (w / total).toFixed(3).replace(/^0/, '');
+}
+
+function computeGB(team, leader) {
+  if (!leader || team === leader) return '-';
+  const w = Number(team.siege) || 0;
+  const l = Number(team.niederlagen) || 0;
+  const lw = Number(leader.siege) || 0;
+  const ll = Number(leader.niederlagen) || 0;
+  const gb = ((lw - w) + (l - ll)) / 2;
+  if (gb <= 0) return '-';
+  // Half-Game (.5) ist im Baseball ueblich, sonst ganze Zahl
+  return (gb % 1 === 0) ? String(gb) : gb.toFixed(1);
 }
 
 function renderGameCompact(game) {
