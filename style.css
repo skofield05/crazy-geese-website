@@ -1108,6 +1108,11 @@ li {
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--space-xs);
+  /* Auf engen Viewports duerfen Datum und Tags umbrechen, sonst zwingen
+     sie die Card breiter als der Container und die Seite scrollt
+     horizontal. */
+  flex-wrap: wrap;
+  gap: var(--space-xs);
 }
 
 .game-tags {
