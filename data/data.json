@@ -25,21 +25,21 @@
     }
   },
   "tabelle": {
-    "stand": "2026-05-04",
+    "stand": "2026-05-16",
     "phase": "Regular Season",
     "teams": [
       {
         "rang": 1,
-        "name": "Vienna Metrostars 3",
-        "kuerzel": "MS",
-        "siege": 2,
+        "name": "Rohrbach Crazy Geese",
+        "kuerzel": "CG",
+        "siege": 3,
         "niederlagen": 0,
         "unentschieden": 0
       },
       {
         "rang": 2,
-        "name": "Rohrbach Crazy Geese",
-        "kuerzel": "CG",
+        "name": "Vienna Metrostars 3",
+        "kuerzel": "MS",
         "siege": 2,
         "niederlagen": 0,
         "unentschieden": 0
@@ -89,7 +89,7 @@
         "name": "Schremser Beers 2",
         "kuerzel": "SB",
         "siege": 0,
-        "niederlagen": 2,
+        "niederlagen": 3,
         "unentschieden": 0
       },
       {
@@ -103,17 +103,8 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-05-04",
+    "letztes_update": "2026-05-16",
     "naechste": [
-      {
-        "datum": "2026-05-16",
-        "zeit": "11:00",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Schremser Beers 2",
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Grunddurchgang",
-        "spielnr": "#13"
-      },
       {
         "datum": "2026-05-16",
         "zeit": "16:00",
@@ -254,6 +245,17 @@
         "ort": "Sportzentrum Spenadlwiese, Wien",
         "phase": "Grunddurchgang",
         "spielnr": "#6"
+      },
+      {
+        "datum": "2026-05-16",
+        "zeit": "11:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Schremser Beers 2",
+        "ergebnis_heim": 8,
+        "ergebnis_gast": 0,
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang",
+        "spielnr": "#13"
       }
     ]
   },
