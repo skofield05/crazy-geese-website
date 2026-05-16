@@ -51,30 +51,48 @@ function renderPage(data) {
     .sort((a, b) => (a.datum + (a.zeit || '')).localeCompare(b.datum + (b.zeit || '')));
 
   const nextGame = allGames[0];
-  const nextGameCard = document.getElementById('next-game-card');
-  if (nextGame) {
-    nextGameCard.innerHTML = `
-      <span class="highlight-label">Nächstes Spiel</span>
-      ${renderHighlightGame(nextGame)}
-    `;
-  } else {
-    nextGameCard.innerHTML = '<span class="highlight-label">Nächstes Spiel</span><p class="no-games">Saisonpause</p>';
-  }
-
   const nextHomeGame = allGames.find(g => isHomeVenue(g.ort));
+  const gameKey = g => g.datum + '|' + (g.zeit || '') + '|' + g.sport;
+  const sameGame = nextGame && nextHomeGame && gameKey(nextGame) === gameKey(nextHomeGame);
+
+  const highlightsEl = document.querySelector('.hero-highlights');
+  const nextGameCard = document.getElementById('next-game-card');
   const nextHomeCard = document.getElementById('next-home-card');
-  if (nextHomeGame) {
+
+  if (sameGame) {
+    // Nächstes Spiel == Nächstes Heimspiel: nur die Heim-Kachel, einspaltig.
+    highlightsEl.classList.add('hero-highlights--single');
+    nextGameCard.hidden = true;
+    nextHomeCard.hidden = false;
     nextHomeCard.innerHTML = `
       <span class="highlight-label">Nächstes Heimspiel</span>
       ${renderHighlightGame(nextHomeGame)}
       <span class="highlight-free">🎟️ Eintritt frei!</span>
     `;
   } else {
-    nextHomeCard.innerHTML = '<span class="highlight-label">Nächstes Heimspiel</span><p class="no-games">Keine Heimspiele geplant</p>';
+    highlightsEl.classList.remove('hero-highlights--single');
+    nextGameCard.hidden = false;
+    nextHomeCard.hidden = false;
+    if (nextGame) {
+      nextGameCard.innerHTML = `
+        <span class="highlight-label">Nächstes Spiel</span>
+        ${renderHighlightGame(nextGame)}
+      `;
+    } else {
+      nextGameCard.innerHTML = '<span class="highlight-label">Nächstes Spiel</span><p class="no-games">Saisonpause</p>';
+    }
+    if (nextHomeGame) {
+      nextHomeCard.innerHTML = `
+        <span class="highlight-label">Nächstes Heimspiel</span>
+        ${renderHighlightGame(nextHomeGame)}
+        <span class="highlight-free">🎟️ Eintritt frei!</span>
+      `;
+    } else {
+      nextHomeCard.innerHTML = '<span class="highlight-label">Nächstes Heimspiel</span><p class="no-games">Keine Heimspiele geplant</p>';
+    }
   }
 
   const nextGamesEl = document.getElementById('next-games');
-  const gameKey = g => g.datum + '|' + (g.zeit || '') + '|' + g.sport;
   const shownIds = [nextGame, nextHomeGame].filter(Boolean).map(gameKey);
   const remaining = allGames.filter(g => !shownIds.includes(gameKey(g))).slice(0, 4);
   if (remaining.length > 0) {

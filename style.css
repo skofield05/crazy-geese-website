@@ -451,6 +451,10 @@ li {
   .hero-highlights {
     grid-template-columns: 1fr 1fr;
   }
+  .hero-highlights.hero-highlights--single {
+    grid-template-columns: minmax(0, 560px);
+    justify-content: center;
+  }
 }
 
 .highlight-card {
