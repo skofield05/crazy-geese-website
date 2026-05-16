@@ -469,6 +469,10 @@ li {
   gap: var(--space-xs);
 }
 
+.highlight-card[hidden] {
+  display: none;
+}
+
 .highlight-card.highlight-home {
   border-color: var(--color-red);
 }
