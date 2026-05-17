@@ -63,13 +63,18 @@ jobs:
       - name: Run Scraper
         run: python scripts/scraper.py
 
-      - name: Validate data.json
-        # Gate: Wenn der Scraper kaputtes JSON geschrieben hat, hier abbrechen,
-        # bevor ICS regeneriert oder committet wird.
-        run: python scripts/validate_data.py
-
       - name: Regenerate ICS
+        # ICS *vor* Validate regenerieren: der Scraper macht ein Re-Split
+        # (game_date < today -> vergangene), das ICS muss vorher neu geschrieben
+        # werden, sonst meldet der ICS-Sync-Check des Validators alte Events
+        # als "extra". Bei kaputtem JSON aus dem Scraper crasht generate_ics.py
+        # selbst, der Gate-Effekt bleibt also erhalten.
         run: python scripts/generate_ics.py
+
+      - name: Validate data.json
+        # Gate: schlaegt fehl, wenn data.json oder die frisch regenerierte ICS
+        # inkonsistent sind. Verhindert Commit von kaputtem Stand.
+        run: python scripts/validate_data.py
 
       - name: Check for Changes
         id: changes
