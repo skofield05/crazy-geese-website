@@ -58,7 +58,11 @@ TZ_VIENNA = ZoneInfo("Europe/Vienna")
 
 # Lokales Modul (gleicher Ordner)
 sys.path.insert(0, str(Path(__file__).parent))
-from metrostars import scrape_standings_metrostars, scrape_games_metrostars
+from metrostars import (
+    fetch_html as metrostars_fetch_html,
+    parse_standings as metrostars_parse_standings,
+    parse_games as metrostars_parse_games,
+)
 
 
 def goto_with_retry(page, url, retries=3, **kwargs):
@@ -720,15 +724,25 @@ def _resolve_games(abf_games, mets_games, rounds, scrape_errors):
         # Filter sie sichtbar.
         return abf_games
 
-    if abf_games and not abf_with_date and mets_games:
-        # Kein scrape_errors-Eintrag (sonst exit 1 -> kein Commit), das wuerde
-        # den Metrostars-Fallback im selben Run wieder verwerfen. Die
-        # "[WARNUNG] Nicht gefunden: ..."-Meldung aus dem Schedule-Step
-        # alarmiert den Maintainer bereits.
-        print(f"      [FALLBACK] ABF lieferte {len(abf_games)} Eintraege ohne Datum "
-              f"(schedule-and-results vermutlich kaputt) – nutze Metrostars "
-              f"({len(mets_games)} Spiele).")
-        return mets_games
+    if abf_games and not abf_with_date:
+        # ABF-Kalender lieferte Eintraege, aber alle ohne Datum
+        # (/schedule-and-results vermutlich kaputt). Wenn Metrostars Spiele
+        # hat, dort uebernehmen – sonst abf_games zurueckgeben (Ghost-Filter
+        # wirft sie spaeter, aber wir bleiben commit-faehig).
+        if mets_games:
+            # Kein scrape_errors-Eintrag (sonst exit 1 -> kein Commit, kein
+            # Metrostars-Fallback im selben Run). Die "[WARNUNG] Nicht
+            # gefunden: ..."-Meldung aus dem Schedule-Step alarmiert
+            # den Maintainer bereits.
+            print(f"      [FALLBACK] ABF lieferte {len(abf_games)} Eintraege ohne Datum "
+                  f"(schedule-and-results vermutlich kaputt) – nutze Metrostars "
+                  f"({len(mets_games)} Spiele).")
+            return mets_games
+        # Metrostars auch leer: dateless ABF zurueckgeben, damit der
+        # nachfolgende Merge wenigstens nicht "beide leer"-Fehler wirft.
+        print(f"      [WARN] ABF lieferte {len(abf_games)} Eintraege ohne Datum "
+              f"und Metrostars-Spiele leer – Merge wird nichts updaten.")
+        return abf_games
 
     if mets_games:
         if rounds:
@@ -873,13 +887,22 @@ def update_data():
     # Metrostars-Statistikseite als Fallback und Verifizierung.
     # Reine HTTP-Quelle, kein Browser noetig – funktioniert auch wenn ABF
     # gerade kaputt ist (Run #22 / 2026-05-04 06:42 UTC).
+    # Nur EIN Fetch: das HTML enthaelt Tabelle + Spiele in einem Dokument.
+    # Frueher haben wir zwei separate Fetches gemacht; das verdoppelt nicht
+    # nur den Traffic, sondern hat in Actions Runs sporadisch unter-
+    # schiedliche Antworten geliefert (vermutlich Caching/Bot-Detection).
     print(f"\n[FALLBACK/VERIFY] viennametrostars.at")
-    mets_teams = scrape_standings_metrostars(canonicalize=canonical_team_name)
-    mets_games = scrape_games_metrostars(canonicalize=canonical_team_name, team_filter=TEAM_NAME)
-    if mets_teams:
-        print(f"      Metrostars-Tabelle: {len(mets_teams)} Teams")
-    if mets_games:
-        print(f"      Metrostars-Spiele:  {len(mets_games)}")
+    mets_html = metrostars_fetch_html()
+    mets_teams = []
+    mets_games = []
+    if mets_html:
+        mets_teams = metrostars_parse_standings(mets_html, canonicalize=canonical_team_name)
+        mets_games = metrostars_parse_games(
+            mets_html, canonicalize=canonical_team_name, team_filter=TEAM_NAME
+        )
+        print(f"      HTML: {len(mets_html)} bytes")
+    print(f"      Metrostars-Tabelle: {len(mets_teams)} Teams")
+    print(f"      Metrostars-Spiele:  {len(mets_games)}")
 
     # Tabelle: ABF bevorzugen, Metrostars als Fallback. Bei Disagreement warnen.
     teams = _resolve_standings(abf_teams, mets_teams, data, scrape_errors)

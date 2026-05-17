@@ -8,11 +8,14 @@ Wird vom Haupt-Scraper genutzt:
     der Scraper eine Warnung, damit der Maintainer es sieht
 
 Quelle: https://www.viennametrostars.at/de/Ligastatistiken/l2s__550.htm
-Die Seite ist server-rendered HTML mit Tables:
-  Table[0] = Standings (Rank, Team, W, L, PCT, GB, ...)
-  Table[1] = Games (Datum, Heim, Awayteam, Ergebnis)
-  (frueher hatte Table[1] zusaetzlich Umpires/Scorer als 6 Spalten,
-   das Layout wurde 2026 auf 4 Spalten reduziert.)
+Die Seite ist server-rendered HTML mit mehreren Tables:
+  Table[0]   = Standings (Rank, Team, W, L, PCT, GB, ...)
+  Table[1+]  = Games (zwei Varianten, beide werden geparst):
+    "Past"    -> 4 Spalten: Datum, Heim, Awayteam, Ergebnis
+    "Future"  -> 6 Spalten: Datum, Heim, Awayteam, Umpires, Scorer, Ergebnis
+  Erkennung per erste-Spalte-DateMatch, nicht per Index – damit der Parser
+  ueberlebt, wenn Metrostars die Reihenfolge oder Anzahl der Tables aendert
+  (passierte Mai 2026: erst eine 6-Spalten-Table, dann Split in 4+6).
 
 Kein Playwright noetig – plain urllib + Regex reicht.
 
@@ -103,46 +106,61 @@ def parse_standings(html: str, canonicalize=None) -> list[dict]:
 
 def parse_games(html: str, canonicalize=None, team_filter: str | None = None) -> list[dict]:
     """
-    Parsed Spielliste aus dem HTML. team_filter: Substring; nur Spiele, in denen
-    das Team auf einer der beiden Seiten vorkommt, werden zurueckgegeben.
+    Parsed Spielliste aus ALLEN Game-Tables im HTML (kann mehrere geben:
+    z.B. Past + Future getrennt). team_filter: Substring; nur Spiele, in
+    denen das Team auf einer der beiden Seiten vorkommt, werden zurueckgegeben.
 
-    Datum-Format im HTML: "DD.MM.YYYY HH:MM" – wird auf datum/zeit gesplittet.
-    Ergebnis "X - Y" -> ergebnis_heim/ergebnis_gast; "-" -> kein Ergebnis-Feld.
+    Datum-Format: "DD.MM.YYYY HH:MM" – wird auf datum/zeit gesplittet.
+    Ergebnis "X - Y" (in der LETZTEN Zelle) -> ergebnis_heim/ergebnis_gast;
+    "-" oder "Abgesagt" -> kein Ergebnis-Feld.
+
+    Eine Game-Row wird erkannt an einem matchenden Datum in cells[0],
+    nicht an einer fixen Tabellenposition – Metrostars hat das Layout
+    schon mehrfach geaendert (4-Spalten Past, 6-Spalten Future, vs. eine
+    gemeinsame 6-Spalten-Table). Damit ueberlebt der Parser solche Wechsel.
     """
-    tables = _split_tables(html)
-    if len(tables) < 2:
-        return []
-
+    seen: set[tuple] = set()
     games: list[dict] = []
-    for row in _split_rows(tables[1]):
-        cells = [_strip_tags(c) for c in _split_cells(row)]
-        if len(cells) < 6:
-            continue
-        m = _DATE_RX.match(cells[0])
-        if not m:
-            continue
-        dd, mm, yyyy, hhmm = m.groups()
-        heim = cells[1]
-        gast = cells[2]
-        if not heim or not gast:
-            continue
-        if canonicalize:
-            heim = canonicalize(heim)
-            gast = canonicalize(gast)
-        if team_filter and team_filter not in heim and team_filter not in gast:
-            continue
 
-        game = {
-            "datum": f"{yyyy}-{mm}-{dd}",
-            "zeit": hhmm,
-            "heim": heim,
-            "gast": gast,
-        }
-        sm = _SCORE_RX.match(cells[5])
-        if sm:
-            game["ergebnis_heim"] = int(sm.group(1))
-            game["ergebnis_gast"] = int(sm.group(2))
-        games.append(game)
+    # Erste Tabelle ist die Standings – ueberspringen; alle weiteren werden
+    # auf Game-Rows abgeklopft.
+    for table_html in _split_tables(html)[1:]:
+        for row in _split_rows(table_html):
+            cells = [_strip_tags(c) for c in _split_cells(row)]
+            if len(cells) < 4:
+                continue
+            m = _DATE_RX.match(cells[0])
+            if not m:
+                continue
+            dd, mm, yyyy, hhmm = m.groups()
+            heim = cells[1]
+            gast = cells[2]
+            if not heim or not gast:
+                continue
+            if canonicalize:
+                heim = canonicalize(heim)
+                gast = canonicalize(gast)
+            if team_filter and team_filter not in heim and team_filter not in gast:
+                continue
+
+            # Dedup: gleiche Game-Row in Past+Future-Tables vermeiden.
+            key = (f"{yyyy}-{mm}-{dd}", hhmm, heim, gast)
+            if key in seen:
+                continue
+            seen.add(key)
+
+            game = {
+                "datum": key[0],
+                "zeit": hhmm,
+                "heim": heim,
+                "gast": gast,
+            }
+            # Score steht immer in der letzten Zelle, egal ob 4 oder 6 Spalten.
+            sm = _SCORE_RX.match(cells[-1])
+            if sm:
+                game["ergebnis_heim"] = int(sm.group(1))
+                game["ergebnis_gast"] = int(sm.group(2))
+            games.append(game)
     return games
 
 
