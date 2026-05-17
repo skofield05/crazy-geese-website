@@ -8,9 +8,11 @@ Wird vom Haupt-Scraper genutzt:
     der Scraper eine Warnung, damit der Maintainer es sieht
 
 Quelle: https://www.viennametrostars.at/de/Ligastatistiken/l2s__550.htm
-Die Seite ist server-rendered HTML mit zwei Tables:
+Die Seite ist server-rendered HTML mit Tables:
   Table[0] = Standings (Rank, Team, W, L, PCT, GB, ...)
-  Table[1] = Games (Datum, Heim, Awayteam, Umpires, Scorer, Ergebnis)
+  Table[1] = Games (Datum, Heim, Awayteam, Ergebnis)
+  (frueher hatte Table[1] zusaetzlich Umpires/Scorer als 6 Spalten,
+   das Layout wurde 2026 auf 4 Spalten reduziert.)
 
 Kein Playwright noetig – plain urllib + Regex reicht.
 
