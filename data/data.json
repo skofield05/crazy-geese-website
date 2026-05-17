@@ -255,7 +255,9 @@
         "gast": "Graz Dirty Sox",
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Grunddurchgang",
-        "spielnr": "#15"
+        "spielnr": "#15",
+        "ergebnis_heim": 6,
+        "ergebnis_gast": 2
       }
     ]
   },
