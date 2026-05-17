@@ -691,25 +691,44 @@ def _resolve_games(abf_games, mets_games, rounds, scrape_errors):
     Entscheidet, welche Spiele-Daten in den Merge-Pipeline-Schritt gehen.
 
     Strategie:
-      - ABF lieferte Spiele -> ABF nutzen, ABER pro Spiel das Ergebnis von
-        Metrostars uebernehmen, wenn ABF noch keins hat. Hintergrund:
-        ABFs 0:0-Platzhalter fuer ungespielte Spiele wird zwar vom Scraper
-        gefiltert, aber Metrostars hat manchmal das echte Ergebnis bevor
-        ABF es eintraegt – damit fuellen wir solche Luecken. Bei beidseitigem
-        Ergebnis und Diff: Warnung loggen.
+      - ABF lieferte Spiele MIT Datum -> ABF nutzen, ABER pro Spiel das
+        Ergebnis von Metrostars uebernehmen, wenn ABF noch keins hat.
+        Hintergrund: ABFs 0:0-Platzhalter fuer ungespielte Spiele wird zwar
+        vom Scraper gefiltert, aber Metrostars hat manchmal das echte
+        Ergebnis bevor ABF es eintraegt – damit fuellen wir solche Luecken.
+        Bei beidseitigem Ergebnis und Diff: Warnung loggen.
+      - ABF nur dateless    -> ABF-Kalender lieferte Eintraege, aber das
+        ABF-Schedule konnte keine Daten dazu finden (Markup-Aenderung am
+        /schedule-and-results). Faellt komplett auf Metrostars zurueck,
+        weil dateless-Spiele ohnehin vom Ghost-Filter geworfen werden.
       - ABF leer            -> Metrostars als Fallback (mit Errorhinweis,
         falls Runden vorhanden waren).
       - Beide leer          -> Fehler sammeln, leere Liste zurueck.
     """
-    if abf_games:
+    abf_with_date = [g for g in abf_games if g.get("datum")] if abf_games else []
+
+    if abf_with_date:
         if mets_games:
-            filled = _fill_results_from(abf_games, mets_games)
+            filled = _fill_results_from(abf_with_date, mets_games)
             if filled:
                 print(f"      [METROSTARS-FILL] {filled} Spielergebnisse von Metrostars "
                       f"uebernommen (ABF hatte noch keins).")
-            for d in _diff_game_results(abf_games, mets_games):
+            for d in _diff_game_results(abf_with_date, mets_games):
                 print(f"      [DIVERGENZ] {d}")
+        # abf_games (nicht abf_with_date) zurueckgeben: dateless werden
+        # ohnehin vom Ghost-Filter spaeter geworfen, aber so loggt der
+        # Filter sie sichtbar.
         return abf_games
+
+    if abf_games and not abf_with_date and mets_games:
+        # Kein scrape_errors-Eintrag (sonst exit 1 -> kein Commit), das wuerde
+        # den Metrostars-Fallback im selben Run wieder verwerfen. Die
+        # "[WARNUNG] Nicht gefunden: ..."-Meldung aus dem Schedule-Step
+        # alarmiert den Maintainer bereits.
+        print(f"      [FALLBACK] ABF lieferte {len(abf_games)} Eintraege ohne Datum "
+              f"(schedule-and-results vermutlich kaputt) – nutze Metrostars "
+              f"({len(mets_games)} Spiele).")
+        return mets_games
 
     if mets_games:
         if rounds:
