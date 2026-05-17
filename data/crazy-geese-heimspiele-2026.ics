@@ -5,14 +5,6 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:Crazy Geese – Heimspiele 2026
 X-WR-TIMEZONE:Europe/Vienna
 BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260516T160000
-DTEND;TZID=Europe/Vienna:20260516T183000
-SUMMARY:⚾ Graz Dirty Sox vs Crazy Geese (HEIM)
-LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-15@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260523T110000
 DTEND;TZID=Europe/Vienna:20260523T133000
 SUMMARY:⚾ Crazy Geese vs Danube Titans (in Rohrbach)

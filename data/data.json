@@ -25,14 +25,14 @@
     }
   },
   "tabelle": {
-    "stand": "2026-05-16",
+    "stand": "2026-05-17",
     "phase": "Regular Season",
     "teams": [
       {
         "rang": 1,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
-        "siege": 3,
+        "siege": 4,
         "niederlagen": 0,
         "unentschieden": 0
       },
@@ -62,16 +62,16 @@
       },
       {
         "rang": 5,
-        "name": "Danube Titans",
-        "kuerzel": "DT",
-        "siege": 0,
-        "niederlagen": 0,
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
+        "siege": 1,
+        "niederlagen": 1,
         "unentschieden": 0
       },
       {
         "rang": 6,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
+        "name": "Danube Titans",
+        "kuerzel": "DT",
         "siege": 0,
         "niederlagen": 0,
         "unentschieden": 0
@@ -86,34 +86,25 @@
       },
       {
         "rang": 8,
-        "name": "Schremser Beers 2",
-        "kuerzel": "SB",
-        "siege": 0,
-        "niederlagen": 3,
-        "unentschieden": 0
-      },
-      {
-        "rang": 9,
         "name": "Woodquarter Red Devils",
         "kuerzel": "RD",
         "siege": 0,
         "niederlagen": 2,
         "unentschieden": 0
+      },
+      {
+        "rang": 9,
+        "name": "Schremser Beers 2",
+        "kuerzel": "SB",
+        "siege": 0,
+        "niederlagen": 4,
+        "unentschieden": 0
       }
     ]
   },
   "spiele": {
-    "letztes_update": "2026-05-16",
+    "letztes_update": "2026-05-17",
     "naechste": [
-      {
-        "datum": "2026-05-16",
-        "zeit": "16:00",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Graz Dirty Sox",
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Grunddurchgang",
-        "spielnr": "#15"
-      },
       {
         "datum": "2026-05-23",
         "zeit": "11:00",
@@ -256,6 +247,15 @@
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Grunddurchgang",
         "spielnr": "#13"
+      },
+      {
+        "datum": "2026-05-16",
+        "zeit": "16:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Graz Dirty Sox",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang",
+        "spielnr": "#15"
       }
     ]
   },
