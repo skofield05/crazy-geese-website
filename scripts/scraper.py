@@ -547,6 +547,17 @@ def scrape_game_dates(page, games):
 
     page.wait_for_timeout(1000)
 
+    # Sanity-Check: wenn die 30 Klicks ins Leere gegangen sind (ABF-Markup-
+    # Wechsel), erkennt man das am sichtbaren Monat. Nur loggen – kein Fail,
+    # weil der Metrostars-Fallback hinten dran greift.
+    try:
+        header_text = page.inner_text(".datepicker-switch, .ui-datepicker-title, [class*='month']").strip()
+        if header_text:
+            print(f"      Datepicker-Position nach 30x Rueckwaerts: {header_text[:80]}")
+    except Exception:
+        # Selector existiert nicht (ABF-Layout-Wechsel) – Metrostars-Fallback greift
+        print("      [WARN] Datepicker-Header nicht lesbar – ABF-Markup vermutlich geaendert")
+
     # Navigiere durch alle Spieltage
     date_in_context_rx = re.compile(r'(\d{1,2})\.(\d{1,2})\.(\d{4})(?:,\s*(\d{1,2}:\d{2}))?')
     time_rx = re.compile(r'(\d{1,2}:\d{2})')
@@ -562,7 +573,9 @@ def scrape_game_dates(page, games):
             if marker not in body:
                 continue
             pos = body.find(marker)
-            context = body[pos:pos + 600]
+            # 1200 statt 600: bei Doppelheader-Spieltagen mit langem Venue-
+            # Namen kann das Datum hinter dem urspruenglichen Fenster liegen.
+            context = body[pos:pos + 1200]
             if TEAM_NAME not in context:
                 continue
 
@@ -909,7 +922,11 @@ def update_data():
     if teams:
         data["tabelle"]["teams"] = teams
         data["tabelle"]["stand"] = datetime.now(TZ_VIENNA).strftime("%Y-%m-%d")
-        data["tabelle"]["phase"] = determine_phase()
+        # PHASE_MAP normalisiert ABF-Wortlaut auf die im Spielplan
+        # verwendeten Begriffe ("Regular Season" -> "Grunddurchgang"),
+        # damit Tabelle und Spielliste konsistent sind.
+        raw_phase = determine_phase()
+        data["tabelle"]["phase"] = PHASE_MAP.get(raw_phase, raw_phase)
 
     # Spiele: ABF bevorzugen, Metrostars als Fallback. Bei beiden vorhanden:
     # Ergebnis-Verify gegen Metrostars (Datum-/Team-Match).
@@ -942,13 +959,17 @@ def update_data():
         for canonical in canonical_names:
             if canonical and (canonical in name or name in canonical):
                 return canonical
-        # 3. Wort-Overlap-Heuristik
+        # 3. Wort-Overlap-Heuristik (Mindest-Overlap 3, damit "Vienna Foo"
+        #    vs "Vienna Bar" nicht ueber das gemeinsame "Vienna" falsch
+        #    matcht. Erkauft sich mit dem Risiko, dass legitime 2-Wort-
+        #    Matches unkanonisiert durchrutschen – das ist im Frontend
+        #    sichtbar und kann via TEAM_NAME_OVERRIDES nachgepflegt werden.)
         name_words = set(name.lower().split())
         best = None
         best_overlap = 0
         for canonical in canonical_names:
             overlap = len(name_words & set(canonical.lower().split()))
-            if overlap > best_overlap and overlap >= 2:
+            if overlap > best_overlap and overlap >= 3:
                 best = canonical
                 best_overlap = overlap
         return best or name
@@ -963,6 +984,18 @@ def update_data():
 
         nr_match = spielnr_rx.match(game.get("spielnr", "") or "")
         spielnr = nr_match.group(1) if nr_match else None
+        # Metrostars-Fallback liefert keine Spielnummer – synthetische ID
+        # `m-YYYYMMDD-HHMM` erzeugen, damit das Validator-Gate (REQUIRED:
+        # spielnr) den Commit nicht blockt und find_existing_game beim
+        # naechsten Lauf den Match per spielnr findet. Wenn ABF spaeter
+        # eine echte Nummer liefert, ueberschreibt der spielnr-Update-
+        # Pfad weiter unten die synthetische ID per (heim, gast)-Fallback-
+        # Match.
+        if not spielnr:
+            datum = game.get("datum", "")
+            zeit = (game.get("zeit", "") or "").replace(":", "")
+            if datum and zeit:
+                spielnr = f"m-{datum.replace('-', '')}-{zeit}"
 
         raw_phase = game.get("phase", "")
         phase = PHASE_MAP.get(raw_phase, raw_phase or "Grunddurchgang")
@@ -1004,10 +1037,18 @@ def update_data():
             # ("Grunddurchgang" statt ABFs "Regular Season").
             changes = []
 
-            # spielnr: persistenter Schluessel, immer (re-)setzen
+            # spielnr: persistenter Schluessel. Echte ABF-Nummer (#NN) hat
+            # Vorrang vor synthetischer Metrostars-ID (m-...). Beim Recovery
+            # nach ABF-Ausfall darf eine spaetere echte #NN die m-... ersetzen,
+            # aber nicht umgekehrt: wenn ein Spiel bereits eine echte spielnr
+            # hat und Metrostars liefert nur eine synthetische, behalten wir
+            # die echte.
             new_nr = formatted_game.get("spielnr")
-            if new_nr and existing.get("spielnr") != new_nr:
-                changes.append(f"spielnr: {existing.get('spielnr')!r}->{new_nr!r}")
+            existing_nr = existing.get("spielnr")
+            new_is_synthetic = bool(new_nr) and new_nr.startswith("m-")
+            existing_is_real = bool(existing_nr) and not existing_nr.startswith("m-")
+            if new_nr and existing_nr != new_nr and not (new_is_synthetic and existing_is_real):
+                changes.append(f"spielnr: {existing_nr!r}->{new_nr!r}")
                 existing["spielnr"] = new_nr
 
             # datum, zeit: ABF ist authoritativ

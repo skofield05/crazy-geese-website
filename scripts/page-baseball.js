@@ -30,13 +30,9 @@ function renderPage(data) {
 
   // Tabelle (gleich wie auf der Startseite, mit PCT/GB)
   document.getElementById('table-phase').textContent = data.tabelle.phase;
+  // ABF-Rang ist authoritativ (PCT-sortiert) – erstes Team = Leader.
   const teams = data.tabelle.teams || [];
-  const leader = teams.reduce((best, t) => {
-    if (!best) return t;
-    const bd = (Number(best.siege) || 0) - (Number(best.niederlagen) || 0);
-    const td = (Number(t.siege) || 0) - (Number(t.niederlagen) || 0);
-    return td > bd ? t : best;
-  }, null);
+  const leader = teams[0] || null;
   document.getElementById('standings-body').innerHTML = teams.map(team => `
     <tr class="${isOurTeam(team.name) ? 'highlight' : ''}">
       <td class="col-rank">${escapeHtml(team.rang)}</td>

@@ -76,16 +76,21 @@ jobs:
         # inkonsistent sind. Verhindert Commit von kaputtem Stand.
         run: python scripts/validate_data.py
 
+      - name: Bump sitemap lastmod
+        # Sitemap nach Validate bumpen (nur wenn Daten konsistent sind),
+        # damit Crawler die Standings-/Spielplan-Aenderungen mitbekommen.
+        run: python scripts/bump_sitemap.py
+
       - name: Check for Changes
         id: changes
         run: |
-          git diff --quiet data/data.json data/crazy-geese-*.ics || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet data/data.json data/crazy-geese-*.ics sitemap.xml || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit and Push
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add data/data.json data/crazy-geese-*.ics
+          git add data/data.json data/crazy-geese-*.ics sitemap.xml
           git commit -m "Update Standings $(date +'%Y-%m-%d %H:%M')"
           git push

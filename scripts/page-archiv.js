@@ -12,13 +12,9 @@ async function loadArchiv() {
 
 function renderArchiv(data) {
   const tbody = document.getElementById('archiv-standings-2025');
+  // ABF-Rang ist authoritativ (PCT-sortiert) – erstes Team = Leader.
   const teams = data.tabelle.teams || [];
-  const leader = teams.reduce((best, t) => {
-    if (!best) return t;
-    const bd = (Number(best.siege) || 0) - (Number(best.niederlagen) || 0);
-    const td = (Number(t.siege) || 0) - (Number(t.niederlagen) || 0);
-    return td > bd ? t : best;
-  }, null);
+  const leader = teams[0] || null;
   tbody.innerHTML = teams.map(team => `
     <tr class="${isOurKuerzel(team.kuerzel) || isOurTeam(team.name) ? 'highlight' : ''}">
       <td class="col-rank">${escapeHtml(team.rang)}</td>

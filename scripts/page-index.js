@@ -19,15 +19,11 @@ function renderPage(data) {
   document.getElementById('table-phase').textContent = data.tabelle.phase;
 
   const tbody = document.getElementById('standings-body');
-  // Spitzenreiter fuer GB-Berechnung: hoechste W - L. Bei Gleichstand
-  // egal, welcher genommen wird – beide haben GB 0.
+  // Spitzenreiter fuer GB-Berechnung: das erste Team in der Tabelle.
+  // ABF sortiert per Liga-Regeln (PCT, dann Tiebreaker), das ist
+  // konsistenter als eine eigene siege-niederlagen-Heuristik.
   const teams = data.tabelle.teams || [];
-  const leader = teams.reduce((best, t) => {
-    if (!best) return t;
-    const bd = (Number(best.siege) || 0) - (Number(best.niederlagen) || 0);
-    const td = (Number(t.siege) || 0) - (Number(t.niederlagen) || 0);
-    return td > bd ? t : best;
-  }, null);
+  const leader = teams[0] || null;
   tbody.innerHTML = teams.map(team => `
     <tr class="${isOurTeam(team.name) ? 'highlight' : ''}">
       <td class="col-rank">${escapeHtml(team.rang)}</td>

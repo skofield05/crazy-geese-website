@@ -37,15 +37,31 @@ _SCORE_RX = re.compile(r"^\s*(\d+)\s*-\s*(\d+)\s*$")
 _RANK_RX = re.compile(r"^(\d+)\.?$")
 
 
-def fetch_html(timeout: int = 30) -> str | None:
-    """Holt das HTML der Statistik-Seite. None bei Netzwerkfehler."""
+def fetch_html(timeout: int = 30, retries: int = 3, backoff: float = 2.0) -> str | None:
+    """
+    Holt das HTML der Statistik-Seite. None bei Netzwerkfehler.
+
+    Retry-Politik: bis zu `retries` Versuche, dazwischen exponentielles Backoff
+    (backoff * 2**i Sekunden). Metrostars ist Fallback-Quelle wenn ABF kaputt
+    ist – ein einzelner Netz-Blip darf den Workflow nicht kippen.
+    """
+    import time
+
     req = urllib.request.Request(METROSTARS_URL, headers={"User-Agent": USER_AGENT})
-    try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            return r.read().decode("utf-8", errors="replace")
-    except (urllib.error.URLError, TimeoutError, OSError) as e:
-        print(f"      [WARN] Metrostars-Fetch fehlgeschlagen: {e}")
-        return None
+    last_err = None
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read().decode("utf-8", errors="replace")
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            last_err = e
+            if attempt < retries - 1:
+                wait = backoff * (2 ** attempt)
+                print(f"      [WARN] Metrostars-Fetch Versuch {attempt + 1}/{retries} "
+                      f"fehlgeschlagen: {e} – retry in {wait:.0f}s")
+                time.sleep(wait)
+    print(f"      [WARN] Metrostars-Fetch nach {retries} Versuchen aufgegeben: {last_err}")
+    return None
 
 
 def _strip_tags(s: str) -> str:
