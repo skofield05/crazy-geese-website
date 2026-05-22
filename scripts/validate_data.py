@@ -62,6 +62,7 @@ def main() -> int:
     _check_kontakt(data.get("kontakt"), errors, warnings)
     _check_tabelle(data.get("tabelle"), errors, warnings)
     _check_softball(data.get("softball"), errors, warnings)
+    _check_events(data.get("events"), errors, warnings)
     _check_blog(data.get("blog"), errors, warnings)
     _check_spiele(data.get("spiele"), errors, warnings)
     _check_ics_sync(data.get("spiele"), errors, warnings)
@@ -165,6 +166,43 @@ def _check_softball(softball: object, errors: list[str], warnings: list[str]) ->
         zeit = t.get("zeit")
         if zeit and not TIME_RX.match(zeit):
             errors.append(f"{where}.zeit '{zeit}' – erwarte HH:MM.")
+
+
+def _check_events(events: object, errors: list[str], warnings: list[str]) -> None:
+    if events is None:
+        return  # optional
+    if not isinstance(events, list):
+        errors.append("events muss ein Array sein.")
+        return
+    slugs: set[str] = set()
+    for i, ev in enumerate(events):
+        where = f"events[{i}]"
+        if not isinstance(ev, dict):
+            errors.append(f"{where} muss ein Objekt sein.")
+            continue
+        for field in ("titel", "datum"):
+            if not ev.get(field):
+                errors.append(f"{where}.{field} fehlt oder ist leer.")
+        datum = ev.get("datum")
+        if datum and not _is_valid_date(datum):
+            errors.append(f"{where}.datum '{datum}' – erwarte gueltiges YYYY-MM-DD.")
+        zeit = ev.get("zeit")
+        if zeit and not TIME_RX.match(zeit):
+            errors.append(f"{where}.zeit '{zeit}' – erwarte HH:MM.")
+        slug = ev.get("slug")
+        if slug:
+            if slug in slugs:
+                errors.append(f"{where}.slug '{slug}' ist nicht eindeutig.")
+            slugs.add(slug)
+        highlights = ev.get("highlights")
+        if highlights is not None and not isinstance(highlights, list):
+            errors.append(f"{where}.highlights muss ein Array sein.")
+        email = ev.get("kontakt_email")
+        if email and "@" not in str(email):
+            errors.append(f"{where}.kontakt_email '{email}' ist keine gueltige Adresse.")
+        ig = ev.get("instagram_post_url")
+        if ig and not re.match(r"^https?://(www\.)?instagram\.com/", str(ig)):
+            errors.append(f"{where}.instagram_post_url '{ig}' – erwarte https://instagram.com/...")
 
 
 def _check_blog(blog: object, errors: list[str], warnings: list[str]) -> None:

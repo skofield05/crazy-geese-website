@@ -68,20 +68,10 @@ function renderPage(data) {
     eventCard.innerHTML = '';
   }
 
-  // Single-Layout nur, wenn wirklich nur eine Karte uebrig bleibt: also
-  // Spiel==Heimspiel UND kein Event.
-  if (sameGame && !upcomingEvent) {
-    highlightsEl.classList.add('hero-highlights--single');
-    nextGameCard.hidden = true;
-    nextHomeCard.hidden = false;
-    nextHomeCard.innerHTML = `
-      <span class="highlight-label">Nächstes Heimspiel</span>
-      ${renderHighlightGame(nextHomeGame)}
-      <span class="highlight-free">🎟️ Eintritt frei!</span>
-    `;
-  } else if (sameGame && upcomingEvent) {
-    // Spiel==Heimspiel und ein Event existiert: Heim-Kachel + Event nebeneinander.
-    highlightsEl.classList.remove('hero-highlights--single');
+  // Single-Layout (eine zentrierte Karte) nur, wenn wirklich nur eine
+  // Karte uebrig bleibt: Spiel == Heimspiel UND kein Event aktiv.
+  if (sameGame) {
+    highlightsEl.classList.toggle('hero-highlights--single', !upcomingEvent);
     nextGameCard.hidden = true;
     nextHomeCard.hidden = false;
     nextHomeCard.innerHTML = `

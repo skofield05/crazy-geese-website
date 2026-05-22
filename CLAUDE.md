@@ -85,11 +85,14 @@ geese_logo.png                      → Vereinslogo (Header, Favicon, Hero-Hinte
   "kontakt": { "ansprechpartner", "email", "adresse", "social" },
   "tabelle": { "phase", "teams": [...] },
   "spiele": { "naechste": [...], "vergangene": [...] },
+  "events": [ { "slug", "titel", "datum", "zeit", "ort", "highlights": [], "kontakt_email", "kontakt_telefon", "kontakt_telefon_name", "instagram_post_url" } ],
   "softball": { "naechste_termine": [] },
   "archiv": { "2025": { "ergebnis", "bilanz", "datei" } },
   "blog": { "posts": [ { "slug", "url", "titel", "datum", "kategorie", "teaser", "cover", "cover_alt" } ] }
 }
 ```
+
+`events` ist optional (z.B. Slowpitch Firmenturnier). page-index.js rendert pro zukunftigem Event eine eigene `highlight-card.highlight-event` neben Spiel/Heimspiel. Karte verschwindet automatisch, sobald `datum < today`.
 
 ---
 
@@ -352,6 +355,11 @@ In `data/data.json` → `spiele.vergangene`:
 ---
 
 ## Changelog
+
+### 2026-05-22
+- **Event-Karte auf Landing Page:** Neuer optionaler Top-Level-Key `events` in `data.json` fuer Veranstaltungen ausserhalb des regulaeren Spielplans (Slowpitch Firmenturnier 30.05. als Erstanwendung). `page-index.js` rendert eine dritte `highlight-card.highlight-event` (Lila, Softball-Akzentfarbe) neben Spiel/Heimspiel mit Datum, Ort, Highlights-Liste und Mail-/Tel-CTAs sowie sekundaerem Link zum IG-Post. Karte verschwindet automatisch nach `event.datum`
+- **Grid-Refactor:** `.hero-highlights` von festem `1fr 1fr` auf `repeat(auto-fit, minmax(280px, 1fr))` umgestellt — 1/2/3 sichtbare Karten passen jetzt ohne Sonderfall-CSS. Single-Layout (eine zentrierte Karte) greift nur noch, wenn sameGame UND kein Event aktiv ist
+- **Validator:** `validate_data.py` um `_check_events()` erweitert (titel+datum pflicht, datum/zeit-Format, `instagram_post_url`-Regex)
 
 ### 2026-05-04
 - **Security/CSP-Haertung:** `'unsafe-inline'` aus `script-src` und `style-src` der CSP entfernt (alle 9 HTML-Files konsistent). Dazu pro Seite ein per-page Bootstrap nach `scripts/page-<name>.js` ausgelagert (`page-index`, `page-baseball`, `page-blog`, `page-archiv`, `page-softball`, `post-schulcup-mattersburg`); einfache Seiten (kontakt, nachwuchs, was-ist-baseball) brauchen keinen eigenen Bootstrap mehr, weil `shared.js` jetzt am Ende `setFooterYear()` + `setupMobileMenu()` selbst aufruft (idempotent via `dataset.menuInit`-Guard). Eine letzte Inline-`style=`-Stelle in `nachwuchs.html` durch `.schule-interesse`-Klasse ersetzt
