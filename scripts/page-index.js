@@ -54,10 +54,34 @@ function renderPage(data) {
   const highlightsEl = document.querySelector('.hero-highlights');
   const nextGameCard = document.getElementById('next-game-card');
   const nextHomeCard = document.getElementById('next-home-card');
+  const eventCard = document.getElementById('event-card');
 
-  if (sameGame) {
-    // Nächstes Spiel == Nächstes Heimspiel: nur die Heim-Kachel, einspaltig.
+  const upcomingEvent = (data.events || [])
+    .filter(e => e.datum >= today)
+    .sort((a, b) => (a.datum + (a.zeit || '')).localeCompare(b.datum + (b.zeit || '')))[0];
+
+  if (upcomingEvent) {
+    eventCard.hidden = false;
+    eventCard.innerHTML = renderEventCard(upcomingEvent);
+  } else {
+    eventCard.hidden = true;
+    eventCard.innerHTML = '';
+  }
+
+  // Single-Layout nur, wenn wirklich nur eine Karte uebrig bleibt: also
+  // Spiel==Heimspiel UND kein Event.
+  if (sameGame && !upcomingEvent) {
     highlightsEl.classList.add('hero-highlights--single');
+    nextGameCard.hidden = true;
+    nextHomeCard.hidden = false;
+    nextHomeCard.innerHTML = `
+      <span class="highlight-label">Nächstes Heimspiel</span>
+      ${renderHighlightGame(nextHomeGame)}
+      <span class="highlight-free">🎟️ Eintritt frei!</span>
+    `;
+  } else if (sameGame && upcomingEvent) {
+    // Spiel==Heimspiel und ein Event existiert: Heim-Kachel + Event nebeneinander.
+    highlightsEl.classList.remove('hero-highlights--single');
     nextGameCard.hidden = true;
     nextHomeCard.hidden = false;
     nextHomeCard.innerHTML = `
@@ -108,6 +132,35 @@ function renderPage(data) {
     document.getElementById('last-results').innerHTML = past.map(g => renderGame(g)).join('');
     lastResultsSection.hidden = false;
   }
+}
+
+function renderEventCard(event) {
+  const mail = event.kontakt_email
+    ? `<a class="event-cta event-cta-mail" href="mailto:${escapeHtml(event.kontakt_email)}?subject=${encodeURIComponent('Interesse ' + (event.titel || 'Event'))}">✉️ ${escapeHtml(event.kontakt_email)}</a>`
+    : '';
+  const telDigits = event.kontakt_telefon ? event.kontakt_telefon.replace(/[^+\d]/g, '') : '';
+  const telLabel = event.kontakt_telefon_name
+    ? `${escapeHtml(event.kontakt_telefon_name)} · ${escapeHtml(event.kontakt_telefon)}`
+    : escapeHtml(event.kontakt_telefon || '');
+  const tel = event.kontakt_telefon
+    ? `<a class="event-cta event-cta-tel" href="tel:${escapeHtml(telDigits)}">📞 ${telLabel}</a>`
+    : '';
+  const highlights = Array.isArray(event.highlights) && event.highlights.length
+    ? `<ul class="event-highlights">${event.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('')}</ul>`
+    : '';
+  const igPost = /^https?:\/\/(www\.)?instagram\.com\//.test(event.instagram_post_url || '')
+    ? `<a class="event-more-link" href="${escapeHtml(event.instagram_post_url)}" target="_blank" rel="noopener">Mehr Infos auf Instagram →</a>`
+    : '';
+  return `
+    <span class="highlight-label">Event</span>
+    <span class="game-sport event-tag">${escapeHtml(event.titel || 'Event')}</span>
+    <span class="highlight-date">${formatDateLong(event.datum)}</span>
+    ${event.zeit ? `<span class="highlight-time">${escapeHtml(event.zeit)} Uhr</span>` : ''}
+    ${event.ort ? `<span class="highlight-location">📍 ${escapeHtml(event.ort)}</span>` : ''}
+    ${highlights}
+    ${(mail || tel) ? `<div class="event-ctas"><span class="event-ctas-label">Bei Interesse melden:</span>${mail}${tel}</div>` : ''}
+    ${igPost}
+  `;
 }
 
 loadData();

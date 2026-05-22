@@ -261,6 +261,20 @@
       }
     ]
   },
+  "events": [
+    {
+      "slug": "firmenturnier-2026",
+      "titel": "Slowpitch Firmenturnier",
+      "datum": "2026-05-30",
+      "zeit": "10:00",
+      "ort": "Geese Ballpark, Rohrbach",
+      "highlights": ["BBQ & Beer", "Hüpfburg", "Lagerfeuer"],
+      "kontakt_email": "crazygeese93@gmail.com",
+      "kontakt_telefon": "+43 664 118 85 84",
+      "kontakt_telefon_name": "Tom Kissich",
+      "instagram_post_url": "https://www.instagram.com/p/DWrXQ0EjZcL/"
+    }
+  ],
   "softball": {
     "naechste_termine": [
       {

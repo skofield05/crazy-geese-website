@@ -119,7 +119,7 @@
 
       <h1 class="visually-hidden">Rohrbach Crazy Geese – Baseball Landesliga Ost</h1>
 
-      <!-- HIGHLIGHT: Nächstes Spiel + Nächstes Heimspiel -->
+      <!-- HIGHLIGHT: Nächstes Spiel + Nächstes Heimspiel + Event -->
       <div class="hero-highlights">
         <div class="highlight-card" id="next-game-card">
           <span class="highlight-label">Nächstes Spiel</span>
@@ -128,6 +128,9 @@
         <div class="highlight-card highlight-home" id="next-home-card">
           <span class="highlight-label">Nächstes Heimspiel</span>
           <!-- Wird per JS befüllt -->
+        </div>
+        <div class="highlight-card highlight-event" id="event-card" hidden>
+          <!-- Wird per JS befüllt, wenn ein zukünftiges Event in data.events liegt -->
         </div>
       </div>
 
@@ -259,7 +262,7 @@
   </footer>
 
   <script src="scripts/shared.js?v=2026-05-04"></script>
-  <script src="scripts/page-index.js?v=2026-05-18"></script>
+  <script src="scripts/page-index.js?v=2026-05-22"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "fa36618f3ac94932a361e46b5ccf4a03"}'></script>
   <!-- End Cloudflare Web Analytics -->
