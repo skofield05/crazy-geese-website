@@ -25,14 +25,14 @@
     }
   },
   "tabelle": {
-    "stand": "2026-05-17",
-    "phase": "Regular Season",
+    "stand": "2026-05-23",
+    "phase": "Grunddurchgang",
     "teams": [
       {
         "rang": 1,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
-        "siege": 4,
+        "siege": 5,
         "niederlagen": 0,
         "unentschieden": 0
       },
@@ -54,42 +54,42 @@
       },
       {
         "rang": 4,
-        "name": "Vienna Lawnmowers",
-        "kuerzel": "LM",
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
         "siege": 2,
-        "niederlagen": 2,
+        "niederlagen": 1,
         "unentschieden": 0
       },
       {
         "rang": 5,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
+        "name": "Danube Titans",
+        "kuerzel": "DT",
         "siege": 1,
         "niederlagen": 1,
         "unentschieden": 0
       },
       {
         "rang": 6,
-        "name": "Danube Titans",
-        "kuerzel": "DT",
-        "siege": 0,
-        "niederlagen": 0,
+        "name": "Vienna Lawnmowers",
+        "kuerzel": "LM",
+        "siege": 2,
+        "niederlagen": 3,
         "unentschieden": 0
       },
       {
         "rang": 7,
-        "name": "Tulln Ravens",
-        "kuerzel": "TR",
+        "name": "Woodquarter Red Devils",
+        "kuerzel": "RD",
         "siege": 0,
         "niederlagen": 2,
         "unentschieden": 0
       },
       {
         "rang": 8,
-        "name": "Woodquarter Red Devils",
-        "kuerzel": "RD",
+        "name": "Tulln Ravens",
+        "kuerzel": "TR",
         "siege": 0,
-        "niederlagen": 2,
+        "niederlagen": 3,
         "unentschieden": 0
       },
       {
@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-05-17",
+    "letztes_update": "2026-05-23",
     "naechste": [
       {
         "datum": "2026-05-23",
@@ -112,7 +112,9 @@
         "gast": "Rohrbach Crazy Geese",
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Grunddurchgang",
-        "spielnr": "#16"
+        "spielnr": "#16",
+        "ergebnis_heim": 6,
+        "ergebnis_gast": 8
       },
       {
         "datum": "2026-05-23",
@@ -268,7 +270,11 @@
       "datum": "2026-05-30",
       "zeit": "10:00",
       "ort": "Geese Ballpark, Rohrbach",
-      "highlights": ["BBQ & Beer", "Hüpfburg", "Lagerfeuer"],
+      "highlights": [
+        "BBQ & Beer",
+        "Hüpfburg",
+        "Lagerfeuer"
+      ],
       "kontakt_email": "crazygeese93@gmail.com",
       "kontakt_telefon": "+43 664 118 85 84",
       "kontakt_telefon_name": "Tom Kissich",
