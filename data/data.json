@@ -32,12 +32,20 @@
         "rang": 1,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
-        "siege": 5,
+        "siege": 6,
         "niederlagen": 0,
         "unentschieden": 0
       },
       {
         "rang": 2,
+        "name": "Vienna Bucks",
+        "kuerzel": "BU",
+        "siege": 5,
+        "niederlagen": 1,
+        "unentschieden": 0
+      },
+      {
+        "rang": 3,
         "name": "Vienna Metrostars 3",
         "kuerzel": "MS",
         "siege": 2,
@@ -45,19 +53,11 @@
         "unentschieden": 0
       },
       {
-        "rang": 3,
-        "name": "Vienna Bucks",
-        "kuerzel": "BU",
-        "siege": 3,
-        "niederlagen": 1,
-        "unentschieden": 0
-      },
-      {
         "rang": 4,
         "name": "Graz Dirty Sox",
         "kuerzel": "DS",
         "siege": 2,
-        "niederlagen": 1,
+        "niederlagen": 2,
         "unentschieden": 0
       },
       {
@@ -73,7 +73,7 @@
         "name": "Vienna Lawnmowers",
         "kuerzel": "LM",
         "siege": 2,
-        "niederlagen": 3,
+        "niederlagen": 4,
         "unentschieden": 0
       },
       {
@@ -89,7 +89,7 @@
         "name": "Tulln Ravens",
         "kuerzel": "TR",
         "siege": 0,
-        "niederlagen": 3,
+        "niederlagen": 4,
         "unentschieden": 0
       },
       {
@@ -123,7 +123,9 @@
         "gast": "Rohrbach Crazy Geese",
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Grunddurchgang",
-        "spielnr": "#17"
+        "spielnr": "#17",
+        "ergebnis_heim": 11,
+        "ergebnis_gast": 12
       },
       {
         "datum": "2026-06-13",
