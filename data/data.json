@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-05-23",
+    "stand": "2026-05-24",
     "phase": "Grunddurchgang",
     "teams": [
       {
@@ -103,30 +103,8 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-05-23",
+    "letztes_update": "2026-05-24",
     "naechste": [
-      {
-        "datum": "2026-05-23",
-        "zeit": "11:00",
-        "heim": "Danube Titans",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Grunddurchgang",
-        "spielnr": "#16",
-        "ergebnis_heim": 6,
-        "ergebnis_gast": 8
-      },
-      {
-        "datum": "2026-05-23",
-        "zeit": "16:00",
-        "heim": "Vienna Lawnmowers",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Grunddurchgang",
-        "spielnr": "#17",
-        "ergebnis_heim": 11,
-        "ergebnis_gast": 12
-      },
       {
         "datum": "2026-06-13",
         "zeit": "11:00",
@@ -262,6 +240,28 @@
         "spielnr": "#15",
         "ergebnis_heim": 6,
         "ergebnis_gast": 2
+      },
+      {
+        "datum": "2026-05-23",
+        "zeit": "11:00",
+        "heim": "Danube Titans",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang",
+        "spielnr": "#16",
+        "ergebnis_heim": 6,
+        "ergebnis_gast": 8
+      },
+      {
+        "datum": "2026-05-23",
+        "zeit": "16:00",
+        "heim": "Vienna Lawnmowers",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang",
+        "spielnr": "#17",
+        "ergebnis_heim": 11,
+        "ergebnis_gast": 12
       }
     ]
   },
