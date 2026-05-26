@@ -327,7 +327,7 @@ In `data/data.json` → `spiele.vergangene`:
 
 Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors-grid` (nicht datengetrieben). Vorgehen:
 
-1. **Logo aufbereiten** und als PNG mit Alpha unter `img/sponsoren/<slug>.png` ablegen. Die Sponsoren-Grid rendert per CSS in Graustufen (`filter: grayscale(100%) brightness(1.2)`, Hover voll farbig), daher **farbige** Variante verwenden — nicht eine "weiss"-Version vom Sponsor (die wäre fürs dunkle Hintergründe gedacht). Zielgrösse ca. 400 px breit, transparenter Hintergrund.
+1. **Logo aufbereiten** und als PNG mit Alpha unter `img/sponsoren/<slug>.png` ablegen. Zielgrösse ca. 400 px breit. **Helle/weisse Logo-Variante verwenden** — die Sponsoren-Section liegt auf `--color-bg-card` (#161b22, fast schwarz), schwarze Logos auf Alpha-Hintergrund sind dort unsichtbar. Der CSS-Filter `grayscale(100%) brightness(1.2)` rettet nur leicht-graue Bereiche, nicht echtes Schwarz. Wenn der Sponsor mehrere Varianten liefert (z. B. EPS farbig + PSD weiss), die weisse nehmen. Die anderen bestehenden Sponsoren-JPGs werden nur sichtbar, weil sie weissen Hintergrund eingebrannt haben.
 
    Vektor-Quellen (EPS/AI/PDF) per Ghostscript auf hohe DPI rendern, dann mit Pillow auf 400 px Breite skalieren:
    ```bash
@@ -383,7 +383,8 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ### 2026-05-26
 - **Neuer Sponsor:** NIC Solutions (https://nic-solutions.at/) in der Sponsorenleiste auf `index.html`. Logo aus EPS-Quelle ueber Ghostscript (TinyTeX) auf 600 dpi mit Alpha gerendert; Claim „we make IT" weggeschnitten via spaltenweiser Alpha-Analyse (findet die Luecke zwischen Marke und Claim, ohne in den Text reinzuschneiden); auf 400 px Breite skaliert -> `img/sponsoren/nic-solutions.png` (16 KB, 400x219). Quelldateien liegen lokal in `Sponsoren/nic/`
 - **`.gitignore`:** `/Sponsoren/` ergaenzt (analog zu `*.xls`/`*.pdf`). Fuehrender Slash ist load-bearing — ohne ihn wuerde die Regel auf Windows wegen Case-Insensitivity auch `img/sponsoren/` filtern und alle Sponsor-Logos verstecken. Mit `git check-ignore -v` verifiziert
-- **Doku:** „Neuen Sponsor eintragen" in „Haeufige Aufgaben" ergaenzt (EPS->PNG-Workflow, „farbiges Logo nicht weiss"-Hinweis wegen CSS-Graustufenfilter, .gitignore-Gotcha)
+- **Doku:** „Neuen Sponsor eintragen" in „Haeufige Aufgaben" ergaenzt (EPS->PNG-Workflow, .gitignore-Gotcha)
+- **Fix:** PNG durch weisse PSD-Variante ersetzt — die zuerst genommene EPS-Variante (schwarze Schrift auf Alpha) war auf `--color-bg-card` (#161b22) unsichtbar. Der CSS-Filter `grayscale + brightness(1.2)` macht echtes Schwarz nicht hell genug; die anderen Sponsor-JPGs funktionieren nur, weil sie weissen Hintergrund eingebrannt haben. „Haeufige Aufgaben" entsprechend korrigiert
 
 ### 2026-05-22
 - **Event-Karte auf Landing Page:** Neuer optionaler Top-Level-Key `events` in `data.json` fuer Veranstaltungen ausserhalb des regulaeren Spielplans (Slowpitch Firmenturnier 30.05. als Erstanwendung). `page-index.js` rendert eine dritte `highlight-card.highlight-event` (Lila, Softball-Akzentfarbe) neben Spiel/Heimspiel mit Datum, Ort, Highlights-Liste und Mail-/Tel-CTAs sowie sekundaerem Link zum IG-Post. Karte verschwindet automatisch nach `event.datum`
