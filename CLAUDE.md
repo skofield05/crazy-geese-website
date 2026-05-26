@@ -381,6 +381,8 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ## Changelog
 
 ### 2026-05-26
+- **Firmenturnier-Flyer:** Event-Karte auf Landing Page zeigt jetzt das WhatsApp-Flyer-Bild (`img/firmenturnier-2026.jpg`, 800x1131, 174 KB) statt der generierten Text-Karte. Neues `bild`/`bild_alt`-Feld in `data.json` events steuert den Modus; Fallback auf Text-Karte bleibt fuer Events ohne Bild. Flyer verlinkt auf Instagram-Post. Layout: Flyer zentriert oben (max-width 450px), Heimspiel-Karte darunter (Grid auf single-column via `:has(.event-flyer)`)
+- **Neue Sponsoren:** ASVOE (https://www.asvoe.at/) und Sportland Burgenland (https://www.burgenland.at/themen/sport/) in Sponsorenleiste. Logos aus webp/jpg aufbereitet mit weisser Kachel auf 400 px Breite -> `img/sponsoren/asvoe.png` (22 KB), `img/sponsoren/sportland-burgenland.jpg` (11 KB). Quelldateien in `Sponsoren/ASVÖ/` und `Sponsoren/Land Burgenland/`
 - **Neuer Sponsor:** NIC Solutions (https://nic-solutions.at/) in der Sponsorenleiste auf `index.html`. Logo aus EPS-Quelle ueber Ghostscript (TinyTeX) auf 600 dpi mit Alpha gerendert; Claim „we make IT" weggeschnitten via spaltenweiser Alpha-Analyse (findet die Luecke zwischen Marke und Claim, ohne in den Text reinzuschneiden); auf 400 px Breite skaliert -> `img/sponsoren/nic-solutions.png` (16 KB, 400x219). Quelldateien liegen lokal in `Sponsoren/nic/`
 - **`.gitignore`:** `/Sponsoren/` ergaenzt (analog zu `*.xls`/`*.pdf`). Fuehrender Slash ist load-bearing — ohne ihn wuerde die Regel auf Windows wegen Case-Insensitivity auch `img/sponsoren/` filtern und alle Sponsor-Logos verstecken. Mit `git check-ignore -v` verifiziert
 - **Doku:** „Neuen Sponsor eintragen" in „Haeufige Aufgaben" ergaenzt (EPS->PNG-Workflow, .gitignore-Gotcha)
