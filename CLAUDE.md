@@ -323,6 +323,30 @@ In `data/data.json` → `spiele.vergangene`:
 
 5. **Smoke-Test:** Lokal `python -m http.server` im Repo-Root, dann Artikel + Galerie + Lightbox im Browser durchklicken (Prev/Next/ESC/Swipe).
 
+### Neuen Sponsor eintragen
+
+Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors-grid` (nicht datengetrieben). Vorgehen:
+
+1. **Logo aufbereiten** und als PNG mit Alpha unter `img/sponsoren/<slug>.png` ablegen. Die Sponsoren-Grid rendert per CSS in Graustufen (`filter: grayscale(100%) brightness(1.2)`, Hover voll farbig), daher **farbige** Variante verwenden — nicht eine "weiss"-Version vom Sponsor (die wäre fürs dunkle Hintergründe gedacht). Zielgrösse ca. 400 px breit, transparenter Hintergrund.
+
+   Vektor-Quellen (EPS/AI/PDF) per Ghostscript auf hohe DPI rendern, dann mit Pillow auf 400 px Breite skalieren:
+   ```bash
+   # EPS -> PNG (alpha, 600 dpi, EPS-Bounding-Box croppen):
+   gswin64c -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pngalpha -r600 -dEPSCrop \
+     -sOutputFile=tmp.png "Sponsoren/<sponsor>/logo.eps"
+   # dann mit Pillow trimmen + auf 400 px skalieren
+   ```
+   Bei Logos mit Claim/Beiwerk (z. B. „we make IT" neben der Marke) den Claim wegschneiden — bei 50 px Anzeigehöhe in der Grid wäre der ohnehin unter 10 px hoch und unleserlich. Verlässlicher als ein Fix-Prozent-Crop: spaltenweise Alpha-Analyse mit `numpy` findet die Lücke zwischen Marke und Claim.
+
+2. **Eintrag in `index.html`** in `.sponsors-grid` ergänzen (Pattern der existierenden Einträge folgen):
+   ```html
+   <a href="https://<sponsor-url>/" target="_blank" rel="noopener" class="sponsor-logo" title="<Sponsorname>">
+     <img loading="lazy" src="img/sponsoren/<slug>.png" alt="<Sponsorname>">
+   </a>
+   ```
+
+3. **Quelldateien** (EPS/PSD/AI) gehören NICHT ins Repo — analog zu `.xls` und `.pdf`. Liegen sie unter einem eigenen Ordner (z. B. `Sponsoren/`), per `/<ordner>/` in `.gitignore` filtern. **Führender Slash ist wichtig**, sonst filtert die Regel auf Windows wegen Case-Insensitivity auch `img/sponsoren/` weg (`git check-ignore -v <pfad>` zur Verifikation).
+
 ---
 
 ## Wichtige Pfade
@@ -355,6 +379,11 @@ In `data/data.json` → `spiele.vergangene`:
 ---
 
 ## Changelog
+
+### 2026-05-26
+- **Neuer Sponsor:** NIC Solutions (https://nic-solutions.at/) in der Sponsorenleiste auf `index.html`. Logo aus EPS-Quelle ueber Ghostscript (TinyTeX) auf 600 dpi mit Alpha gerendert; Claim „we make IT" weggeschnitten via spaltenweiser Alpha-Analyse (findet die Luecke zwischen Marke und Claim, ohne in den Text reinzuschneiden); auf 400 px Breite skaliert -> `img/sponsoren/nic-solutions.png` (16 KB, 400x219). Quelldateien liegen lokal in `Sponsoren/nic/`
+- **`.gitignore`:** `/Sponsoren/` ergaenzt (analog zu `*.xls`/`*.pdf`). Fuehrender Slash ist load-bearing — ohne ihn wuerde die Regel auf Windows wegen Case-Insensitivity auch `img/sponsoren/` filtern und alle Sponsor-Logos verstecken. Mit `git check-ignore -v` verifiziert
+- **Doku:** „Neuen Sponsor eintragen" in „Haeufige Aufgaben" ergaenzt (EPS->PNG-Workflow, „farbiges Logo nicht weiss"-Hinweis wegen CSS-Graustufenfilter, .gitignore-Gotcha)
 
 ### 2026-05-22
 - **Event-Karte auf Landing Page:** Neuer optionaler Top-Level-Key `events` in `data.json` fuer Veranstaltungen ausserhalb des regulaeren Spielplans (Slowpitch Firmenturnier 30.05. als Erstanwendung). `page-index.js` rendert eine dritte `highlight-card.highlight-event` (Lila, Softball-Akzentfarbe) neben Spiel/Heimspiel mit Datum, Ort, Highlights-Liste und Mail-/Tel-CTAs sowie sekundaerem Link zum IG-Post. Karte verschwindet automatisch nach `event.datum`
