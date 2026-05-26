@@ -125,6 +125,14 @@ function renderPage(data) {
 }
 
 function renderEventCard(event) {
+  if (event.bild) {
+    const link = /^https?:\/\/(www\.)?instagram\.com\//.test(event.instagram_post_url || '')
+      ? event.instagram_post_url : null;
+    const img = `<img class="event-flyer" src="${escapeHtml(event.bild)}" alt="${escapeHtml(event.bild_alt || event.titel || 'Event')}" loading="lazy">`;
+    return link
+      ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">${img}</a>`
+      : img;
+  }
   const mail = event.kontakt_email
     ? `<a class="event-cta event-cta-mail" href="mailto:${escapeHtml(event.kontakt_email)}?subject=${encodeURIComponent('Interesse ' + (event.titel || 'Event'))}">✉️ ${escapeHtml(event.kontakt_email)}</a>`
     : '';

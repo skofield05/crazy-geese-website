@@ -527,6 +527,29 @@ li {
   border-color: #7c3aed;
 }
 
+.highlight-event:has(.event-flyer) {
+  padding: 0;
+  overflow: hidden;
+  border-width: 0;
+  order: -1;
+  justify-self: center;
+  max-width: 380px;
+}
+
+.event-flyer {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+
+@media (min-width: 600px) {
+  .hero-highlights:has(.event-flyer) {
+    grid-template-columns: 1fr;
+    max-width: 560px;
+  }
+}
+
 .highlight-event .highlight-label {
   color: #c4b5fd;
 }
