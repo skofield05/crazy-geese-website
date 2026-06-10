@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-05-24",
+    "stand": "2026-06-10",
     "phase": "Grunddurchgang",
     "teams": [
       {
@@ -38,14 +38,6 @@
       },
       {
         "rang": 2,
-        "name": "Vienna Bucks",
-        "kuerzel": "BU",
-        "siege": 5,
-        "niederlagen": 1,
-        "unentschieden": 0
-      },
-      {
-        "rang": 3,
         "name": "Vienna Metrostars 3",
         "kuerzel": "MS",
         "siege": 2,
@@ -53,19 +45,27 @@
         "unentschieden": 0
       },
       {
-        "rang": 4,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
-        "siege": 2,
-        "niederlagen": 2,
+        "rang": 3,
+        "name": "Danube Titans",
+        "kuerzel": "DT",
+        "siege": 5,
+        "niederlagen": 1,
         "unentschieden": 0
       },
       {
-        "rang": 5,
-        "name": "Danube Titans",
-        "kuerzel": "DT",
-        "siege": 1,
-        "niederlagen": 1,
+        "rang": 4,
+        "name": "Vienna Bucks",
+        "kuerzel": "BU",
+        "siege": 5,
+        "niederlagen": 5,
+        "unentschieden": 0
+      },
+      {
+        "rang": 4,
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
+        "siege": 3,
+        "niederlagen": 3,
         "unentschieden": 0
       },
       {
@@ -78,6 +78,14 @@
       },
       {
         "rang": 7,
+        "name": "Schremser Beers 2",
+        "kuerzel": "SB",
+        "siege": 1,
+        "niederlagen": 5,
+        "unentschieden": 0
+      },
+      {
+        "rang": 8,
         "name": "Woodquarter Red Devils",
         "kuerzel": "RD",
         "siege": 0,
@@ -85,17 +93,9 @@
         "unentschieden": 0
       },
       {
-        "rang": 8,
+        "rang": 9,
         "name": "Tulln Ravens",
         "kuerzel": "TR",
-        "siege": 0,
-        "niederlagen": 4,
-        "unentschieden": 0
-      },
-      {
-        "rang": 9,
-        "name": "Schremser Beers 2",
-        "kuerzel": "SB",
         "siege": 0,
         "niederlagen": 4,
         "unentschieden": 0
@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-05-24",
+    "letztes_update": "2026-06-10",
     "naechste": [
       {
         "datum": "2026-06-13",
@@ -260,8 +260,8 @@
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Grunddurchgang",
         "spielnr": "#17",
-        "ergebnis_heim": 11,
-        "ergebnis_gast": 12
+        "ergebnis_heim": 0,
+        "ergebnis_gast": 7
       }
     ]
   },
