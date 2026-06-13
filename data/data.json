@@ -25,30 +25,30 @@
     }
   },
   "tabelle": {
-    "stand": "2026-06-10",
+    "stand": "2026-06-13",
     "phase": "Grunddurchgang",
     "teams": [
       {
         "rang": 1,
-        "name": "Rohrbach Crazy Geese",
-        "kuerzel": "CG",
-        "siege": 6,
-        "niederlagen": 0,
+        "name": "Danube Titans",
+        "kuerzel": "DT",
+        "siege": 7,
+        "niederlagen": 1,
         "unentschieden": 0
       },
       {
         "rang": 2,
-        "name": "Vienna Metrostars 3",
-        "kuerzel": "MS",
-        "siege": 2,
-        "niederlagen": 0,
+        "name": "Rohrbach Crazy Geese",
+        "kuerzel": "CG",
+        "siege": 6,
+        "niederlagen": 1,
         "unentschieden": 0
       },
       {
         "rang": 3,
-        "name": "Danube Titans",
-        "kuerzel": "DT",
-        "siege": 5,
+        "name": "Vienna Metrostars 3",
+        "kuerzel": "MS",
+        "siege": 2,
         "niederlagen": 1,
         "unentschieden": 0
       },
@@ -61,7 +61,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 4,
+        "rang": 5,
         "name": "Graz Dirty Sox",
         "kuerzel": "DS",
         "siege": 3,
@@ -70,6 +70,14 @@
       },
       {
         "rang": 6,
+        "name": "Woodquarter Red Devils",
+        "kuerzel": "RD",
+        "siege": 0,
+        "niederlagen": 2,
+        "unentschieden": 0
+      },
+      {
+        "rang": 7,
         "name": "Vienna Lawnmowers",
         "kuerzel": "LM",
         "siege": 2,
@@ -77,19 +85,11 @@
         "unentschieden": 0
       },
       {
-        "rang": 7,
+        "rang": 8,
         "name": "Schremser Beers 2",
         "kuerzel": "SB",
         "siege": 1,
         "niederlagen": 5,
-        "unentschieden": 0
-      },
-      {
-        "rang": 8,
-        "name": "Woodquarter Red Devils",
-        "kuerzel": "RD",
-        "siege": 0,
-        "niederlagen": 2,
         "unentschieden": 0
       },
       {
@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-06-10",
+    "letztes_update": "2026-06-13",
     "naechste": [
       {
         "datum": "2026-06-13",
@@ -112,7 +112,9 @@
         "gast": "Danube Titans",
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Grunddurchgang",
-        "spielnr": "#28"
+        "spielnr": "#28",
+        "ergebnis_heim": 4,
+        "ergebnis_gast": 7
       },
       {
         "datum": "2026-06-13",
