@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-06-13",
+    "stand": "2026-06-14",
     "phase": "Grunddurchgang",
     "teams": [
       {
@@ -40,20 +40,12 @@
         "rang": 2,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
-        "siege": 6,
+        "siege": 7,
         "niederlagen": 1,
         "unentschieden": 0
       },
       {
         "rang": 3,
-        "name": "Vienna Metrostars 3",
-        "kuerzel": "MS",
-        "siege": 2,
-        "niederlagen": 1,
-        "unentschieden": 0
-      },
-      {
-        "rang": 4,
         "name": "Vienna Bucks",
         "kuerzel": "BU",
         "siege": 5,
@@ -61,11 +53,19 @@
         "unentschieden": 0
       },
       {
-        "rang": 5,
+        "rang": 4,
         "name": "Graz Dirty Sox",
         "kuerzel": "DS",
         "siege": 3,
         "niederlagen": 3,
+        "unentschieden": 0
+      },
+      {
+        "rang": 5,
+        "name": "Vienna Metrostars 3",
+        "kuerzel": "MS",
+        "siege": 2,
+        "niederlagen": 2,
         "unentschieden": 0
       },
       {
@@ -103,28 +103,8 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-06-13",
+    "letztes_update": "2026-06-14",
     "naechste": [
-      {
-        "datum": "2026-06-13",
-        "zeit": "11:00",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Danube Titans",
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Grunddurchgang",
-        "spielnr": "#28",
-        "ergebnis_heim": 4,
-        "ergebnis_gast": 7
-      },
-      {
-        "datum": "2026-06-13",
-        "zeit": "16:00",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Vienna Metrostars 3",
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Grunddurchgang",
-        "spielnr": "#30"
-      },
       {
         "datum": "2026-06-20",
         "zeit": "13:30",
@@ -264,6 +244,28 @@
         "spielnr": "#17",
         "ergebnis_heim": 0,
         "ergebnis_gast": 7
+      },
+      {
+        "datum": "2026-06-13",
+        "zeit": "11:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Danube Titans",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang",
+        "spielnr": "#28",
+        "ergebnis_heim": 4,
+        "ergebnis_gast": 7
+      },
+      {
+        "datum": "2026-06-13",
+        "zeit": "16:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Vienna Metrostars 3",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang",
+        "spielnr": "#30",
+        "ergebnis_heim": 19,
+        "ergebnis_gast": 3
       }
     ]
   },

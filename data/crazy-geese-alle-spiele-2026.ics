@@ -5,22 +5,6 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:Crazy Geese – Alle Spiele 2026
 X-WR-TIMEZONE:Europe/Vienna
 BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260613T110000
-DTEND;TZID=Europe/Vienna:20260613T133000
-SUMMARY:⚾ Danube Titans vs Crazy Geese (HEIM)
-LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-28@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260613T160000
-DTEND;TZID=Europe/Vienna:20260613T183000
-SUMMARY:⚾ Vienna Metrostars 3 vs Crazy Geese (HEIM)
-LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-30@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260620T133000
 DTEND;TZID=Europe/Vienna:20260620T160000
 SUMMARY:⚾ Tulln Ravens vs Crazy Geese
