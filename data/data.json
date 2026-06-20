@@ -30,6 +30,14 @@
     "teams": [
       {
         "rang": 1,
+        "name": "Danube Titans",
+        "kuerzel": "DT",
+        "siege": 8,
+        "niederlagen": 1,
+        "unentschieden": 0
+      },
+      {
+        "rang": 2,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
         "siege": 7,
@@ -37,15 +45,15 @@
         "unentschieden": 0
       },
       {
-        "rang": 1,
-        "name": "Danube Titans",
-        "kuerzel": "DT",
-        "siege": 7,
-        "niederlagen": 1,
+        "rang": 3,
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
+        "siege": 4,
+        "niederlagen": 3,
         "unentschieden": 0
       },
       {
-        "rang": 3,
+        "rang": 4,
         "name": "Vienna Bucks",
         "kuerzel": "BU",
         "siege": 5,
@@ -53,15 +61,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 3,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
-        "siege": 3,
-        "niederlagen": 3,
-        "unentschieden": 0
-      },
-      {
-        "rang": 3,
+        "rang": 5,
         "name": "Vienna Metrostars 3",
         "kuerzel": "MS",
         "siege": 2,
@@ -70,22 +70,6 @@
       },
       {
         "rang": 6,
-        "name": "Vienna Lawnmowers",
-        "kuerzel": "LM",
-        "siege": 2,
-        "niederlagen": 4,
-        "unentschieden": 0
-      },
-      {
-        "rang": 7,
-        "name": "Schremser Beers 2",
-        "kuerzel": "SB",
-        "siege": 1,
-        "niederlagen": 5,
-        "unentschieden": 0
-      },
-      {
-        "rang": 8,
         "name": "Woodquarter Red Devils",
         "kuerzel": "RD",
         "siege": 0,
@@ -93,11 +77,27 @@
         "unentschieden": 0
       },
       {
+        "rang": 7,
+        "name": "Vienna Lawnmowers",
+        "kuerzel": "LM",
+        "siege": 2,
+        "niederlagen": 5,
+        "unentschieden": 0
+      },
+      {
+        "rang": 8,
+        "name": "Schremser Beers 2",
+        "kuerzel": "SB",
+        "siege": 1,
+        "niederlagen": 5,
+        "unentschieden": 0
+      },
+      {
         "rang": 9,
         "name": "Tulln Ravens",
         "kuerzel": "TR",
         "siege": 0,
-        "niederlagen": 4,
+        "niederlagen": 5,
         "unentschieden": 0
       }
     ]
