@@ -25,21 +25,21 @@
     }
   },
   "tabelle": {
-    "stand": "2026-06-14",
+    "stand": "2026-06-20",
     "phase": "Grunddurchgang",
     "teams": [
       {
         "rang": 1,
-        "name": "Danube Titans",
-        "kuerzel": "DT",
+        "name": "Rohrbach Crazy Geese",
+        "kuerzel": "CG",
         "siege": 7,
         "niederlagen": 1,
         "unentschieden": 0
       },
       {
-        "rang": 2,
-        "name": "Rohrbach Crazy Geese",
-        "kuerzel": "CG",
+        "rang": 1,
+        "name": "Danube Titans",
+        "kuerzel": "DT",
         "siege": 7,
         "niederlagen": 1,
         "unentschieden": 0
@@ -53,7 +53,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 4,
+        "rang": 3,
         "name": "Graz Dirty Sox",
         "kuerzel": "DS",
         "siege": 3,
@@ -61,7 +61,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 5,
+        "rang": 3,
         "name": "Vienna Metrostars 3",
         "kuerzel": "MS",
         "siege": 2,
@@ -70,14 +70,6 @@
       },
       {
         "rang": 6,
-        "name": "Woodquarter Red Devils",
-        "kuerzel": "RD",
-        "siege": 0,
-        "niederlagen": 2,
-        "unentschieden": 0
-      },
-      {
-        "rang": 7,
         "name": "Vienna Lawnmowers",
         "kuerzel": "LM",
         "siege": 2,
@@ -85,11 +77,19 @@
         "unentschieden": 0
       },
       {
-        "rang": 8,
+        "rang": 7,
         "name": "Schremser Beers 2",
         "kuerzel": "SB",
         "siege": 1,
         "niederlagen": 5,
+        "unentschieden": 0
+      },
+      {
+        "rang": 8,
+        "name": "Woodquarter Red Devils",
+        "kuerzel": "RD",
+        "siege": 0,
+        "niederlagen": 2,
         "unentschieden": 0
       },
       {
@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-06-14",
+    "letztes_update": "2026-06-20",
     "naechste": [
       {
         "datum": "2026-06-20",
