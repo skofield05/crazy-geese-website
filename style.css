@@ -479,6 +479,16 @@ li {
   border-color: var(--color-red);
 }
 
+/* Softball-Karte – nur sichtbar, wenn ein Softball-Termin das naechste Event
+   ist. Lila wie der SOFTBALL-Tag. */
+.highlight-card.highlight-softball {
+  border-color: #7c3aed;
+}
+
+.highlight-softball .highlight-label {
+  color: #c4b5fd;
+}
+
 .highlight-label {
   font-family: var(--font-display);
   font-size: 1.1rem;
@@ -1284,6 +1294,24 @@ li {
 .game-badge.result-tie {
   background: var(--color-tie);
   color: var(--color-bg);
+}
+
+/* Verschobenes Spiel (Regen o.ae.): Orange-Badge + leicht gedaempfte Karte,
+   damit klar ist, dass der Termin nicht mehr gilt. */
+.game-badge.postponed,
+.game-homeaway.postponed {
+  background: var(--color-loss);
+  color: white;
+}
+
+.game-card.postponed,
+.game-compact.postponed {
+  opacity: 0.75;
+}
+
+.game-card.postponed .game-date {
+  text-decoration: line-through;
+  text-decoration-color: var(--color-loss);
 }
 
 .no-games {

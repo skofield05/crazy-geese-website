@@ -161,10 +161,14 @@ function showError(container, message) {
 function renderGame(game, isFeatured) {
   const isHome = isOurTeam(game.heim);
   const hasResult = game.ergebnis_heim !== null && game.ergebnis_heim !== undefined;
+  const isPostponed = game.status === 'verschoben';
   const isHomeGame = isHomeVenue(game.ort);
   const venueBadge = isHomeGame
     ? '<span class="game-badge home">HEIMSPIEL</span>'
     : '<span class="game-badge away">AUSWÄRTS</span>';
+  const postponedBadge = isPostponed
+    ? '<span class="game-badge postponed" aria-label="Verschoben">VERSCHOBEN</span>'
+    : '';
 
   let resultClass = '';
   let resultBadge = '';
@@ -193,10 +197,10 @@ function renderGame(game, isFeatured) {
   const scoreClass = hasResult ? 'score score-' + resultClass : 'vs';
 
   return `
-    <div class="game-card ${resultClass} ${featuredClass}" role="article" aria-label="${gast} bei ${heim}">
+    <div class="game-card ${resultClass} ${featuredClass} ${isPostponed ? 'postponed' : ''}" role="article" aria-label="${gast} bei ${heim}">
       <div class="game-card-header">
         <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + escapeHtml(game.zeit) : ''}</div>
-        <div class="game-tags">${resultBadge}${venueBadge}</div>
+        <div class="game-tags">${postponedBadge}${resultBadge}${venueBadge}</div>
       </div>
       <div class="game-matchup">
         <span class="team ${!isHome ? 'us' : ''}">${gast}</span>
@@ -237,16 +241,20 @@ function renderGameCompact(game) {
   const isHomeGame = isHomeVenue(game.ort);
   const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
   const homeAwayClass = isHomeGame ? 'home' : 'away';
+  const postponedTag = game.status === 'verschoben'
+    ? '<span class="game-homeaway postponed">VERSCHOBEN</span>'
+    : '';
 
   if (sport === 'softball') {
     const label = escapeHtml(game.gegner || game.beschreibung || 'Softball');
     return `
-      <div class="game-compact">
+      <div class="game-compact${game.status === 'verschoben' ? ' postponed' : ''}">
         <span class="game-date-compact">${formatDateShort(game.datum)}</span>
         <span class="game-time-compact">${game.zeit ? escapeHtml(game.zeit) : ''}</span>
         <span class="game-opponent">${label}</span>
         <span class="game-sport ${sport}">${sportTag}</span>
         <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
+        ${postponedTag}
         ${game.ort ? `<span class="game-location-compact">📍 ${escapeHtml(game.ort)}</span>` : ''}
       </div>
     `;
@@ -256,12 +264,13 @@ function renderGameCompact(game) {
   const opponent = escapeHtml(isHome ? game.gast : game.heim);
 
   return `
-    <div class="game-compact">
+    <div class="game-compact${game.status === 'verschoben' ? ' postponed' : ''}">
       <span class="game-date-compact">${formatDateShort(game.datum)}</span>
       <span class="game-time-compact">${game.zeit ? escapeHtml(game.zeit) : ''}</span>
       <span class="game-opponent">${opponent}</span>
       <span class="game-sport ${sport}">${sportTag}</span>
       <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
+      ${postponedTag}
       ${game.ort ? `<span class="game-location-compact">📍 ${escapeHtml(game.ort)}</span>` : ''}
     </div>
   `;

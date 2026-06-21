@@ -112,7 +112,8 @@
         "gast": "Tulln Ravens",
         "ort": "Sox Field, Graz",
         "phase": "Grunddurchgang",
-        "spielnr": "#35"
+        "spielnr": "#35",
+        "status": "verschoben"
       },
       {
         "datum": "2026-06-20",
@@ -121,7 +122,8 @@
         "gast": "Rohrbach Crazy Geese",
         "ort": "Sox Field, Graz",
         "phase": "Grunddurchgang",
-        "spielnr": "#36"
+        "spielnr": "#36",
+        "status": "verschoben"
       },
       {
         "datum": "2026-07-19",

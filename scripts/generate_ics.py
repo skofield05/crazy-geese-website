@@ -51,7 +51,14 @@ def main() -> int:
     # spiele.vergangene). Vergangene Spiele in einem Termin-Kalender bringen
     # Kalender-Apps nur durcheinander.
     games = list(data.get("spiele", {}).get("naechste", []))
-    games = [g for g in games if g.get("datum") and g.get("zeit") and g.get("heim") and g.get("gast")]
+    # Verschobene Spiele (status "verschoben") haben keinen gueltigen Termin mehr
+    # und gehoeren nicht in den Kalender, sonst zeigen Kalender-Apps ein
+    # Phantom-Event am alten Datum.
+    games = [
+        g for g in games
+        if g.get("datum") and g.get("zeit") and g.get("heim") and g.get("gast")
+        and g.get("status") != "verschoben"
+    ]
     games.sort(key=lambda g: (g["datum"], g["zeit"]))
 
     home_games = [g for g in games if HOME_VENUE_KEYWORD in (g.get("ort") or "")]

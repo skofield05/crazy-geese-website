@@ -37,8 +37,10 @@ function renderPage(data) {
 
   const today = new Date().toLocaleDateString('en-CA');
 
+  // Verschobene Spiele (status "verschoben") gehoeren nicht in die Highlight-
+  // Karten – sie haben keinen gueltigen Termin mehr.
   const baseballGames = (data.spiele.naechste || [])
-    .filter(g => g.datum >= today)
+    .filter(g => g.datum >= today && g.status !== 'verschoben')
     .map(g => ({ ...g, sport: 'baseball' }));
   const softballGames = (data.softball && data.softball.naechste_termine || [])
     .filter(t => t.datum >= today)
@@ -46,13 +48,26 @@ function renderPage(data) {
   const allGames = [...baseballGames, ...softballGames]
     .sort((a, b) => (a.datum + (a.zeit || '')).localeCompare(b.datum + (b.zeit || '')));
 
-  const nextGame = allGames[0];
-  const nextHomeGame = allGames.find(g => isHomeVenue(g.ort));
   const gameKey = g => g.datum + '|' + (g.zeit || '') + '|' + g.sport;
-  const sameGame = nextGame && nextHomeGame && gameKey(nextGame) === gameKey(nextHomeGame);
+
+  // Baseball ist die Kern-Sportart: das naechste Baseballspiel wird IMMER
+  // angezeigt. Softball bekommt nur dann eine eigene Karte, wenn es das
+  // chronologisch naechste Event ueberhaupt ist – dann steht es neben dem
+  // naechsten Baseballspiel. Die Heimspiel-Karte zaehlt beide Sportarten.
+  const nextBaseball = baseballGames[0] || null;
+  const nextHomeGame = allGames.find(g => isHomeVenue(g.ort)) || null;
+  const softballIsNext = allGames[0] && allGames[0].sport === 'softball';
+  const nextSoftball = softballIsNext ? (softballGames[0] || null) : null;
+
+  const homeKey = nextHomeGame ? gameKey(nextHomeGame) : null;
+  // Dedup: ein Spiel, das gleichzeitig das naechste Heimspiel ist, erscheint
+  // nur in der Heimspiel-Karte (Heimspiel-Label hat Vorrang).
+  const showBaseballSeparately = nextBaseball && gameKey(nextBaseball) !== homeKey;
+  const showSoftballSeparately = nextSoftball && gameKey(nextSoftball) !== homeKey;
 
   const highlightsEl = document.querySelector('.hero-highlights');
   const nextGameCard = document.getElementById('next-game-card');
+  const nextSoftballCard = document.getElementById('next-softball-card');
   const nextHomeCard = document.getElementById('next-home-card');
   const eventCard = document.getElementById('event-card');
 
@@ -68,42 +83,57 @@ function renderPage(data) {
     eventCard.innerHTML = '';
   }
 
-  // Single-Layout (eine zentrierte Karte) nur, wenn wirklich nur eine
-  // Karte uebrig bleibt: Spiel == Heimspiel UND kein Event aktiv.
-  if (sameGame) {
-    highlightsEl.classList.toggle('hero-highlights--single', !upcomingEvent);
+  // Baseball-Karte: das naechste Baseballspiel. Wenn auch eine Softball-Karte
+  // gezeigt wird, praezisiert das Label auf "Baseballspiel", sonst genuegt
+  // "Naechstes Spiel".
+  if (showBaseballSeparately) {
+    const baseballLabel = showSoftballSeparately ? 'Nächstes Baseballspiel' : 'Nächstes Spiel';
+    nextGameCard.hidden = false;
+    nextGameCard.innerHTML = `
+      <span class="highlight-label">${baseballLabel}</span>
+      ${renderHighlightGame(nextBaseball)}
+    `;
+  } else if (!nextBaseball && !nextSoftball && !nextHomeGame) {
+    nextGameCard.hidden = false;
+    nextGameCard.innerHTML = '<span class="highlight-label">Nächstes Spiel</span><p class="no-games">Saisonpause</p>';
+  } else {
     nextGameCard.hidden = true;
-    nextHomeCard.hidden = false;
+    nextGameCard.innerHTML = '';
+  }
+
+  // Softball-Karte: nur wenn Softball als Naechstes ansteht und nicht ohnehin
+  // schon die Heimspiel-Karte ist.
+  if (showSoftballSeparately) {
+    nextSoftballCard.hidden = false;
+    nextSoftballCard.innerHTML = `
+      <span class="highlight-label">Nächster Softball-Termin</span>
+      ${renderHighlightGame(nextSoftball)}
+    `;
+  } else {
+    nextSoftballCard.hidden = true;
+    nextSoftballCard.innerHTML = '';
+  }
+
+  // Heimspiel-Karte (beide Sportarten).
+  if (nextHomeGame) {
     nextHomeCard.innerHTML = `
       <span class="highlight-label">Nächstes Heimspiel</span>
       ${renderHighlightGame(nextHomeGame)}
       <span class="highlight-free">🎟️ Eintritt frei!</span>
     `;
   } else {
-    highlightsEl.classList.remove('hero-highlights--single');
-    nextGameCard.hidden = false;
-    nextHomeCard.hidden = false;
-    if (nextGame) {
-      nextGameCard.innerHTML = `
-        <span class="highlight-label">Nächstes Spiel</span>
-        ${renderHighlightGame(nextGame)}
-      `;
-    } else {
-      nextGameCard.innerHTML = '<span class="highlight-label">Nächstes Spiel</span><p class="no-games">Saisonpause</p>';
-    }
-    if (nextHomeGame) {
-      nextHomeCard.innerHTML = `
-        <span class="highlight-label">Nächstes Heimspiel</span>
-        ${renderHighlightGame(nextHomeGame)}
-        <span class="highlight-free">🎟️ Eintritt frei!</span>
-      `;
-    } else {
-      nextHomeCard.innerHTML = '<span class="highlight-label">Nächstes Heimspiel</span><p class="no-games">Keine Heimspiele geplant</p>';
-    }
+    nextHomeCard.innerHTML = '<span class="highlight-label">Nächstes Heimspiel</span><p class="no-games">Keine Heimspiele geplant</p>';
   }
+  nextHomeCard.hidden = false;
+
+  // Single-Layout (eine zentrierte Karte) nur, wenn ausschliesslich die
+  // Heimspiel-Karte ein Spiel zeigt (kein separates Baseball-/Softball-Spiel,
+  // kein Event).
+  const onlyHomeCard = !showBaseballSeparately && !showSoftballSeparately && !!nextHomeGame;
+  highlightsEl.classList.toggle('hero-highlights--single', onlyHomeCard && !upcomingEvent);
 
   const nextGamesEl = document.getElementById('next-games');
-  const shownIds = [nextGame, nextHomeGame].filter(Boolean).map(gameKey);
+  const shownIds = [nextBaseball, nextSoftball, nextHomeGame].filter(Boolean).map(gameKey);
   const remaining = allGames.filter(g => !shownIds.includes(gameKey(g))).slice(0, 4);
   if (remaining.length > 0) {
     nextGamesEl.innerHTML = remaining.map(renderGameCompact).join('');

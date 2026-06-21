@@ -321,6 +321,10 @@ def _check_ics_sync(spiele: object, errors: list[str], warnings: list[str]) -> N
     expected_dts: set[str] = set()
     expected_home_dts: set[str] = set()
     for g in games:
+        # Verschobene Spiele sind bewusst nicht in den ICS-Dateien (kein
+        # gueltiger Termin) – generate_ics.py filtert sie ebenfalls raus.
+        if g.get("status") == "verschoben":
+            continue
         datum = g.get("datum", "")
         zeit = g.get("zeit", "")
         if not datum or not zeit:
