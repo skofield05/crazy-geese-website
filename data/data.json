@@ -25,14 +25,14 @@
     }
   },
   "tabelle": {
-    "stand": "2026-06-20",
+    "stand": "2026-06-21",
     "phase": "Grunddurchgang",
     "teams": [
       {
         "rang": 1,
         "name": "Danube Titans",
         "kuerzel": "DT",
-        "siege": 8,
+        "siege": 9,
         "niederlagen": 1,
         "unentschieden": 0
       },
@@ -70,26 +70,26 @@
       },
       {
         "rang": 6,
-        "name": "Woodquarter Red Devils",
-        "kuerzel": "RD",
-        "siege": 0,
-        "niederlagen": 2,
+        "name": "Vienna Lawnmowers",
+        "kuerzel": "LM",
+        "siege": 3,
+        "niederlagen": 5,
         "unentschieden": 0
       },
       {
         "rang": 7,
-        "name": "Vienna Lawnmowers",
-        "kuerzel": "LM",
-        "siege": 2,
+        "name": "Schremser Beers 2",
+        "kuerzel": "SB",
+        "siege": 1,
         "niederlagen": 5,
         "unentschieden": 0
       },
       {
         "rang": 8,
-        "name": "Schremser Beers 2",
-        "kuerzel": "SB",
-        "siege": 1,
-        "niederlagen": 5,
+        "name": "Woodquarter Red Devils",
+        "kuerzel": "RD",
+        "siege": 0,
+        "niederlagen": 4,
         "unentschieden": 0
       },
       {
@@ -103,28 +103,8 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-06-20",
+    "letztes_update": "2026-06-21",
     "naechste": [
-      {
-        "datum": "2026-06-20",
-        "zeit": "13:30",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Tulln Ravens",
-        "ort": "Sox Field, Graz",
-        "phase": "Grunddurchgang",
-        "spielnr": "#35",
-        "status": "verschoben"
-      },
-      {
-        "datum": "2026-06-20",
-        "zeit": "16:00",
-        "heim": "Graz Dirty Sox",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Sox Field, Graz",
-        "phase": "Grunddurchgang",
-        "spielnr": "#36",
-        "status": "verschoben"
-      },
       {
         "datum": "2026-07-19",
         "zeit": "11:00",
@@ -268,6 +248,26 @@
         "spielnr": "#30",
         "ergebnis_heim": 19,
         "ergebnis_gast": 3
+      },
+      {
+        "datum": "2026-06-20",
+        "zeit": "13:30",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Tulln Ravens",
+        "ort": "Sox Field, Graz",
+        "phase": "Grunddurchgang",
+        "spielnr": "#35",
+        "status": "verschoben"
+      },
+      {
+        "datum": "2026-06-20",
+        "zeit": "16:00",
+        "heim": "Graz Dirty Sox",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Sox Field, Graz",
+        "phase": "Grunddurchgang",
+        "spielnr": "#36",
+        "status": "verschoben"
       }
     ]
   },
