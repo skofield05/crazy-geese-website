@@ -132,6 +132,24 @@ function renderPage(data) {
   const onlyHomeCard = !showBaseballSeparately && !showSoftballSeparately && !!nextHomeGame;
   highlightsEl.classList.toggle('hero-highlights--single', onlyHomeCard && !upcomingEvent);
 
+  // Karten chronologisch anordnen: naeheres Datum links. Wir setzen CSS-`order`
+  // auf jede sichtbare Karte anhand ihres Datums (Sortkey datum+zeit). Karten
+  // ohne Spiel (Saisonpause/keine Heimspiele) und ein Flyer-Event bleiben hinten
+  // bzw. (Flyer) via CSS oben gepinnt.
+  const sortKey = g => g ? g.datum + (g.zeit || '') : '9999';
+  const orderCards = [];
+  if (!nextGameCard.hidden) orderCards.push({ el: nextGameCard, key: sortKey(nextBaseball) });
+  if (!nextSoftballCard.hidden) orderCards.push({ el: nextSoftballCard, key: sortKey(nextSoftball) });
+  orderCards.push({ el: nextHomeCard, key: sortKey(nextHomeGame) });
+  // Text-Event (ohne Flyer) sortiert chronologisch mit; ein Flyer-Event bleibt
+  // via `.highlight-event:has(.event-flyer){order:-1}` oben.
+  if (upcomingEvent && !eventCard.querySelector('.event-flyer')) {
+    orderCards.push({ el: eventCard, key: sortKey(upcomingEvent) });
+  }
+  orderCards
+    .sort((a, b) => a.key.localeCompare(b.key))
+    .forEach((c, i) => { c.el.style.order = String(i); });
+
   const nextGamesEl = document.getElementById('next-games');
   const shownIds = [nextBaseball, nextSoftball, nextHomeGame].filter(Boolean).map(gameKey);
   const remaining = allGames.filter(g => !shownIds.includes(gameKey(g))).slice(0, 4);
@@ -142,9 +160,11 @@ function renderPage(data) {
   }
 
   // Letzte 2 absolvierte Spiele (neueste zuerst). Nur einblenden, wenn
-  // ueberhaupt was zu zeigen ist.
+  // ueberhaupt was zu zeigen ist. Verschobene Spiele rutschen nach dem
+  // Scraper-Re-Split (datum < today) nach vergangene, sind aber kein
+  // Ergebnis – sie duerfen "Letzte Ergebnisse" nicht verdraengen.
   const past = (data.spiele.vergangene || [])
-    .slice()
+    .filter(g => g.status !== 'verschoben')
     .sort((a, b) => (b.datum + (b.zeit || '')).localeCompare(a.datum + (a.zeit || '')))
     .slice(0, 2);
   const lastResultsSection = document.getElementById('letzte-ergebnisse');

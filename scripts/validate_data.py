@@ -35,6 +35,10 @@ REQUIRED_GAME_FIELDS = ("datum", "heim", "gast", "spielnr")
 # Weich – nur Warnung, weil die ABF-Daten gelegentlich ohne Ort kommen
 # und der Maintainer das hinterher auffuellen muss.
 RECOMMENDED_GAME_FIELDS = ("zeit", "ort", "phase")
+# Erlaubte Werte fuer das optionale status-Feld. Ein Tippfehler ("verschobn")
+# wuerde sonst die exakte Gleichheitspruefung in generate_ics.py und
+# page-index.js umgehen und das Spiel doch wieder als Phantom-Event ausspielen.
+ALLOWED_GAME_STATUS = ("verschoben",)
 TIME_RX = re.compile(r"^\d{2}:\d{2}$")
 HOME_VENUE_KEYWORD = "Geese Ballpark"
 TEAM_NAME = "Crazy Geese"
@@ -280,6 +284,12 @@ def _check_spiele(spiele: object, errors: list[str], warnings: list[str]) -> Non
             zeit = g.get("zeit")
             if zeit and not TIME_RX.match(zeit):
                 errors.append(f"{where}.zeit '{zeit}' – erwarte HH:MM.")
+
+            status = g.get("status")
+            if status is not None and status not in ALLOWED_GAME_STATUS:
+                errors.append(
+                    f"{where}.status '{status}' ungueltig – erlaubt: {', '.join(ALLOWED_GAME_STATUS)}."
+                )
 
             spielnr = g.get("spielnr")
             if spielnr:

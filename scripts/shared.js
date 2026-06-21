@@ -241,14 +241,16 @@ function renderGameCompact(game) {
   const isHomeGame = isHomeVenue(game.ort);
   const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
   const homeAwayClass = isHomeGame ? 'home' : 'away';
-  const postponedTag = game.status === 'verschoben'
+  const isPostponed = game.status === 'verschoben';
+  const compactClass = isPostponed ? 'game-compact postponed' : 'game-compact';
+  const postponedTag = isPostponed
     ? '<span class="game-homeaway postponed">VERSCHOBEN</span>'
     : '';
 
   if (sport === 'softball') {
     const label = escapeHtml(game.gegner || game.beschreibung || 'Softball');
     return `
-      <div class="game-compact${game.status === 'verschoben' ? ' postponed' : ''}">
+      <div class="${compactClass}">
         <span class="game-date-compact">${formatDateShort(game.datum)}</span>
         <span class="game-time-compact">${game.zeit ? escapeHtml(game.zeit) : ''}</span>
         <span class="game-opponent">${label}</span>
@@ -264,7 +266,7 @@ function renderGameCompact(game) {
   const opponent = escapeHtml(isHome ? game.gast : game.heim);
 
   return `
-    <div class="game-compact${game.status === 'verschoben' ? ' postponed' : ''}">
+    <div class="${compactClass}">
       <span class="game-date-compact">${formatDateShort(game.datum)}</span>
       <span class="game-time-compact">${game.zeit ? escapeHtml(game.zeit) : ''}</span>
       <span class="game-opponent">${opponent}</span>
