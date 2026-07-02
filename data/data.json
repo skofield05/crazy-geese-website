@@ -106,6 +106,24 @@
     "letztes_update": "2026-06-21",
     "naechste": [
       {
+        "datum": "2026-07-25",
+        "zeit": "13:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Tulln Ravens",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang",
+        "spielnr": "#35"
+      },
+      {
+        "datum": "2026-08-22",
+        "zeit": "13:00",
+        "heim": "Graz Dirty Sox",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Sox Field, Graz",
+        "phase": "Grunddurchgang",
+        "spielnr": "#36"
+      },
+      {
         "datum": "2026-07-19",
         "zeit": "11:00",
         "heim": "Vienna Metrostars 3",
@@ -248,26 +266,6 @@
         "spielnr": "#30",
         "ergebnis_heim": 19,
         "ergebnis_gast": 3
-      },
-      {
-        "datum": "2026-06-20",
-        "zeit": "13:30",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Tulln Ravens",
-        "ort": "Sox Field, Graz",
-        "phase": "Grunddurchgang",
-        "spielnr": "#35",
-        "status": "verschoben"
-      },
-      {
-        "datum": "2026-06-20",
-        "zeit": "16:00",
-        "heim": "Graz Dirty Sox",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Sox Field, Graz",
-        "phase": "Grunddurchgang",
-        "spielnr": "#36",
-        "status": "verschoben"
       }
     ]
   },

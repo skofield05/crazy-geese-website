@@ -5,6 +5,14 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:Crazy Geese – Heimspiele 2026
 X-WR-TIMEZONE:Europe/Vienna
 BEGIN:VEVENT
+DTSTART;TZID=Europe/Vienna:20260725T130000
+DTEND;TZID=Europe/Vienna:20260725T153000
+SUMMARY:⚾ Tulln Ravens vs Crazy Geese (HEIM)
+LOCATION:Geese Ballpark\, Rohrbach
+DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
+UID:cg-35@crazy-geese.at
+END:VEVENT
+BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260815T110000
 DTEND;TZID=Europe/Vienna:20260815T133000
 SUMMARY:⚾ Vienna Bucks vs Crazy Geese (HEIM)

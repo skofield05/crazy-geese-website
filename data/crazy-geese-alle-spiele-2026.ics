@@ -21,6 +21,14 @@ DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
 UID:cg-53@crazy-geese.at
 END:VEVENT
 BEGIN:VEVENT
+DTSTART;TZID=Europe/Vienna:20260725T130000
+DTEND;TZID=Europe/Vienna:20260725T153000
+SUMMARY:⚾ Tulln Ravens vs Crazy Geese (HEIM)
+LOCATION:Geese Ballpark\, Rohrbach
+DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
+UID:cg-35@crazy-geese.at
+END:VEVENT
+BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260802T110000
 DTEND;TZID=Europe/Vienna:20260802T133000
 SUMMARY:⚾ Crazy Geese vs Schremser Beers 2
@@ -51,5 +59,13 @@ SUMMARY:⚾ Vienna Lawnmowers vs Crazy Geese (HEIM)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
 UID:cg-69@crazy-geese.at
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=Europe/Vienna:20260822T130000
+DTEND;TZID=Europe/Vienna:20260822T153000
+SUMMARY:⚾ Crazy Geese vs Graz Dirty Sox
+LOCATION:Sox Field\, Graz
+DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
+UID:cg-36@crazy-geese.at
 END:VEVENT
 END:VCALENDAR
