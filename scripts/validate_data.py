@@ -170,6 +170,24 @@ def _check_softball(softball: object, errors: list[str], warnings: list[str]) ->
         zeit = t.get("zeit")
         if zeit and not TIME_RX.match(zeit):
             errors.append(f"{where}.zeit '{zeit}' – erwarte HH:MM.")
+        # Optionales spiele-Array (Turnier-Anwurfzeiten der Geese).
+        spiele = t.get("spiele")
+        if spiele is not None:
+            if not isinstance(spiele, list):
+                errors.append(f"{where}.spiele muss ein Array sein.")
+            else:
+                for j, s in enumerate(spiele):
+                    swhere = f"{where}.spiele[{j}]"
+                    if not isinstance(s, dict):
+                        errors.append(f"{swhere} muss ein Objekt sein.")
+                        continue
+                    if not s.get("gegner"):
+                        errors.append(f"{swhere}.gegner fehlt oder ist leer.")
+                    szeit = s.get("zeit")
+                    if szeit and not TIME_RX.match(szeit):
+                        errors.append(f"{swhere}.zeit '{szeit}' – erwarte HH:MM.")
+                    if not isinstance(s.get("heim"), bool):
+                        errors.append(f"{swhere}.heim muss true/false sein.")
 
 
 def _check_events(events: object, errors: list[str], warnings: list[str]) -> None:

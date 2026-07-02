@@ -279,9 +279,15 @@
       },
       {
         "datum": "2026-07-05",
-        "zeit": "",
+        "zeit": "10:00",
         "beschreibung": "ABBQS Turnier",
-        "ort": "Geese Ballpark, Rohrbach"
+        "ort": "Geese Ballpark, Rohrbach",
+        "spiele": [
+          { "zeit": "10:00", "gegner": "Monkeys", "heim": false },
+          { "zeit": "12:40", "gegner": "Rubberducks", "heim": true },
+          { "zeit": "14:20", "gegner": "Monkeys", "heim": true },
+          { "zeit": "17:00", "gegner": "Rubberducks", "heim": false }
+        ]
       },
       {
         "datum": "2026-09-27",

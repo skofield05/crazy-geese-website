@@ -641,6 +641,53 @@ li {
   color: #ddd6fe;
 }
 
+/* Details-Link auf der Softball-Highlight-Karte (verweist auf softball.html) */
+.highlight-details-link {
+  display: inline-block;
+  margin-top: var(--space-sm);
+  color: #c4b5fd;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.highlight-details-link:hover,
+.highlight-details-link:focus {
+  color: #ddd6fe;
+}
+
+/* Anwurfzeiten-Tabelle eines Turnier-Termins (softball.html) */
+.turnier-spiele {
+  width: 100%;
+  margin-top: var(--space-sm);
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.turnier-spiele caption {
+  text-align: left;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-xs);
+}
+
+.turnier-spiele td {
+  padding: var(--space-xs) var(--space-sm) var(--space-xs) 0;
+  border-top: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.turnier-spiele .turnier-zeit {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.turnier-spiele .turnier-gegner {
+  width: 100%;
+}
+
 /* Softball-Termine */
 .softball-termine {
   position: relative;

@@ -263,6 +263,31 @@ In `data/data.json` → `softball.naechste_termine`:
 
 Erscheinen automatisch auf der Landing Page mit SOFTBALL-Tag.
 
+**Optional: Turnier-Anwurfzeiten (`spiele`)** – für Turniertage (z.B. ABBQS) kann
+ein Termin ein optionales `spiele`-Array mit den Geese-Spielen bekommen:
+
+```json
+{
+  "datum": "2026-07-05",
+  "zeit": "10:00",
+  "beschreibung": "ABBQS Turnier",
+  "ort": "Geese Ballpark, Rohrbach",
+  "spiele": [
+    { "zeit": "10:00", "gegner": "Monkeys", "heim": false },
+    { "zeit": "12:40", "gegner": "Rubberducks", "heim": true }
+  ]
+}
+```
+
+`zeit` des Termins = erste Anwurfzeit (erscheint auf der Startseiten-Karte als
+„Beginn HH:MM Uhr"). Jedes `spiele`-Objekt braucht `gegner` + `heim` (bool);
+`heim` ist hier die **formale Rolle im Spiel** (wer zuletzt schlägt), nicht der
+Spielort – beim Turnier sind alle Spiele am selben Ort. `page-softball.js`
+rendert daraus eine Anwurfzeiten-Tabelle (nach `zeit` sortiert); `page-index.js`
+blendet einen „Details →"-Link zur Softball-Seite ein, sobald `spiele` gesetzt
+ist. `validate_data.py` prüft das Array (Pflicht: `gegner`, `heim`-bool;
+`zeit`-Format optional).
+
 ### ICS-Dateien regenerieren
 
 ```bash
@@ -379,6 +404,11 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ---
 
 ## Changelog
+
+### 2026-07-02
+- **Nachholtermine 20.06.:** Die zwei regenbedingt verschobenen Spiele haben neue Termine (aus der Metrostars-Seite verifiziert): #35 vs Tulln Ravens jetzt **25.07.** (Heim, Geese Ballpark), #36 vs Graz Dirty Sox jetzt **22.08.**. `status: "verschoben"` entfernt, beide wieder in `spiele.naechste` (chronologisch einsortiert – `baseball.html` rendert `naechste` in Array-Reihenfolge ohne eigenen Sort). #36 findet trotz formalem Gast-Status **in Rohrbach** statt: `ort` auf „Geese Ballpark, Rohrbach" → HEIMSPIEL-Badge (UI badged nach Spielort via `isHomeVenue`) + Aufnahme in die Heimspiele-ICS mit „(in Rohrbach)"-Suffix. Beide ICS regeneriert
+- **Softball-Turnier-Anwurfzeiten:** Neues optionales `spiele`-Array auf `softball.naechste_termine`-Objekten (Turniertage wie ABBQS). Jedes Element `{ zeit, gegner, heim }`, wobei `heim` die formale Spielrolle meint (nicht den Spielort – beim Turnier alle Spiele am selben Ort). `page-softball.js` rendert daraus die `.turnier-spiele`-Tabelle (nach `zeit` sortiert, Caption „Geese-Spiele"); der Termin selbst zeigt „Beginn HH:MM" (auch die Softball-Highlight-Karte via `renderHighlightGame` in `shared.js`). `page-index.js` blendet einen „Details →"-Link (`.highlight-details-link`) zur Softball-Seite ein, sobald `spiele` gesetzt ist – hängt an Softball- ODER Heimspiel-Karte (der ABBQS-Tag 05.07. in Rohrbach ist beides, per Dedup nur einmal). `validate_data.py` prüft das Array (`gegner`+`heim`-bool Pflicht, `zeit`-Format). Erstanwendung: ABBQS-Tag 05.07. (4 Geese-Spiele). CSS in `style.css`
+- **Cache-Buster** aller `shared.js`-Verweise (9 HTML-Files) auf `?v=2026-07-02`, dazu `page-index.js` und `page-softball.js`
 
 ### 2026-06-21
 - **Highlight-Cards baseball-priorisiert:** Die Hero-Karten (`.highlight-card` im `.hero-highlights`-Grid) zeigen jetzt IMMER das nächste Baseballspiel. Softball bekommt nur dann eine eigene Karte (`#next-softball-card`, lila wie SOFTBALL-Tag), wenn es das chronologisch nächste Event überhaupt ist – dann steht es neben dem nächsten Baseballspiel. Baseball-Karten-Label wird in dem Fall auf „Nächstes Baseballspiel" präzisiert, sonst bleibt „Nächstes Spiel". Heimspiel-Karte zählt weiterhin beide Sportarten (nächstes Heim-Event egal welche Sportart). Dedup: ein Spiel, das gleichzeitig nächstes Heimspiel ist, erscheint nur in der Heimspiel-Karte. Logik in `page-index.js`, neue Karte in `index.html`, CSS `.highlight-softball` in `style.css`

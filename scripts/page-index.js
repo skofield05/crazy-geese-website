@@ -101,6 +101,15 @@ function renderPage(data) {
     nextGameCard.innerHTML = '';
   }
 
+  // Turnier-Termine (Softball mit hinterlegter Spielliste) bekommen einen
+  // Details-Link auf die Softball-Seite, wo die Anwurfzeiten stehen. Kann an
+  // jeder Karte haengen, die so einen Termin zeigt (Softball- ODER Heimspiel-
+  // Karte – der 05.07.-Turniertag in Rohrbach ist z.B. beides).
+  const detailsLink = g =>
+    g && Array.isArray(g.spiele) && g.spiele.length > 0
+      ? '<a class="highlight-details-link" href="softball.html">Details →</a>'
+      : '';
+
   // Softball-Karte: nur wenn Softball als Naechstes ansteht und nicht ohnehin
   // schon die Heimspiel-Karte ist.
   if (showSoftballSeparately) {
@@ -108,6 +117,7 @@ function renderPage(data) {
     nextSoftballCard.innerHTML = `
       <span class="highlight-label">Nächster Softball-Termin</span>
       ${renderHighlightGame(nextSoftball)}
+      ${detailsLink(nextSoftball)}
     `;
   } else {
     nextSoftballCard.hidden = true;
@@ -120,6 +130,7 @@ function renderPage(data) {
       <span class="highlight-label">Nächstes Heimspiel</span>
       ${renderHighlightGame(nextHomeGame)}
       <span class="highlight-free">🎟️ Eintritt frei!</span>
+      ${detailsLink(nextHomeGame)}
     `;
   } else {
     nextHomeCard.innerHTML = '<span class="highlight-label">Nächstes Heimspiel</span><p class="no-games">Keine Heimspiele geplant</p>';

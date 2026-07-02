@@ -291,7 +291,7 @@ function renderHighlightGame(game) {
       <span class="game-sport ${sport}">${sportTag}</span>
       <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
       <span class="highlight-date">${formatDateLong(game.datum)}</span>
-      ${game.zeit ? `<span class="highlight-time">${escapeHtml(game.zeit)} Uhr</span>` : ''}
+      ${game.zeit ? `<span class="highlight-time">Beginn ${escapeHtml(game.zeit)} Uhr</span>` : ''}
       <span class="highlight-opponent">${label}</span>
       ${game.ort ? `<span class="highlight-location">📍 ${escapeHtml(game.ort)}</span>` : ''}
     `;
