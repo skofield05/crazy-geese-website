@@ -1,27 +1,20 @@
 // Bootstrap fuer softball.html (ABBQS-Termine).
 
 // Rendert die Anwurfzeiten eines Turnier-Termins als kleine Tabelle. Erwartet
-// ein Array von { zeit, gegner, heim } (nur die Geese-Spiele). HEIM/AUSW hier
-// bezieht sich auf die formale Rolle im jeweiligen Spiel (wer zuletzt schlaegt),
-// nicht auf den Spielort – beim Turnier sind alle Spiele am selben Ort.
+// ein Array von { zeit, gegner, heim } (nur die Geese-Spiele). Angezeigt werden
+// nur Startzeit + Gegner; das HEIM/AUSW-Badge steht bewusst nur am Spieltag
+// (Termin-Ebene), nicht pro Einzelspiel. `heim` bleibt in den Daten (formale
+// Spielrolle), wird hier aber nicht dargestellt.
 function renderTurnierSpiele(spiele) {
   if (!Array.isArray(spiele) || spiele.length === 0) return '';
   const rows = [...spiele]
     .sort((a, b) => (a.zeit || '').localeCompare(b.zeit || ''))
-    .map(s => {
-    const heim = s.heim === true;
-    const roleClass = heim ? 'home' : 'away';
-    const roleText = heim ? 'HEIM' : 'AUSWÄRTS';
-    const gegner = escapeHtml(s.gegner || '');
-    const matchup = heim ? `vs ${gegner}` : `@ ${gegner}`;
-    return `
+    .map(s => `
       <tr>
         <td class="turnier-zeit">${s.zeit ? escapeHtml(s.zeit) : ''}</td>
-        <td class="turnier-gegner">${matchup}</td>
-        <td><span class="game-badge ${roleClass}">${roleText}</span></td>
+        <td class="turnier-gegner">${escapeHtml(s.gegner || '')}</td>
       </tr>
-    `;
-  }).join('');
+    `).join('');
   return `
     <table class="turnier-spiele">
       <caption>Geese-Spiele</caption>
