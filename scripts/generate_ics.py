@@ -103,14 +103,21 @@ def _event(game: dict) -> dict:
         suffix = ""
         desc_extra = ""
 
-    # Kompakte Team-Anzeige: bei Geese den Kurznamen verwenden
-    gast_short = _shorten(gast)
-    heim_short = _shorten(heim)
+    # Kompakte Team-Anzeige: bei Geese den Kurznamen verwenden.
+    # Team-Namen ICS-escapen (Komma/Semikolon/Backslash sind in ICS Wert-Trenner
+    # – ein Name wie "Team, Wien" wuerde die SUMMARY-Zeile sonst zerlegen).
+    # `suffix` und die "Baseball Landesliga Ost"-Literale sind konstant und
+    # enthalten keine Sonderzeichen.
+    gast_short = _ics_escape(_shorten(gast))
+    heim_short = _ics_escape(_shorten(heim))
     summary = f"⚾ {gast_short} vs {heim_short}{suffix}"
 
-    description = f"Baseball Landesliga Ost"
+    # phase escapen; desc_extra bewusst NICHT – es enthaelt literale "\n"-
+    # Zeilenumbrueche (ICS-Escape-Sequenz), die _ics_escape durch das
+    # Backslash-Doubling ("\\" -> "\\\\") zerstoeren wuerde.
+    description = "Baseball Landesliga Ost"
     if phase:
-        description += f" – {phase}"
+        description += f" – {_ics_escape(phase)}"
     description += desc_extra
 
     # DTSTART/DTEND: 2,5 Stunden Spielzeit
@@ -148,6 +155,28 @@ def _ics_escape(value: str) -> str:
     return value.replace("\\", "\\\\").replace(",", "\\,").replace(";", "\\;")
 
 
+# Standard-VTIMEZONE fuer Europe/Vienna (CET/CEST) mit der EU-weiten DST-Regel.
+_VTIMEZONE_VIENNA = [
+    "BEGIN:VTIMEZONE",
+    "TZID:Europe/Vienna",
+    "BEGIN:DAYLIGHT",
+    "TZOFFSETFROM:+0100",
+    "TZOFFSETTO:+0200",
+    "TZNAME:CEST",
+    "DTSTART:19700329T020000",
+    "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU",
+    "END:DAYLIGHT",
+    "BEGIN:STANDARD",
+    "TZOFFSETFROM:+0200",
+    "TZOFFSETTO:+0100",
+    "TZNAME:CET",
+    "DTSTART:19701025T030000",
+    "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU",
+    "END:STANDARD",
+    "END:VTIMEZONE",
+]
+
+
 def _write_ics(path: pathlib.Path, title: str, events: list[dict]) -> None:
     lines = [
         "BEGIN:VCALENDAR",
@@ -157,6 +186,12 @@ def _write_ics(path: pathlib.Path, title: str, events: list[dict]) -> None:
         f"X-WR-CALNAME:{title}",
         "X-WR-TIMEZONE:Europe/Vienna",
     ]
+    # VTIMEZONE-Definition fuer die per DTSTART;TZID=Europe/Vienna referenzierte
+    # Zeitzone. Google/Apple loesen den Olson-Namen zwar auch ohne auf, strikte
+    # Parser (aeltere Outlook-Versionen) brauchen die explizite Definition, sonst
+    # koennen sie die Uhrzeit falsch interpretieren. EU-DST-Regel: MESZ vom
+    # letzten So im Maerz 02:00 bis letzten So im Oktober 03:00.
+    lines.extend(_VTIMEZONE_VIENNA)
     for ev in events:
         lines.extend([
             "BEGIN:VEVENT",

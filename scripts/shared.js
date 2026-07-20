@@ -13,9 +13,17 @@ const HOME_LOCATION_KEYWORD = 'rohrbach';
 
 function escapeHtml(value) {
   if (value === null || value === undefined) return '';
-  const div = document.createElement('div');
-  div.textContent = String(value);
-  return div.innerHTML;
+  // Auch " und ' maskieren: die Ausgabe wird nicht nur in Text-, sondern auch
+  // in Attribut-Kontexte interpoliert (aria-label="…", href="…", alt="…").
+  // Team-/Ortsnamen kommen aus dem Scraper (ABF/Metrostars) – ein " darin
+  // wuerde sonst das Attribut aufbrechen. In Text-Kontext rendern die Entities
+  // identisch, die Erweiterung ist also fuer beide Faelle sicher.
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function isOurTeam(name) {
@@ -30,21 +38,31 @@ function isHomeVenue(ort) {
   return typeof ort === 'string' && ort.toLowerCase().includes(HOME_LOCATION_KEYWORD);
 }
 
+// YYYY-MM-DD als LOKALE Mitternacht parsen. `new Date("2026-07-25")` wuerde als
+// UTC-Mitternacht interpretiert; toLocaleDateString rendert dann in der Zeitzone
+// des Besuchers – westlich von UTC kann das Spiel einen Tag zu frueh erscheinen.
+// Mit explizitem "T00:00:00" (ohne Z) parst JS lokal -> in jeder Zeitzone der
+// korrekte Kalendertag. Strings mit Zeitanteil bleiben unveraendert.
+function parseLocalDate(dateStr) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return new Date(dateStr + 'T00:00:00');
+  return new Date(dateStr);
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '-';
-  const date = new Date(dateStr);
+  const date = parseLocalDate(dateStr);
   return date.toLocaleDateString('de-AT', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 function formatDateShort(dateStr) {
   if (!dateStr) return '-';
-  const date = new Date(dateStr);
+  const date = parseLocalDate(dateStr);
   return date.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' });
 }
 
 function formatDateLong(dateStr) {
   if (!dateStr) return '-';
-  const date = new Date(dateStr);
+  const date = parseLocalDate(dateStr);
   return date.toLocaleDateString('de-AT', { weekday: 'long', day: '2-digit', month: 'long' });
 }
 

@@ -41,6 +41,15 @@ on:
 permissions:
   contents: write
 
+# Überlappende Läufe serialisieren: an einem Spieltag feuert der Cron stündlich,
+# ein langsamer Playwright-Lauf kann in den nächsten hineinreichen. Ohne dies
+# würden zwei Läufe gleichzeitig committen/pushen und einer am non-fast-forward
+# scheitern. cancel-in-progress: false -> laufenden Scrape zu Ende bringen,
+# nächsten warten lassen (nicht abbrechen).
+concurrency:
+  group: update-standings
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -93,4 +102,10 @@ jobs:
           git config user.email "actions@github.com"
           git add data/data.json data/crazy-geese-*.ics sitemap.xml
           git commit -m "Update Standings $(date +'%Y-%m-%d %H:%M')"
+          # Vor dem Push auf origin/main rebasen: falls zwischen Checkout und
+          # Push ein anderer Commit gelandet ist (manueller Push, anderer Lauf),
+          # verhindert das ein non-fast-forward-Fehlschlag. Bot ändert nur
+          # data.json/ICS/sitemap – Konflikte sind praktisch ausgeschlossen;
+          # falls doch, schlägt der Lauf bewusst fehl (kein Silent-Overwrite).
+          git pull --rebase origin main
           git push
