@@ -309,6 +309,12 @@ def _check_spiele(spiele: object, errors: list[str], warnings: list[str]) -> Non
                     f"{where}.status '{status}' ungueltig – erlaubt: {', '.join(ALLOWED_GAME_STATUS)}."
                 )
 
+            # Optionaler Freitext-Hinweis (z.B. "Fortsetzung eines abgebrochenen
+            # Spiels"). Wird in den Render-Funktionen (shared.js) angezeigt.
+            hinweis = g.get("hinweis")
+            if hinweis is not None and not isinstance(hinweis, str):
+                errors.append(f"{where}.hinweis muss ein String sein.")
+
             spielnr = g.get("spielnr")
             if spielnr:
                 if spielnr in seen_spielnr:

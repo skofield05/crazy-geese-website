@@ -313,6 +313,13 @@ In `data/data.json` → `spiele.vergangene`:
 }
 ```
 
+**Optional: `hinweis`** – Freitext-Kontexthinweis am Spiel-Objekt (in `naechste`
+oder `vergangene`), z.B. `"hinweis": "Fortsetzung des in Graz im 2. Inning
+abgebrochenen Spiels."`. Erscheint als ℹ️-Info-Zeile auf der Startseiten-
+Highlight-Karte, im Spielplan und auf `baseball.html`. Überlebt Re-Scrapes
+(Scraper fasst nur bekannte Keys an). `validate_data.py` prüft optional den
+String-Typ.
+
 ### Neuen Blogpost anlegen
 
 1. **Bilder aufbereiten:** Quellbilder (z.B. aus WhatsApp) in einen beliebigen Ordner legen, dann:
@@ -405,7 +412,11 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 
 ## Changelog
 
-### 2026-07-20
+### 2026-07-20 (2)
+- **Optionales `hinweis`-Feld an Spiel-Objekten:** Freitext-Kontexthinweis, der in allen drei Render-Funktionen (`shared.js`: `renderHighlightGame`, `renderGame`, `renderGameCompact`) als Info-Zeile mit ℹ️ erscheint (Info-Blau `--color-win`, farbenblind-freundlich, klar abgesetzt ohne wie eine Warnung zu wirken). CSS: `.highlight-hinweis` (Hero-Karte, zentrierte Box), `.game-hinweis` (volle Karte, linker Border), `.game-hinweis-compact` (Spielplan-Zeile, Full-Width-Grid-Row). `validate_data.py` prüft optional auf String-Typ. Der Scraper mutiert bestehende Spiele in-place und fasst nur bekannte Keys an → `hinweis` überlebt Re-Scrapes (analog `status`). **Erstanwendung:** #35 vs Tulln Ravens (25.07.) ist die **Fortsetzung des in Graz im 2. Inning abgebrochenen Spiels** – Hinweis erscheint auf der „Nächstes Heimspiel"-Karte der Startseite und auf `baseball.html`. Headless verifiziert.
+- **Cache-Buster** aller `shared.js`/`page-index.js`/`page-softball.js`-Verweise auf `?v=2026-07-20`
+
+### 2026-07-20 (1)
 - **Scraper-Fixes (3 Bugs, Workflow-Fehler Spieltag 19.07.):** Der „Update Standings"-Run scheiterte mit Exit 1, obwohl der Metrostars-Fallback korrekte Daten lieferte. Drei ineinandergreifende Bugs behoben:
   1. **Harter Fehler trotz Fallback:** Wenn ABF unten ist (keine Team-ID im Calendar-Dropdown), deckt der Metrostars-Fallback Tabelle UND Spiele vollständig ab. Der Team-ID-Check hängte trotzdem einen `scrape_errors`-Eintrag an → `exit 1` → kein Commit trotz gültiger Daten. Jetzt nur noch `[WARNUNG]`-Print (analog zum dokumentierten Prinzip in `_resolve_games`). Echte Totalausfälle (ABF + Metrostars beide leer) fangen die „beide leer"-Checks in `_resolve_standings`/`_resolve_games` weiter unten ab und färben den Run weiterhin rot.
   2. **`0:0`-Platzhalter bei gespielten Spielen:** ABF trägt Ergebnisse oft tagelang verspätet ein und zeigt bis dahin `0:0`. Die `0:0`-Neutralisierung im Merge griff nur für Zukunfts-Spiele (`if not game_in_past`) – ein am Vortag gespieltes Spiel bekam einen falschen `0:0`-Endstand. Ein Baseballspiel kann nie `0:0` enden (kein Unentschieden in der Liga: Mercy-/Extra-Innings), also ist `0:0` immer ein Platzhalter. Wird jetzt am ABF-Parse-Punkt (`scrape_games_from_calendar`) generell auf `None` neutralisiert, damit `_fill_results_from()` den echten Wert aus Metrostars übernimmt.

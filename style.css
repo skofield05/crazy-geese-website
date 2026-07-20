@@ -531,6 +531,21 @@ li {
   margin-top: var(--space-xs);
 }
 
+/* Kontext-Hinweis am Spiel (z.B. "Fortsetzung eines abgebrochenen Spiels").
+   Info-Blau (farbenblind-freundlich), damit es sich klar vom regulaeren
+   Spieltext abhebt, ohne wie eine Warnung (Rot/Orange) zu wirken. */
+.highlight-hinweis {
+  margin-top: var(--space-xs);
+  max-width: 36ch;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(37, 99, 235, 0.55);
+  border-radius: 6px;
+  padding: var(--space-xs) var(--space-sm);
+}
+
 /* Event-Karte (z.B. Slowpitch Firmenturnier) – nutzt Softball-Lila, weil
    Slowpitch-Event. Liegt im selben hero-highlights-Grid wie Spiel/Heimspiel. */
 .highlight-card.highlight-event {
@@ -818,6 +833,17 @@ li {
   grid-column: 1 / -1;
   font-size: 0.9rem;
   color: var(--color-text-muted);
+}
+
+.game-hinweis-compact {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.12);
+  border-left: 3px solid var(--color-win);
+  border-radius: 4px;
+  padding: 2px var(--space-sm);
 }
 
 .game-compact.next-game {
@@ -1270,6 +1296,17 @@ li {
   margin-top: var(--space-sm);
   font-size: 0.95rem;
   color: var(--color-text-muted);
+}
+
+.game-hinweis {
+  margin-top: var(--space-sm);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.12);
+  border-left: 3px solid var(--color-win);
+  border-radius: 4px;
+  padding: var(--space-xs) var(--space-sm);
 }
 
 .game-phase {

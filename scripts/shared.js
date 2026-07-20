@@ -208,6 +208,7 @@ function renderGame(game, isFeatured) {
         <span class="team ${isHome ? 'us' : ''}">${heim}</span>
       </div>
       ${game.ort ? `<div class="game-location">📍 ${escapeHtml(game.ort)}</div>` : ''}
+      ${game.hinweis ? `<div class="game-hinweis">ℹ️ ${escapeHtml(game.hinweis)}</div>` : ''}
       ${game.phase ? `<div class="game-phase">${escapeHtml(game.phase)}</div>` : ''}
     </div>
   `;
@@ -258,6 +259,7 @@ function renderGameCompact(game) {
         <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
         ${postponedTag}
         ${game.ort ? `<span class="game-location-compact">📍 ${escapeHtml(game.ort)}</span>` : ''}
+        ${game.hinweis ? `<span class="game-hinweis-compact">ℹ️ ${escapeHtml(game.hinweis)}</span>` : ''}
       </div>
     `;
   }
@@ -274,6 +276,7 @@ function renderGameCompact(game) {
       <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
       ${postponedTag}
       ${game.ort ? `<span class="game-location-compact">📍 ${escapeHtml(game.ort)}</span>` : ''}
+      ${game.hinweis ? `<span class="game-hinweis-compact">ℹ️ ${escapeHtml(game.hinweis)}</span>` : ''}
     </div>
   `;
 }
@@ -306,6 +309,7 @@ function renderHighlightGame(game) {
     ${game.zeit ? `<span class="highlight-time">${escapeHtml(game.zeit)} Uhr</span>` : ''}
     <span class="highlight-opponent">vs ${opponent}</span>
     ${game.ort ? `<span class="highlight-location">📍 ${escapeHtml(game.ort)}</span>` : ''}
+    ${game.hinweis ? `<span class="highlight-hinweis">ℹ️ ${escapeHtml(game.hinweis)}</span>` : ''}
   `;
 }
 
