@@ -5,22 +5,6 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:Crazy Geese – Alle Spiele 2026
 X-WR-TIMEZONE:Europe/Vienna
 BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260719T110000
-DTEND;TZID=Europe/Vienna:20260719T133000
-SUMMARY:⚾ Crazy Geese vs Vienna Metrostars 3
-LOCATION:Freudenau\, Wien
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-52@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260719T133000
-DTEND;TZID=Europe/Vienna:20260719T160000
-SUMMARY:⚾ Crazy Geese vs Tulln Ravens
-LOCATION:Freudenau\, Wien
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-53@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260725T130000
 DTEND;TZID=Europe/Vienna:20260725T153000
 SUMMARY:⚾ Tulln Ravens vs Crazy Geese (HEIM)

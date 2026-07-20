@@ -25,14 +25,14 @@
     }
   },
   "tabelle": {
-    "stand": "2026-06-21",
+    "stand": "2026-07-20",
     "phase": "Grunddurchgang",
     "teams": [
       {
         "rang": 1,
         "name": "Danube Titans",
         "kuerzel": "DT",
-        "siege": 9,
+        "siege": 11,
         "niederlagen": 1,
         "unentschieden": 0
       },
@@ -40,89 +40,71 @@
         "rang": 2,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
-        "siege": 7,
+        "siege": 9,
         "niederlagen": 1,
         "unentschieden": 0
       },
       {
         "rang": 3,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
-        "siege": 4,
-        "niederlagen": 3,
+        "name": "Vienna Bucks",
+        "kuerzel": "BU",
+        "siege": 7,
+        "niederlagen": 7,
         "unentschieden": 0
       },
       {
         "rang": 4,
-        "name": "Vienna Bucks",
-        "kuerzel": "BU",
-        "siege": 5,
-        "niederlagen": 5,
+        "name": "Schremser Beers 2",
+        "kuerzel": "SB",
+        "siege": 6,
+        "niederlagen": 6,
         "unentschieden": 0
       },
       {
         "rang": 5,
-        "name": "Vienna Metrostars 3",
-        "kuerzel": "MS",
-        "siege": 2,
-        "niederlagen": 2,
+        "name": "Vienna Lawnmowers",
+        "kuerzel": "LM",
+        "siege": 6,
+        "niederlagen": 6,
         "unentschieden": 0
       },
       {
         "rang": 6,
-        "name": "Vienna Lawnmowers",
-        "kuerzel": "LM",
-        "siege": 3,
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
+        "siege": 4,
         "niederlagen": 5,
         "unentschieden": 0
       },
       {
         "rang": 7,
-        "name": "Schremser Beers 2",
-        "kuerzel": "SB",
-        "siege": 1,
-        "niederlagen": 5,
+        "name": "Vienna Metrostars 3",
+        "kuerzel": "MS",
+        "siege": 3,
+        "niederlagen": 7,
         "unentschieden": 0
       },
       {
         "rang": 8,
         "name": "Woodquarter Red Devils",
         "kuerzel": "RD",
-        "siege": 0,
-        "niederlagen": 4,
+        "siege": 2,
+        "niederlagen": 6,
         "unentschieden": 0
       },
       {
         "rang": 9,
         "name": "Tulln Ravens",
         "kuerzel": "TR",
-        "siege": 0,
-        "niederlagen": 5,
+        "siege": 1,
+        "niederlagen": 10,
         "unentschieden": 0
       }
     ]
   },
   "spiele": {
-    "letztes_update": "2026-06-21",
+    "letztes_update": "2026-07-20",
     "naechste": [
-      {
-        "datum": "2026-07-19",
-        "zeit": "11:00",
-        "heim": "Vienna Metrostars 3",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Freudenau, Wien",
-        "phase": "Grunddurchgang",
-        "spielnr": "#52"
-      },
-      {
-        "datum": "2026-07-19",
-        "zeit": "13:30",
-        "heim": "Tulln Ravens",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Freudenau, Wien",
-        "phase": "Grunddurchgang",
-        "spielnr": "#53"
-      },
       {
         "datum": "2026-07-25",
         "zeit": "13:00",
@@ -266,6 +248,28 @@
         "spielnr": "#30",
         "ergebnis_heim": 19,
         "ergebnis_gast": 3
+      },
+      {
+        "datum": "2026-07-19",
+        "zeit": "11:00",
+        "heim": "Vienna Metrostars 3",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Freudenau, Wien",
+        "phase": "Grunddurchgang",
+        "spielnr": "#52",
+        "ergebnis_heim": 2,
+        "ergebnis_gast": 13
+      },
+      {
+        "datum": "2026-07-19",
+        "zeit": "13:30",
+        "heim": "Tulln Ravens",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Freudenau, Wien",
+        "phase": "Grunddurchgang",
+        "spielnr": "#53",
+        "ergebnis_heim": 6,
+        "ergebnis_gast": 18
       }
     ]
   },
@@ -283,10 +287,26 @@
         "beschreibung": "ABBQS Turnier",
         "ort": "Geese Ballpark, Rohrbach",
         "spiele": [
-          { "zeit": "10:00", "gegner": "Monkeys", "heim": false },
-          { "zeit": "12:40", "gegner": "Rubberducks", "heim": true },
-          { "zeit": "14:20", "gegner": "Monkeys", "heim": true },
-          { "zeit": "17:00", "gegner": "Rubberducks", "heim": false }
+          {
+            "zeit": "10:00",
+            "gegner": "Monkeys",
+            "heim": false
+          },
+          {
+            "zeit": "12:40",
+            "gegner": "Rubberducks",
+            "heim": true
+          },
+          {
+            "zeit": "14:20",
+            "gegner": "Monkeys",
+            "heim": true
+          },
+          {
+            "zeit": "17:00",
+            "gegner": "Rubberducks",
+            "heim": false
+          }
         ]
       },
       {

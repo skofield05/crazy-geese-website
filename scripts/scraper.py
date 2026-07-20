@@ -454,8 +454,22 @@ def parse_games_from_calendar_text(body_text, phase):
         elif score_rx.match(line):
             awaiting_ort = False
             scores = line.split(':')
-            current_game['ergebnis_gast'] = int(scores[0].strip())
-            current_game['ergebnis_heim'] = int(scores[1].strip())
+            g_score = int(scores[0].strip())
+            h_score = int(scores[1].strip())
+            # ABF zeigt 0:0 als Platzhalter fuer noch nicht eingetragene
+            # Ergebnisse – auch bei bereits gespielten Spielen (ABF traegt oft
+            # tagelang verspaetet ein). Ein Baseballspiel kann nicht 0:0 enden
+            # (kein Unentschieden in der Liga: Mercy-/Extra-Innings-Regel), also
+            # ist 0:0 immer ein Platzhalter. Als "kein Ergebnis" behandeln, damit
+            # _fill_results_from() den echten Wert aus Metrostars uebernehmen
+            # kann statt eines falschen 0:0-Endstands. (Die spaetere
+            # game_in_past-Neutralisierung deckt nur Zukunfts-Spiele ab.)
+            if g_score == 0 and h_score == 0:
+                current_game['ergebnis_gast'] = None
+                current_game['ergebnis_heim'] = None
+            else:
+                current_game['ergebnis_gast'] = g_score
+                current_game['ergebnis_heim'] = h_score
 
         # Ort: erste nicht-Marker-Zeile nach der Spielnummer, die nicht wie
         # ein Teamkuerzel aussieht. Ersetzt die frühere Whitelist, damit neue
@@ -882,9 +896,16 @@ def update_data():
             rounds, team_id = get_rounds_and_team_id(page)
 
             if not team_id:
-                scrape_errors.append(
-                    f"Team-ID fuer '{TEAM_NAME}' nicht im Calendar-Dropdown gefunden. "
-                    f"Saison-URL pruefen ({ABF_BASE})."
+                # Kein scrape_errors-Eintrag (sonst exit 1 -> kein Commit trotz
+                # gueltiger Metrostars-Daten). Analog zu _resolve_games: wenn
+                # ABF unten ist, deckt der Metrostars-Fallback Tabelle UND Spiele
+                # vollstaendig. Echte Totalausfaelle (ABF + Metrostars beide leer)
+                # fangen die "beide leer"-Checks in _resolve_standings/
+                # _resolve_games weiter unten ab und faerben den Run dann rot.
+                print(
+                    f"      [WARNUNG] Team-ID fuer '{TEAM_NAME}' nicht im "
+                    f"Calendar-Dropdown gefunden – ABF-Markup/Saison-URL pruefen "
+                    f"({ABF_BASE}). Fallback auf Metrostars folgt."
                 )
             else:
                 # 3. Spiele aus Kalender holen
@@ -927,6 +948,20 @@ def update_data():
         # damit Tabelle und Spielliste konsistent sind.
         raw_phase = determine_phase()
         data["tabelle"]["phase"] = PHASE_MAP.get(raw_phase, raw_phase)
+
+    # ABF-Teamnamen kanonisieren, BEVOR _resolve_games gegen Metrostars matcht.
+    # ABF liefert Rohnamen ("Metrostars", "Kutro Crazy Geese"), Metrostars ist
+    # schon kanonisch ("Vienna Metrostars 3", "Rohrbach Crazy Geese"). Ohne das
+    # scheitert das (datum, heim, gast)-Matching in _fill_results_from/
+    # _diff_game_results komplett – der Metrostars-Fill fuer ABF-Luecken (z.B.
+    # ein noch nicht eingetragenes Ergebnis) greift dann nie. Die spaetere
+    # normalize_team-Runde im Merge bleibt (deckt Substring-/Overlap-Faelle ab),
+    # aber der harte Override muss schon hier passieren.
+    for _g in abf_games:
+        if _g.get("heim"):
+            _g["heim"] = canonical_team_name(_g["heim"])
+        if _g.get("gast"):
+            _g["gast"] = canonical_team_name(_g["gast"])
 
     # Spiele: ABF bevorzugen, Metrostars als Fallback. Bei beiden vorhanden:
     # Ergebnis-Verify gegen Metrostars (Datum-/Team-Match).
