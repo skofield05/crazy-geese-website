@@ -22,14 +22,6 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260725T130000
-DTEND;TZID=Europe/Vienna:20260725T153000
-SUMMARY:⚾ Tulln Ravens vs Crazy Geese (HEIM)
-LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-35@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260815T110000
 DTEND;TZID=Europe/Vienna:20260815T133000
 SUMMARY:⚾ Vienna Bucks vs Crazy Geese (HEIM)

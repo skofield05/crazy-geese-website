@@ -25,27 +25,43 @@
     }
   },
   "tabelle": {
-    "stand": "2026-07-20",
+    "stand": "2026-08-02",
     "phase": "Grunddurchgang",
     "teams": [
       {
         "rang": 1,
         "name": "Danube Titans",
         "kuerzel": "DT",
-        "siege": 11,
-        "niederlagen": 1,
+        "siege": 12,
+        "niederlagen": 2,
         "unentschieden": 0
       },
       {
         "rang": 2,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
-        "siege": 9,
+        "siege": 10,
         "niederlagen": 1,
         "unentschieden": 0
       },
       {
         "rang": 3,
+        "name": "Schremser Beers 2",
+        "kuerzel": "SB",
+        "siege": 8,
+        "niederlagen": 6,
+        "unentschieden": 0
+      },
+      {
+        "rang": 4,
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
+        "siege": 7,
+        "niederlagen": 6,
+        "unentschieden": 0
+      },
+      {
+        "rang": 5,
         "name": "Vienna Bucks",
         "kuerzel": "BU",
         "siege": 7,
@@ -53,15 +69,7 @@
         "unentschieden": 0
       },
       {
-        "rang": 4,
-        "name": "Schremser Beers 2",
-        "kuerzel": "SB",
-        "siege": 6,
-        "niederlagen": 6,
-        "unentschieden": 0
-      },
-      {
-        "rang": 5,
+        "rang": 6,
         "name": "Vienna Lawnmowers",
         "kuerzel": "LM",
         "siege": 6,
@@ -69,19 +77,11 @@
         "unentschieden": 0
       },
       {
-        "rang": 6,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
-        "siege": 4,
-        "niederlagen": 5,
-        "unentschieden": 0
-      },
-      {
         "rang": 7,
         "name": "Vienna Metrostars 3",
         "kuerzel": "MS",
         "siege": 3,
-        "niederlagen": 7,
+        "niederlagen": 9,
         "unentschieden": 0
       },
       {
@@ -89,7 +89,7 @@
         "name": "Woodquarter Red Devils",
         "kuerzel": "RD",
         "siege": 2,
-        "niederlagen": 6,
+        "niederlagen": 8,
         "unentschieden": 0
       },
       {
@@ -97,24 +97,14 @@
         "name": "Tulln Ravens",
         "kuerzel": "TR",
         "siege": 1,
-        "niederlagen": 10,
+        "niederlagen": 11,
         "unentschieden": 0
       }
     ]
   },
   "spiele": {
-    "letztes_update": "2026-07-20",
+    "letztes_update": "2026-08-02",
     "naechste": [
-      {
-        "datum": "2026-07-25",
-        "zeit": "13:00",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Tulln Ravens",
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Grunddurchgang",
-        "spielnr": "#35",
-        "hinweis": "Fortsetzung des in Graz im 2. Inning abgebrochenen Spiels."
-      },
       {
         "datum": "2026-08-02",
         "zeit": "11:00",
@@ -271,6 +261,18 @@
         "spielnr": "#53",
         "ergebnis_heim": 6,
         "ergebnis_gast": 18
+      },
+      {
+        "datum": "2026-07-25",
+        "zeit": "13:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Tulln Ravens",
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Grunddurchgang",
+        "spielnr": "#35",
+        "hinweis": "Fortsetzung des in Graz im 2. Inning abgebrochenen Spiels.",
+        "ergebnis_heim": 17,
+        "ergebnis_gast": 3
       }
     ]
   },
