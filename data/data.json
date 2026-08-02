@@ -30,6 +30,14 @@
     "teams": [
       {
         "rang": 1,
+        "name": "Rohrbach Crazy Geese",
+        "kuerzel": "CG",
+        "siege": 12,
+        "niederlagen": 1,
+        "unentschieden": 0
+      },
+      {
+        "rang": 2,
         "name": "Danube Titans",
         "kuerzel": "DT",
         "siege": 12,
@@ -37,19 +45,11 @@
         "unentschieden": 0
       },
       {
-        "rang": 2,
-        "name": "Rohrbach Crazy Geese",
-        "kuerzel": "CG",
-        "siege": 10,
-        "niederlagen": 1,
-        "unentschieden": 0
-      },
-      {
         "rang": 3,
         "name": "Schremser Beers 2",
         "kuerzel": "SB",
-        "siege": 8,
-        "niederlagen": 6,
+        "siege": 9,
+        "niederlagen": 7,
         "unentschieden": 0
       },
       {
@@ -89,7 +89,7 @@
         "name": "Woodquarter Red Devils",
         "kuerzel": "RD",
         "siege": 2,
-        "niederlagen": 8,
+        "niederlagen": 10,
         "unentschieden": 0
       },
       {
@@ -112,7 +112,9 @@
         "gast": "Rohrbach Crazy Geese",
         "ort": "Beers Field, Schrems",
         "phase": "Grunddurchgang",
-        "spielnr": "#61"
+        "spielnr": "#61",
+        "ergebnis_heim": 7,
+        "ergebnis_gast": 8
       },
       {
         "datum": "2026-08-02",
@@ -121,7 +123,9 @@
         "gast": "Rohrbach Crazy Geese",
         "ort": "Beers Field, Schrems",
         "phase": "Grunddurchgang",
-        "spielnr": "#62"
+        "spielnr": "#62",
+        "ergebnis_heim": 9,
+        "ergebnis_gast": 24
       },
       {
         "datum": "2026-08-15",
