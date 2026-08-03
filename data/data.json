@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-08-02",
+    "stand": "2026-08-03",
     "phase": "Grunddurchgang",
     "teams": [
       {
@@ -103,30 +103,8 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-08-02",
+    "letztes_update": "2026-08-03",
     "naechste": [
-      {
-        "datum": "2026-08-02",
-        "zeit": "11:00",
-        "heim": "Schremser Beers 2",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Beers Field, Schrems",
-        "phase": "Grunddurchgang",
-        "spielnr": "#61",
-        "ergebnis_heim": 7,
-        "ergebnis_gast": 8
-      },
-      {
-        "datum": "2026-08-02",
-        "zeit": "13:30",
-        "heim": "Woodquarter Red Devils",
-        "gast": "Rohrbach Crazy Geese",
-        "ort": "Beers Field, Schrems",
-        "phase": "Grunddurchgang",
-        "spielnr": "#62",
-        "ergebnis_heim": 9,
-        "ergebnis_gast": 24
-      },
       {
         "datum": "2026-08-15",
         "zeit": "11:00",
@@ -277,6 +255,28 @@
         "hinweis": "Fortsetzung des in Graz im 2. Inning abgebrochenen Spiels.",
         "ergebnis_heim": 17,
         "ergebnis_gast": 3
+      },
+      {
+        "datum": "2026-08-02",
+        "zeit": "11:00",
+        "heim": "Schremser Beers 2",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Beers Field, Schrems",
+        "phase": "Grunddurchgang",
+        "spielnr": "#61",
+        "ergebnis_heim": 7,
+        "ergebnis_gast": 8
+      },
+      {
+        "datum": "2026-08-02",
+        "zeit": "13:30",
+        "heim": "Woodquarter Red Devils",
+        "gast": "Rohrbach Crazy Geese",
+        "ort": "Beers Field, Schrems",
+        "phase": "Grunddurchgang",
+        "spielnr": "#62",
+        "ergebnis_heim": 9,
+        "ergebnis_gast": 24
       }
     ]
   },

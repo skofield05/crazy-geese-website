@@ -22,22 +22,6 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260802T110000
-DTEND;TZID=Europe/Vienna:20260802T133000
-SUMMARY:⚾ Crazy Geese vs Schremser Beers 2
-LOCATION:Beers Field\, Schrems
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-61@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260802T133000
-DTEND;TZID=Europe/Vienna:20260802T160000
-SUMMARY:⚾ Crazy Geese vs Woodquarter Red Devils
-LOCATION:Beers Field\, Schrems
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang
-UID:cg-62@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260815T110000
 DTEND;TZID=Europe/Vienna:20260815T133000
 SUMMARY:⚾ Vienna Bucks vs Crazy Geese (HEIM)
