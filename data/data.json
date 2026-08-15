@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-08-03",
+    "stand": "2026-08-15",
     "phase": "Grunddurchgang",
     "teams": [
       {
@@ -46,18 +46,18 @@
       },
       {
         "rang": 3,
-        "name": "Schremser Beers 2",
-        "kuerzel": "SB",
+        "name": "Graz Dirty Sox",
+        "kuerzel": "DS",
         "siege": 9,
-        "niederlagen": 7,
+        "niederlagen": 6,
         "unentschieden": 0
       },
       {
         "rang": 4,
-        "name": "Graz Dirty Sox",
-        "kuerzel": "DS",
-        "siege": 7,
-        "niederlagen": 6,
+        "name": "Schremser Beers 2",
+        "kuerzel": "SB",
+        "siege": 9,
+        "niederlagen": 7,
         "unentschieden": 0
       },
       {
@@ -73,15 +73,15 @@
         "name": "Vienna Lawnmowers",
         "kuerzel": "LM",
         "siege": 6,
-        "niederlagen": 6,
+        "niederlagen": 8,
         "unentschieden": 0
       },
       {
         "rang": 7,
         "name": "Vienna Metrostars 3",
         "kuerzel": "MS",
-        "siege": 3,
-        "niederlagen": 9,
+        "siege": 4,
+        "niederlagen": 10,
         "unentschieden": 0
       },
       {
@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-08-03",
+    "letztes_update": "2026-08-15",
     "naechste": [
       {
         "datum": "2026-08-15",
