@@ -32,7 +32,7 @@
         "rang": 1,
         "name": "Rohrbach Crazy Geese",
         "kuerzel": "CG",
-        "siege": 12,
+        "siege": 14,
         "niederlagen": 1,
         "unentschieden": 0
       },
@@ -40,7 +40,7 @@
         "rang": 2,
         "name": "Danube Titans",
         "kuerzel": "DT",
-        "siege": 12,
+        "siege": 14,
         "niederlagen": 2,
         "unentschieden": 0
       },
@@ -65,15 +65,15 @@
         "name": "Vienna Bucks",
         "kuerzel": "BU",
         "siege": 7,
-        "niederlagen": 7,
+        "niederlagen": 9,
         "unentschieden": 0
       },
       {
         "rang": 6,
         "name": "Vienna Lawnmowers",
         "kuerzel": "LM",
-        "siege": 6,
-        "niederlagen": 8,
+        "siege": 7,
+        "niederlagen": 9,
         "unentschieden": 0
       },
       {
@@ -88,8 +88,8 @@
         "rang": 8,
         "name": "Woodquarter Red Devils",
         "kuerzel": "RD",
-        "siege": 2,
-        "niederlagen": 10,
+        "siege": 3,
+        "niederlagen": 11,
         "unentschieden": 0
       },
       {
@@ -97,7 +97,7 @@
         "name": "Tulln Ravens",
         "kuerzel": "TR",
         "siege": 1,
-        "niederlagen": 11,
+        "niederlagen": 13,
         "unentschieden": 0
       }
     ]
@@ -112,7 +112,9 @@
         "gast": "Vienna Bucks",
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Grunddurchgang",
-        "spielnr": "#67"
+        "spielnr": "#67",
+        "ergebnis_heim": 18,
+        "ergebnis_gast": 2
       },
       {
         "datum": "2026-08-15",
@@ -121,7 +123,9 @@
         "gast": "Vienna Lawnmowers",
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Grunddurchgang",
-        "spielnr": "#69"
+        "spielnr": "#69",
+        "ergebnis_heim": 19,
+        "ergebnis_gast": 5
       },
       {
         "datum": "2026-08-22",
