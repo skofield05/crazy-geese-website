@@ -22,22 +22,6 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260815T110000
-DTEND;TZID=Europe/Vienna:20260815T133000
-SUMMARY:⚾ Vienna Bucks vs Crazy Geese (HEIM)
-LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-67@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260815T160000
-DTEND;TZID=Europe/Vienna:20260815T183000
-SUMMARY:⚾ Vienna Lawnmowers vs Crazy Geese (HEIM)
-LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nHeimspiel – Eintritt frei!
-UID:cg-69@crazy-geese.at
-END:VEVENT
-BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260822T130000
 DTEND;TZID=Europe/Vienna:20260822T153000
 SUMMARY:⚾ Crazy Geese vs Graz Dirty Sox (in Rohrbach)
