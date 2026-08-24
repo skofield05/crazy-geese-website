@@ -110,7 +110,10 @@ def _event(game: dict) -> dict:
     # enthalten keine Sonderzeichen.
     gast_short = _ics_escape(_shorten(gast))
     heim_short = _ics_escape(_shorten(heim))
-    summary = f"⚾ {gast_short} vs {heim_short}{suffix}"
+    # Finale nach vorn: Kalender-Monatsansichten kuerzen die SUMMARY hart ab,
+    # und "FINALE" ist die Information, die dabei ueberleben soll.
+    prefix = "⚾ FINALE: " if phase == "Finale" else "⚾ "
+    summary = f"{prefix}{gast_short} vs {heim_short}{suffix}"
 
     # phase escapen; desc_extra bewusst NICHT – es enthaelt literale "\n"-
     # Zeilenumbrueche (ICS-Escape-Sequenz), die _ics_escape durch das

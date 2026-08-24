@@ -211,6 +211,11 @@ function renderGame(game, isFeatured) {
   const score = hasResult
     ? escapeHtml(game.ergebnis_gast) + ':' + escapeHtml(game.ergebnis_heim)
     : 'vs';
+  // Finale: eigener Badge, damit das Spiel im Spielplan nicht wie ein
+  // Grunddurchgangs-Spiel unter vielen aussieht.
+  const finaleBadge = game.phase === 'Finale'
+    ? '<span class="game-homeaway finale">FINALE</span>'
+    : '';
   const featuredClass = isFeatured ? 'next-game-featured' : '';
   const scoreClass = hasResult ? 'score score-' + resultClass : 'vs';
 
@@ -218,7 +223,7 @@ function renderGame(game, isFeatured) {
     <div class="game-card ${resultClass} ${featuredClass} ${isPostponed ? 'postponed' : ''}" role="article" aria-label="${gast} bei ${heim}">
       <div class="game-card-header">
         <div class="game-date">${formatDate(game.datum)}${game.zeit ? ' • ' + escapeHtml(game.zeit) : ''}</div>
-        <div class="game-tags">${postponedBadge}${resultBadge}${venueBadge}</div>
+        <div class="game-tags">${finaleBadge}${postponedBadge}${resultBadge}${venueBadge}</div>
       </div>
       <div class="game-matchup">
         <span class="team ${!isHome ? 'us' : ''}">${gast}</span>
@@ -227,7 +232,7 @@ function renderGame(game, isFeatured) {
       </div>
       ${game.ort ? `<div class="game-location">📍 ${escapeHtml(game.ort)}</div>` : ''}
       ${game.hinweis ? `<div class="game-hinweis">ℹ️ ${escapeHtml(game.hinweis)}</div>` : ''}
-      ${game.phase ? `<div class="game-phase">${escapeHtml(game.phase)}</div>` : ''}
+      ${game.phase && !finaleBadge ? `<div class="game-phase">${escapeHtml(game.phase)}</div>` : ''}
     </div>
   `;
 }
@@ -265,6 +270,9 @@ function renderGameCompact(game) {
   const postponedTag = isPostponed
     ? '<span class="game-homeaway postponed">VERSCHOBEN</span>'
     : '';
+  const finaleTag = game.phase === 'Finale'
+    ? '<span class="game-homeaway finale">FINALE</span>'
+    : '';
 
   if (sport === 'softball') {
     const label = escapeHtml(game.gegner || game.beschreibung || 'Softball');
@@ -292,6 +300,7 @@ function renderGameCompact(game) {
       <span class="game-opponent">${opponent}</span>
       <span class="game-sport ${sport}">${sportTag}</span>
       <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
+      ${finaleTag}
       ${postponedTag}
       ${game.ort ? `<span class="game-location-compact">📍 ${escapeHtml(game.ort)}</span>` : ''}
       ${game.hinweis ? `<span class="game-hinweis-compact">ℹ️ ${escapeHtml(game.hinweis)}</span>` : ''}
@@ -321,8 +330,13 @@ function renderHighlightGame(game) {
   const isHome = isOurTeam(game.heim);
   const opponent = escapeHtml(isHome ? game.gast : game.heim);
 
+  // Tags in einer Zeile buendeln – die Karte ist ein Column-Flex, ohne
+  // Wrapper wuerde jeder Badge eine eigene Zeile bekommen.
   return `
-    <span class="game-sport ${sport}">${sportTag}</span>
+    <span class="highlight-tags">
+      <span class="game-sport ${sport}">${sportTag}</span>
+      ${game.phase === 'Finale' ? '<span class="game-homeaway finale">FINALE</span>' : ''}
+    </span>
     <span class="highlight-date">${formatDateLong(game.datum)}</span>
     ${game.zeit ? `<span class="highlight-time">${escapeHtml(game.zeit)} Uhr</span>` : ''}
     <span class="highlight-opponent">vs ${opponent}</span>

@@ -124,10 +124,15 @@ function renderPage(data) {
     nextSoftballCard.innerHTML = '';
   }
 
-  // Heimspiel-Karte (beide Sportarten).
+  // Heimspiel-Karte (beide Sportarten). Ist das naechste Heimspiel das
+  // Finale, bekommt die Karte Label und Rahmen in Gold – ein Finale vor
+  // eigenem Publikum soll nicht wie ein Spieltag unter acht aussehen.
+  const homeIsFinale = !!nextHomeGame && nextHomeGame.phase === 'Finale';
+  nextHomeCard.classList.toggle('highlight-finale', homeIsFinale);
   if (nextHomeGame) {
+    const homeLabel = homeIsFinale ? 'Finale in Rohrbach' : 'Nächstes Heimspiel';
     nextHomeCard.innerHTML = `
-      <span class="highlight-label">Nächstes Heimspiel</span>
+      <span class="highlight-label">${homeLabel}</span>
       ${renderHighlightGame(nextHomeGame)}
       <span class="highlight-free">🎟️ Eintritt frei!</span>
       ${detailsLink(nextHomeGame)}

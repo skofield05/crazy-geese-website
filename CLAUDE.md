@@ -189,6 +189,7 @@ gh workflow run "Update Standings"
 | SOFTBALL | Lila (#7c3aed) | Softball-Termine |
 | HEIM | Blau (#2563eb) | Heimspiele |
 | AUSWÄRTS | Grau | Auswärtsspiele |
+| FINALE | Gold (#eab308) | Spiele mit `phase: "Finale"` |
 
 ### Logo
 
@@ -313,6 +314,18 @@ In `data/data.json` → `spiele.vergangene`:
 }
 ```
 
+**Optional: `platzhalter`** – `true` markiert ein Spiel, das schon beworben
+wird, bevor der Gegner feststeht (Erstanwendung: das Finale am 13.09.2026).
+`gast` traegt dann einen Platzhaltertext („Danube Titans oder Schremser Beers
+2"). Sobald ABF/Metrostars die echte Paarung liefert, loest der Scraper den
+Eintrag auf: `find_existing_game` matcht Stufe 3 ueber **Datum + geteiltes
+Team**, der Merge ersetzt `heim`/`gast`, entfernt `platzhalter` und den
+(dann veralteten) `hinweis` – und **behaelt die eigene `spielnr`**, weil die
+ICS-UID daran haengt und eine neue UID Kalender-Apps ein zweites Event
+anlegen liesse. Das Datum ist im Match bewusst Pflicht: ohne es wuerde jedes
+andere Playoff-Spiel des Teams den Platzhalter still ueberschreiben; ein
+Duplikat nach einer Verlegung faellt dagegen sofort auf.
+
 **Optional: `hinweis`** – Freitext-Kontexthinweis am Spiel-Objekt (in `naechste`
 oder `vergangene`), z.B. `"hinweis": "Fortsetzung des in Graz im 2. Inning
 abgebrochenen Spiels."`. Erscheint als ℹ️-Info-Zeile auf der Startseiten-
@@ -411,6 +424,15 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ---
 
 ## Changelog
+
+### 2026-08-24 (2)
+- **Finale am 13.09. wird beworben, obwohl der Gegner noch offen ist.** Geese haben durch Platz 1 im Grunddurchgang Heimrecht; der Gegner (Danube Titans oder Schremser Beers 2) entscheidet sich am 06.09. Neues optionales Feld **`platzhalter: true`** an Spiel-Objekten (siehe „Manuell Spiel eintragen") – das Spiel liegt als normaler Eintrag in `spiele.naechste` und laeuft dadurch automatisch durch alle Kanaele: Hero-Karte, Spielplan, `baseball.html`, beide ICS und das Schema.org-JSON-LD.
+- **Scraper loest den Platzhalter selbst auf:** neue Match-Stufe 3 in `find_existing_game` (Datum + geteiltes Team), Merge ersetzt `heim`/`gast`, entfernt `platzhalter` + `hinweis`, behaelt aber die eigene `spielnr` (`#FINALE`) – sonst waere die ICS-UID gewandert und jeder, der den Termin schon importiert hat, haette ein zweites Event im Kalender. **End-to-End verifiziert:** Platzhalter testweise auf den 22.08. gesetzt und den echten Scraper laufen lassen → in-place aufgeloest (Graz Dirty Sox 9:20 Geese), kein Duplikat, `spielnr` stabil. Zusaetzlich 6 Match-Faelle als Unit-Check, u.a. dass das Halbfinale Titans-Beers und ein hypothetisches anderes Geese-Playoffspiel den Platzhalter **nicht** kapern.
+- **FINALE-Badge (Gold `#eab308`)** in allen drei Render-Funktionen (`renderGame`, `renderGameCompact`, `renderHighlightGame`) fuer `phase === 'Finale'`. Die Heimspiel-Hero-Karte bekommt Gold-Rahmen + Glow (`.highlight-finale`) und das Label „Finale in Rohrbach" statt „Nächstes Heimspiel". Farbe ist nie alleiniger Traeger – der Badge sagt „FINALE"; das ist hier besonders wichtig, weil Gold und das Niederlagen-Orange bei Rot-Gruen-Schwaeche aehnlich wirken. Die `.game-phase`-Zeile entfaellt, wenn der Badge steht (sonst stuende „FINALE" zweimal auf derselben Karte).
+- **CSS-Reihenfolge beachtet:** `.highlight-finale .highlight-label` muss **nach** `.highlight-home .highlight-label` stehen – gleiche Spezifitaet, und die Finale-Karte traegt beide Klassen. Neuer `.highlight-tags`-Wrapper buendelt BASEBALL + FINALE in eine Zeile (die Karte ist Column-Flex, ohne Wrapper stapeln die Badges).
+- **ICS-SUMMARY beginnt bei `phase: "Finale"` mit `⚾ FINALE:`** – Kalender-Monatsansichten kuerzen die SUMMARY hart ab, und „FINALE" ist die Information, die dabei ueberleben soll.
+- `validate_data.py` prueft `platzhalter` auf bool. **Cache-Buster** `shared.js` (9 Files) + `page-index.js` auf `?v=2026-08-24`.
+- **Bekannt, nicht angefasst:** `index.html` hat auf schmalen Viewports (~390 px) horizontalen Overflow – `.spielplan-card`/`.tabelle-card` werden breiter als der Viewport. Vorbestehend, tritt auch ohne den Finale-Eintrag auf.
 
 ### 2026-08-24
 - **Grunddurchgang abgeschlossen – Geese auf Platz 1 (15-1):** Ergebnis #36 nachgetragen (22.08., Graz Dirty Sox 9:20 Rohrbach Crazy Geese, formal auswaerts aber in Rohrbach gespielt). Tabelle auf Stand 24.08. Alle 16 Spiele sind jetzt in `spiele.vergangene`, `spiele.naechste` ist leer.

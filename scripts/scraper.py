@@ -151,6 +151,8 @@ def find_existing_game(existing_games, new_game):
       1. spielnr (eindeutig pro Liga, bleibt auch bei Verlegung gleich)
       2. (heim, gast). Bei mehreren Kandidaten: gleiches Datum bevorzugt.
          Wenn nicht aufloesbar, kein Match (→ neues Spiel).
+      3. Platzhalter (`platzhalter: true`) per (datum + geteiltes Team) –
+         fuer vorab beworbene Spiele, deren Gegner noch nicht feststeht.
 
     Hintergrund: ABF kann Termine/Orte aendern, ohne dass das Spiel "neu" ist.
     Match per spielnr toleriert solche Aenderungen; Fallback per (heim, gast)
@@ -175,6 +177,31 @@ def find_existing_game(existing_games, new_game):
             for c in candidates:
                 if c.get("datum") == new_datum:
                     return c
+        return None
+
+    # 3. Platzhalter-Eintrag: ein Spiel, das schon beworben wird, bevor der
+    #    Gegner feststeht (z.B. das Finale, dessen Paarung erst im Halbfinale
+    #    ausgespielt wird). Weder spielnr noch (heim, gast) koennen matchen,
+    #    weil beides im JSON noch Platzhalter ist. Aufloesung ueber die
+    #    bekannte Seite: genau ein Platzhalter, der sich ein Team mit dem
+    #    neuen Spiel teilt UND am selben Tag stattfindet, ist der gesuchte.
+    #
+    #    Das Datum ist hier bewusst Pflicht, obwohl ein Finaltermin sich
+    #    verschieben koennte: ohne es wuerde jedes andere Playoff-Spiel
+    #    unseres Teams den Platzhalter kapern und ihn still mit der falschen
+    #    Paarung ueberschreiben. Ein Duplikat nach einer Verlegung faellt
+    #    dagegen sofort auf und ist von Hand korrigiert.
+    new_teams = {new_game.get("heim"), new_game.get("gast")} - {None, ""}
+    new_datum = new_game.get("datum")
+    shared = [
+        g for g in existing_games
+        if g.get("platzhalter")
+        and new_datum and g.get("datum") == new_datum
+        and new_teams & ({g.get("heim"), g.get("gast")} - {None, ""})
+    ]
+    if len(shared) == 1:
+        return shared[0]
+
     return None
 
 
@@ -1072,6 +1099,22 @@ def update_data():
             # ("Grunddurchgang" statt ABFs "Regular Season").
             changes = []
 
+            # Platzhalter aufloesen: heim/gast werden sonst NIE ueberschrieben,
+            # hier ist genau das der Zweck des Eintrags – die echte Paarung
+            # ersetzt den Platzhaltertext ("X oder Y").
+            is_placeholder = bool(existing.get("platzhalter"))
+            if is_placeholder:
+                for key in ("heim", "gast"):
+                    new_val = formatted_game.get(key)
+                    if new_val and existing.get(key) != new_val:
+                        changes.append(f"{key}: {existing.get(key)!r}->{new_val!r}")
+                        existing[key] = new_val
+                existing.pop("platzhalter", None)
+                # Der Hinweis ("Gegner steht am ... fest") ist jetzt veraltet.
+                if existing.pop("hinweis", None) is not None:
+                    changes.append("hinweis entfernt (Gegner steht fest)")
+                changes.append("platzhalter aufgeloest")
+
             # spielnr: persistenter Schluessel. Echte ABF-Nummer (#NN) hat
             # Vorrang vor synthetischer Metrostars-ID (m-...). Beim Recovery
             # nach ABF-Ausfall darf eine spaetere echte #NN die m-... ersetzen,
@@ -1082,7 +1125,11 @@ def update_data():
             existing_nr = existing.get("spielnr")
             new_is_synthetic = bool(new_nr) and new_nr.startswith("m-")
             existing_is_real = bool(existing_nr) and not existing_nr.startswith("m-")
-            if new_nr and existing_nr != new_nr and not (new_is_synthetic and existing_is_real):
+            # Ein aufgeloester Platzhalter behaelt seine eigene spielnr
+            # ("#FINALE"): die ICS-UID haengt daran, und wer den Termin schon
+            # importiert hat, bekaeme durch eine neue UID ein zweites Event
+            # im Kalender statt eines Updates.
+            if (not is_placeholder) and new_nr and existing_nr != new_nr and not (new_is_synthetic and existing_is_real):
                 changes.append(f"spielnr: {existing_nr!r}->{new_nr!r}")
                 existing["spielnr"] = new_nr
 

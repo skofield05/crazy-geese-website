@@ -23,6 +23,7 @@
   --color-win: #2563eb;           /* Blau für Siege */
   --color-loss: #ea580c;          /* Orange für Niederlagen */
   --color-tie: #a3a3a3;           /* Grau für Unentschieden */
+  --color-finale: #eab308;        /* Gold für Finale-Akzente */
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -479,6 +480,14 @@ li {
   border-color: var(--color-red);
 }
 
+/* Finale-Heimspiel: Gold-Rahmen mit leichtem Glow, damit die Karte aus dem
+   Hero heraussticht. Ueberschreibt .highlight-home (gleiche Spezifitaet,
+   steht deshalb dahinter). */
+.highlight-card.highlight-finale {
+  border-color: var(--color-finale);
+  box-shadow: 0 0 24px rgba(234, 179, 8, 0.25);
+}
+
 /* Softball-Karte – nur sichtbar, wenn ein Softball-Termin das naechste Event
    ist. Lila wie der SOFTBALL-Tag. */
 .highlight-card.highlight-softball {
@@ -487,6 +496,16 @@ li {
 
 .highlight-softball .highlight-label {
   color: #c4b5fd;
+}
+
+/* Badge-Zeile in der Highlight-Karte (BASEBALL + ggf. FINALE). Die Karte
+   selbst ist Column-Flex, ohne diesen Wrapper stapeln sich die Badges. */
+.highlight-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 .highlight-label {
@@ -500,6 +519,12 @@ li {
 
 .highlight-home .highlight-label {
   color: var(--color-red);
+}
+
+/* Muss NACH .highlight-home .highlight-label stehen: gleiche Spezifitaet,
+   die Finale-Karte traegt beide Klassen. */
+.highlight-finale .highlight-label {
+  color: var(--color-finale);
 }
 
 .highlight-date {
@@ -1391,6 +1416,15 @@ li {
 .game-card.postponed,
 .game-compact.postponed {
   opacity: 0.75;
+}
+
+/* Finale: Gold-Badge. Der Badge traegt das Wort "FINALE", die Farbe ist also
+   nie alleiniger Informationstraeger – wichtig, weil Gold und das
+   Niederlagen-Orange (--color-loss) bei Rot-Gruen-Schwaeche aehnlich wirken. */
+.game-homeaway.finale {
+  background: var(--color-finale);
+  color: var(--color-bg);
+  letter-spacing: 0.05em;
 }
 
 .game-card.postponed .game-date {

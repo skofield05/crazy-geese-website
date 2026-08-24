@@ -104,7 +104,21 @@
   },
   "spiele": {
     "letztes_update": "2026-08-24",
-    "naechste": [],
+    "naechste": [
+      {
+        "spielnr": "#FINALE",
+        "datum": "2026-09-13",
+        "zeit": "14:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Danube Titans oder Schremser Beers 2",
+        "ergebnis_heim": null,
+        "ergebnis_gast": null,
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Finale",
+        "platzhalter": true,
+        "hinweis": "Heimrecht durch Platz 1 im Grunddurchgang. Der Gegner steht am 6. September fest – dann spielen Danube Titans und Schremser Beers 2 gegeneinander."
+      }
+    ],
     "vergangene": [
       {
         "datum": "2026-05-03",

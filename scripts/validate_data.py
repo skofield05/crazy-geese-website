@@ -315,6 +315,15 @@ def _check_spiele(spiele: object, errors: list[str], warnings: list[str]) -> Non
             if hinweis is not None and not isinstance(hinweis, str):
                 errors.append(f"{where}.hinweis muss ein String sein.")
 
+            # platzhalter: vorab beworbenes Spiel ohne feststehenden Gegner.
+            # Der Scraper loest es auf (find_existing_game, Match-Stufe 3) und
+            # entfernt das Flag dabei – ein Truthy-String statt bool wuerde
+            # dort zwar auch greifen, aber der exakte Gleichheitsvergleich
+            # anderer Konsumenten koennte daran vorbeilaufen.
+            platzhalter = g.get("platzhalter")
+            if platzhalter is not None and not isinstance(platzhalter, bool):
+                errors.append(f"{where}.platzhalter muss true/false sein.")
+
             spielnr = g.get("spielnr")
             if spielnr:
                 if spielnr in seen_spielnr:
