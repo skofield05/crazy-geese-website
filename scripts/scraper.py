@@ -1110,10 +1110,13 @@ def update_data():
                         changes.append(f"{key}: {existing.get(key)!r}->{new_val!r}")
                         existing[key] = new_val
                 existing.pop("platzhalter", None)
-                # Der Hinweis ("Gegner steht am ... fest") ist jetzt veraltet.
-                if existing.pop("hinweis", None) is not None:
-                    changes.append("hinweis entfernt (Gegner steht fest)")
-                changes.append("platzhalter aufgeloest")
+                # spielnr dauerhaft festnageln. `platzhalter` taugt dafuer
+                # NICHT: es wird genau hier entfernt, der naechste Lauf saehe
+                # das Flag also nicht mehr, wuerde per (heim, gast) matchen
+                # und die spielnr doch noch ueberschreiben – die ICS-UID waere
+                # eine Woche spaeter trotzdem gewandert.
+                existing["spielnr_fest"] = True
+                changes.append("platzhalter aufgeloest, spielnr festgenagelt")
 
             # spielnr: persistenter Schluessel. Echte ABF-Nummer (#NN) hat
             # Vorrang vor synthetischer Metrostars-ID (m-...). Beim Recovery
@@ -1125,11 +1128,13 @@ def update_data():
             existing_nr = existing.get("spielnr")
             new_is_synthetic = bool(new_nr) and new_nr.startswith("m-")
             existing_is_real = bool(existing_nr) and not existing_nr.startswith("m-")
-            # Ein aufgeloester Platzhalter behaelt seine eigene spielnr
+            # Ein (ehemaliger) Platzhalter behaelt seine eigene spielnr
             # ("#FINALE"): die ICS-UID haengt daran, und wer den Termin schon
             # importiert hat, bekaeme durch eine neue UID ein zweites Event
-            # im Kalender statt eines Updates.
-            if (not is_placeholder) and new_nr and existing_nr != new_nr and not (new_is_synthetic and existing_is_real):
+            # im Kalender statt eines Updates. `spielnr_fest` bleibt dauerhaft
+            # im JSON stehen, damit das auch fuer alle spaeteren Laeufe gilt.
+            spielnr_locked = is_placeholder or bool(existing.get("spielnr_fest"))
+            if (not spielnr_locked) and new_nr and existing_nr != new_nr and not (new_is_synthetic and existing_is_real):
                 changes.append(f"spielnr: {existing_nr!r}->{new_nr!r}")
                 existing["spielnr"] = new_nr
 

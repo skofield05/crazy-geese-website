@@ -322,7 +322,10 @@ Eintrag auf: `find_existing_game` matcht Stufe 3 ueber **Datum + geteiltes
 Team**, der Merge ersetzt `heim`/`gast`, entfernt `platzhalter` und den
 (dann veralteten) `hinweis` – und **behaelt die eigene `spielnr`**, weil die
 ICS-UID daran haengt und eine neue UID Kalender-Apps ein zweites Event
-anlegen liesse. Das Datum ist im Match bewusst Pflicht: ohne es wuerde jedes
+anlegen liesse. Dazu setzt er **`spielnr_fest: true`** – ein Flag, das
+dauerhaft bleibt: `platzhalter` selbst taugt nicht als Schutz, weil es bei
+der Aufloesung entfernt wird und der naechste Lauf die spielnr sonst doch
+noch ueberschreiben wuerde. Das Datum ist im Match bewusst Pflicht: ohne es wuerde jedes
 andere Playoff-Spiel des Teams den Platzhalter still ueberschreiben; ein
 Duplikat nach einer Verlegung faellt dagegen sofort auf.
 
@@ -424,6 +427,16 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ---
 
 ## Changelog
+
+### 2026-08-24 (4)
+- **Code-Review ueber das ganze Repo, 5 Findings – 5 behoben:**
+  1. **(HIGH) Der ICS-UID-Schutz am Platzhalter hielt nur einen einzigen Scraper-Lauf.** Die Bedingung las `platzhalter`, aber der Block direkt darueber loescht dieses Flag im selben Lauf. Beim naechsten Lauf matchte der Eintrag per Regel 2 `(heim, gast)` – beide Namen sind nach der Aufloesung echt – und die spielnr wurde doch noch auf die ABF-Nummer ueberschrieben. Die UID waere also eine Woche spaeter trotzdem gewandert und haette genau das Doppel-Event im Kalender erzeugt, das der Kommentar zu verhindern behauptete. Fix: persistentes Feld **`spielnr_fest: true`**, das bei der Aufloesung gesetzt wird und dauerhaft im JSON bleibt. Ueber 3 simulierte Laeufe verifiziert: `spielnr` bleibt `#FINALE`.
+  2. **(MEDIUM) Der FINALE-Badge lag auf Handys exakt ueber dem HEIM-Badge.** `.game-homeaway` ist in der 500px-Media-Query fest auf `grid-column: 2 / grid-row: 3` genagelt – zwei Badges mit dieser Klasse landeten in derselben Zelle (headless gemessen: identische x/y, HEIM unsichtbar). Ab 501px fiel der dritte Badge stattdessen aus dem 5-Spalten-Template in eine eigene Zeile. Betraf latent auch das VERSCHOBEN-Badge, wurde aber erst durch den vollstaendigen Startseiten-Spielplan sichtbar. Fix: neuer `.game-tags-compact`-Flex-Wrapper buendelt alle Badges in EINER Grid-Zelle; Desktop-Template von 5 auf 4 Spalten. Bei 390/768/1200px gegengemessen – keine Ueberlappung mehr.
+  3. **(LOW) Ein liegengebliebener Platzhalter faellt niemandem auf.** Der Datums-Match ist streng; legt ABF das Finale auf den 12.09. statt 13.09., wird das echte Spiel neu angelegt und der Platzhalter bleibt fuer immer stehen – Seite und ICS zeigen dann zwei Finals, eines mit Phantasie-Gegner, und der Scraper-Lauf bleibt gruen. `validate_data.py` prueft jetzt: **Fehler**, wenn ein Platzhalter-Datum in der Vergangenheit liegt (blockt via Validator-Gate den Commit), **Warnung** ab 3 Tagen vorher. Beide Zweige gegengeprueft.
+  4. **(LOW) Das Finale-Styling hing pauschal an der Heimspiel-Karte.** Bei einem Auswaertsfinale haette die generische „Nächstes Spiel"-Karte das Finale gezeigt (ohne Gold), waehrend die rote Heimspiel-Karte daneben ein beliebiges anderes Spiel prominent gemacht haette. Gold + Label haengen jetzt an der Karte, die das Finale tatsaechlich traegt.
+  5. **(LOW) `hinweis` wurde bei der Platzhalter-Aufloesung bedingungslos geloescht.** Der Code nahm an, ein `hinweis` am Platzhalter koenne nur die „Gegner steht fest"-Notiz sein – dabei ist das laut Doku ein allgemeines Kuratoren-Feld, dessen Kernversprechen ist, Re-Scrapes zu ueberleben. Der Sonderfall ist ersatzlos raus.
+- **Cache-Buster:** `shared.js` (9 Files) auf `?v=2026-08-24b`, `page-index.js` auf `?v=2026-08-24c`.
+- Regressionslauf: 9 Seiten x 2 Viewports ohne JS-Fehler, `validate_data.py` 0 Fehler, beide ICS regeneriert.
 
 ### 2026-08-24 (3)
 - **Startseiten-Spielplan zeigt jetzt alle anstehenden Termine.** Bisher filterte `page-index.js` jedes Spiel aus der Liste, das schon in einer Highlight-Karte stand (`shownIds`/`remaining`, seit der ersten Landing-Page-Version). Effekt: Das Finale stand in der Hero-Karte, fehlte aber im Spielplan – und die Section heisst „Spielplan 2026", nicht „Weitere Spiele". Ein Spielplan ohne das naechste Spiel liest sich wie ein Fehler, deshalb faellt der Filter weg (`upcoming = allGames.slice(0, 4)`). Die Wiederholung stoert nicht: Hero-Karte ist gross und beschriftet, die Liste eine kompakte Zeile. `gameKey` bleibt in Gebrauch – es dedupliziert weiterhin die Highlight-Karten untereinander (ein Spiel soll nicht gleichzeitig „Nächstes Spiel" und „Nächstes Heimspiel" sein). Leer-Text entsprechend „Keine weiteren Spiele" → „Keine anstehenden Spiele".

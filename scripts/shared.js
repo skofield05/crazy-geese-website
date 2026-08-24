@@ -281,9 +281,11 @@ function renderGameCompact(game) {
         <span class="game-date-compact">${formatDateShort(game.datum)}</span>
         <span class="game-time-compact">${game.zeit ? escapeHtml(game.zeit) : ''}</span>
         <span class="game-opponent">${label}</span>
-        <span class="game-sport ${sport}">${sportTag}</span>
-        <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
-        ${postponedTag}
+        <span class="game-tags-compact">
+          <span class="game-sport ${sport}">${sportTag}</span>
+          <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
+          ${postponedTag}
+        </span>
         ${game.ort ? `<span class="game-location-compact">📍 ${escapeHtml(game.ort)}</span>` : ''}
         ${game.hinweis ? `<span class="game-hinweis-compact">ℹ️ ${escapeHtml(game.hinweis)}</span>` : ''}
       </div>
@@ -298,10 +300,12 @@ function renderGameCompact(game) {
       <span class="game-date-compact">${formatDateShort(game.datum)}</span>
       <span class="game-time-compact">${game.zeit ? escapeHtml(game.zeit) : ''}</span>
       <span class="game-opponent">${opponent}</span>
-      <span class="game-sport ${sport}">${sportTag}</span>
-      <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
-      ${finaleTag}
-      ${postponedTag}
+      <span class="game-tags-compact">
+        <span class="game-sport ${sport}">${sportTag}</span>
+        <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
+        ${finaleTag}
+        ${postponedTag}
+      </span>
       ${game.ort ? `<span class="game-location-compact">📍 ${escapeHtml(game.ort)}</span>` : ''}
       ${game.hinweis ? `<span class="game-hinweis-compact">ℹ️ ${escapeHtml(game.hinweis)}</span>` : ''}
     </div>

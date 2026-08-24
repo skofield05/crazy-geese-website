@@ -347,6 +347,31 @@ def _check_spiele(spiele: object, errors: list[str], warnings: list[str]) -> Non
             if bucket == "naechste" and erg_h is not None:
                 warnings.append(f"{where}: zukuenftiges Spiel hat schon ein Ergebnis – ABF-Platzhalter?")
 
+            # Ein Platzhalter soll vom Scraper aufgeloest werden, sobald die
+            # echte Paarung feststeht. Passiert das nicht (z.B. weil ABF das
+            # Spiel auf einen anderen Tag legt und der datums-strenge Match in
+            # find_existing_game deshalb nicht greift), bleibt der Eintrag mit
+            # seinem Platzhalter-Gegnernamen stehen – auf der Seite und in
+            # beiden ICS. Ohne diesen Check faellt das niemandem auf, weil der
+            # Scraper-Lauf gruen bleibt.
+            if g.get("platzhalter") and isinstance(datum, str):
+                try:
+                    d = datetime.date.fromisoformat(datum)
+                except ValueError:
+                    d = None
+                if d is not None:
+                    rest = (d - datetime.date.today()).days
+                    if rest < 0:
+                        errors.append(
+                            f"{where}: Platzhalter-Spiel liegt in der Vergangenheit "
+                            f"({datum}) – Gegner wurde nie eingetragen."
+                        )
+                    elif rest <= 3:
+                        warnings.append(
+                            f"{where}: Platzhalter-Spiel am {datum} (in {rest} Tagen) – "
+                            f"Gegner steht noch nicht fest, bitte pruefen."
+                        )
+
 
 def _check_ics_sync(spiele: object, errors: list[str], warnings: list[str]) -> None:
     """Pruefe, ob beide ICS-Dateien zu den zukuenftigen Spielen passen.

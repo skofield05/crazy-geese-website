@@ -86,8 +86,16 @@ function renderPage(data) {
   // Baseball-Karte: das naechste Baseballspiel. Wenn auch eine Softball-Karte
   // gezeigt wird, praezisiert das Label auf "Baseballspiel", sonst genuegt
   // "Naechstes Spiel".
+  // Gold-Styling haengt an der Karte, die das Finale tatsaechlich zeigt –
+  // nicht pauschal an der Heimspiel-Karte. Heimrecht ist nicht garantiert;
+  // bei einem Auswaertsfinale liegt das Spiel in dieser Karte hier.
+  const baseballIsFinale = !!(showBaseballSeparately && nextBaseball.phase === 'Finale');
+  nextGameCard.classList.toggle('highlight-finale', baseballIsFinale);
+
   if (showBaseballSeparately) {
-    const baseballLabel = showSoftballSeparately ? 'Nächstes Baseballspiel' : 'Nächstes Spiel';
+    const baseballLabel = baseballIsFinale
+      ? 'Finale'
+      : (showSoftballSeparately ? 'Nächstes Baseballspiel' : 'Nächstes Spiel');
     nextGameCard.hidden = false;
     nextGameCard.innerHTML = `
       <span class="highlight-label">${baseballLabel}</span>
