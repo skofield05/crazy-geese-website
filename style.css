@@ -795,6 +795,14 @@ li {
   border-radius: 8px;
   padding: var(--space-lg);
   border: 1px solid var(--color-border);
+  /* Grid-Items haben per Default `min-width: auto`, was auf die min-content-
+     Breite des Inhalts aufloest. Die Tabelle braucht min-content 422px – die
+     Grid-Spalte wurde dadurch breiter als der Viewport und die ganze Seite
+     scrollte horizontal. Mit `min-width: 0` darf die Spalte schrumpfen; die
+     Tabelle scrollt dann in ihrem eigenen `.table-container` (overflow-x:
+     auto), was allein nicht reichte: das Auto-Minimum schlaegt den
+     Scroll-Container. */
+  min-width: 0;
 }
 
 /* baseball.html: Tabelle und Spielplan stehen volle Breite untereinander
@@ -1187,6 +1195,19 @@ li {
 .standings .col-stat {
   width: 2.5rem;
   text-align: center;
+}
+
+/* Schmalere Zellpolsterung auf Handys: bringt die min-content-Breite der
+   Tabelle unter die typische Geraetebreite, sodass sie gar nicht erst
+   horizontal scrollen muss. Muss NACH `.standings th, .standings td` stehen –
+   gleiche Spezifitaet, Media-Queries erhoehen sie nicht; weiter oben in der
+   Datei haette die Basisregel gewonnen. Der `.table-container` bleibt als
+   Sicherheitsnetz fuer sehr schmale Geraete. */
+@media (max-width: 500px) {
+  .standings th,
+  .standings td {
+    padding: var(--space-sm) var(--space-xs);
+  }
 }
 
 .standings tr.highlight {
