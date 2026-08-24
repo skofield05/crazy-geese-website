@@ -166,13 +166,18 @@ function renderPage(data) {
     .sort((a, b) => a.key.localeCompare(b.key))
     .forEach((c, i) => { c.el.style.order = String(i); });
 
+  // Die Liste zeigt bewusst ALLE anstehenden Termine, auch die, die schon in
+  // einer Highlight-Karte stehen. Frueher wurden die herausgefiltert ("weitere
+  // Spiele"), aber die Section heisst "Spielplan" – und ein Spielplan, in dem
+  // ausgerechnet das naechste Spiel fehlt, liest sich wie ein Fehler. Die
+  // Wiederholung stoert nicht: die Hero-Karte ist gross und beschriftet, die
+  // Liste eine kompakte Zeile.
   const nextGamesEl = document.getElementById('next-games');
-  const shownIds = [nextBaseball, nextSoftball, nextHomeGame].filter(Boolean).map(gameKey);
-  const remaining = allGames.filter(g => !shownIds.includes(gameKey(g))).slice(0, 4);
-  if (remaining.length > 0) {
-    nextGamesEl.innerHTML = remaining.map(renderGameCompact).join('');
+  const upcoming = allGames.slice(0, 4);
+  if (upcoming.length > 0) {
+    nextGamesEl.innerHTML = upcoming.map(renderGameCompact).join('');
   } else {
-    nextGamesEl.innerHTML = '<p class="no-games">Keine weiteren Spiele</p>';
+    nextGamesEl.innerHTML = '<p class="no-games">Keine anstehenden Spiele</p>';
   }
 
   // Letzte 2 absolvierte Spiele (neueste zuerst). Nur einblenden, wenn
