@@ -412,6 +412,13 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 
 ## Changelog
 
+### 2026-08-24
+- **Grunddurchgang abgeschlossen – Geese auf Platz 1 (15-1):** Ergebnis #36 nachgetragen (22.08., Graz Dirty Sox 9:20 Rohrbach Crazy Geese, formal auswaerts aber in Rohrbach gespielt). Tabelle auf Stand 24.08. Alle 16 Spiele sind jetzt in `spiele.vergangene`, `spiele.naechste` ist leer.
+- **Warum es haengen blieb:** Der Workflow-Cron kennt nur die urspruenglichen Spieltage. Die zwei regenbedingt verlegten Spiele (#35 -> 25.07., #36 -> 22.08.) fielen auf keinen davon. #35 wurde noch vom 02.08.-Lauf mitgenommen, #36 haette bis zum Playoff-Lauf am 05.09. gewartet. **Fix:** Sicherheitsnetz-Cron `0 5 * 5-9 1` (jeden Montag 07:00 MESZ, Mai-September) in `update-standings.yml`.
+- **ABF war beim Lauf nicht erreichbar** (keine standings-Tabelle, keine Runden-IDs, kein Team-Dropdown; per WebFetch 403). Der Metrostars-Fallback hat Tabelle + Spiele vollstaendig geliefert – genau der Fall, fuer den er gebaut wurde. Kein `scrape_errors`-Eintrag, Validator 0 Fehler.
+- **Beide ICS regeneriert** und dadurch leer (0 Events) – korrekt, weil keine Spiele mehr anstehen. Struktur (VCALENDAR + VTIMEZONE) bleibt valide, die Download-Buttons auf `baseball.html` liefern also keine kaputte Datei.
+- **Playoffs (05./06. + 12./13.09.) sind noch nicht angesetzt** – weder ABF noch Metrostars listen Paarungen. Sobald sie da sind, zieht der Playoff-Cron sie automatisch. Bis dahin zeigt die Startseite als einzige Highlight-Karte den ABBQS-Softballtermin am 27.09.
+
 ### 2026-07-20 (3)
 - **Code-Review-Fixes (5 Findings aus Gesamt-Review):**
   1. **`escapeHtml` maskiert jetzt auch `"` und `'`** (`shared.js`): Die Ausgabe wird nicht nur in Text-, sondern auch in Attribut-Kontexte interpoliert (`aria-label="…"`, `href="…"`, `alt="…"`). Team-/Ortsnamen kommen aus dem Scraper (ABF/Metrostars) – ein `"` darin hätte das Attribut aufgebrochen (Markup-Bruch/Attribut-Injection). Implementierung von DOM-basiert (`textContent`→`innerHTML`) auf expliziten 5-Zeichen-Replace (`& < > " '`) umgestellt. Headless verifiziert: `A"B<C>D&E'F` → `A&quot;B&lt;C&gt;D&amp;E&#39;F`, kein rohes `"` mehr im gerenderten Attribut.

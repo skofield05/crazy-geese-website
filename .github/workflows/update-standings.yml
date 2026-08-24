@@ -37,6 +37,11 @@ on:
     # nach Playoffs (-> 07.09., 14.09.)
     - cron: '0 4-8 7,14 9 *'
 
+    # === SICHERHEITSNETZ: jeden Montag 07:00 MESZ (= 05:00 UTC), Mai-September ===
+    # Faengt verlegte/nachgeholte Spiele ab, die auf keinen der obigen
+    # Spieltage fallen (z.B. #35 am 25.07. und #36 am 22.08. 2026).
+    - cron: '0 5 * 5-9 1'
+
 # WICHTIG: Schreibrechte für git push
 permissions:
   contents: write

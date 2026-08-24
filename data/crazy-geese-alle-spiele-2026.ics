@@ -21,12 +21,4 @@ DTSTART:19701025T030000
 RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
-BEGIN:VEVENT
-DTSTART;TZID=Europe/Vienna:20260822T130000
-DTEND;TZID=Europe/Vienna:20260822T153000
-SUMMARY:⚾ Crazy Geese vs Graz Dirty Sox (in Rohrbach)
-LOCATION:Geese Ballpark\, Rohrbach
-DESCRIPTION:Baseball Landesliga Ost – Grunddurchgang\nSpielort verlegt nach Rohrbach – Eintritt frei!
-UID:cg-36@crazy-geese.at
-END:VEVENT
 END:VCALENDAR
