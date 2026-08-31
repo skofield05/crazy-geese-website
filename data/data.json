@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-08-24",
+    "stand": "2026-08-31",
     "phase": "Grunddurchgang",
     "teams": [
       {
@@ -78,18 +78,18 @@
       },
       {
         "rang": 7,
-        "name": "Vienna Metrostars 3",
-        "kuerzel": "MS",
-        "siege": 4,
+        "name": "Woodquarter Red Devils",
+        "kuerzel": "RD",
+        "siege": 5,
         "niederlagen": 11,
         "unentschieden": 0
       },
       {
         "rang": 8,
-        "name": "Woodquarter Red Devils",
-        "kuerzel": "RD",
+        "name": "Vienna Metrostars 3",
+        "kuerzel": "MS",
         "siege": 4,
-        "niederlagen": 11,
+        "niederlagen": 12,
         "unentschieden": 0
       },
       {
@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-08-24",
+    "letztes_update": "2026-08-31",
     "naechste": [
       {
         "spielnr": "#FINALE",
