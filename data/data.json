@@ -25,8 +25,8 @@
     }
   },
   "tabelle": {
-    "stand": "2026-08-31",
-    "phase": "Grunddurchgang",
+    "stand": "2026-09-05",
+    "phase": "Playoffs",
     "teams": [
       {
         "rang": 1,
@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-08-31",
+    "letztes_update": "2026-09-05",
     "naechste": [
       {
         "spielnr": "#FINALE",
