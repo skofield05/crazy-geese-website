@@ -324,6 +324,26 @@ def _check_spiele(spiele: object, errors: list[str], warnings: list[str]) -> Non
             if platzhalter is not None and not isinstance(platzhalter, bool):
                 errors.append(f"{where}.platzhalter muss true/false sein.")
 
+            # fremdspiel: Spiel an unserem Ballpark ohne Geese-Beteiligung.
+            # Wird aus Highlight-Karten, "Letzte Ergebnisse", Schema.org und
+            # beiden ICS-Dateien ausgenommen – siehe CLAUDE.md.
+            fremdspiel = g.get("fremdspiel")
+            if fremdspiel is not None and not isinstance(fremdspiel, bool):
+                errors.append(f"{where}.fremdspiel muss true/false sein.")
+
+            # bild/bild_alt: optionaler Ankuendigungs-Flyer am Spiel.
+            bild = g.get("bild")
+            if bild is not None:
+                if not isinstance(bild, str):
+                    errors.append(f"{where}.bild muss ein String sein.")
+                elif not (REPO_ROOT / bild).is_file():
+                    errors.append(f"{where}.bild fehlt auf der Platte: {bild}")
+                elif not g.get("bild_alt"):
+                    warnings.append(f"{where}.bild ohne bild_alt (Barrierefreiheit).")
+            bild_alt = g.get("bild_alt")
+            if bild_alt is not None and not isinstance(bild_alt, str):
+                errors.append(f"{where}.bild_alt muss ein String sein.")
+
             spielnr = g.get("spielnr")
             if spielnr:
                 if spielnr in seen_spielnr:
@@ -391,7 +411,7 @@ def _check_ics_sync(spiele: object, errors: list[str], warnings: list[str]) -> N
     for g in games:
         # Verschobene Spiele sind bewusst nicht in den ICS-Dateien (kein
         # gueltiger Termin) – generate_ics.py filtert sie ebenfalls raus.
-        if g.get("status") == "verschoben":
+        if g.get("status") == "verschoben" or g.get("fremdspiel"):
             continue
         datum = g.get("datum", "")
         zeit = g.get("zeit", "")

@@ -54,8 +54,11 @@ function renderPage(data) {
   // angezeigt. Softball bekommt nur dann eine eigene Karte, wenn es das
   // chronologisch naechste Event ueberhaupt ist – dann steht es neben dem
   // naechsten Baseballspiel. Die Heimspiel-Karte zaehlt beide Sportarten.
-  const nextBaseball = baseballGames[0] || null;
-  const nextHomeGame = allGames.find(g => isHomeVenue(g.ort)) || null;
+  // Fremdspiele (ohne Geese-Beteiligung) taugen nicht als Highlight: sonst
+  // waere das Spiel um Platz 3 um 11:00 das "Naechste Spiel" und nicht das
+  // Finale um 14:00. In der Spielplan-Liste unten bleiben sie sichtbar.
+  const nextBaseball = baseballGames.find(g => !g.fremdspiel) || null;
+  const nextHomeGame = allGames.find(g => isHomeVenue(g.ort) && !g.fremdspiel) || null;
   const softballIsNext = allGames[0] && allGames[0].sport === 'softball';
   const nextSoftball = softballIsNext ? (softballGames[0] || null) : null;
 
@@ -193,7 +196,7 @@ function renderPage(data) {
   // Scraper-Re-Split (datum < today) nach vergangene, sind aber kein
   // Ergebnis – sie duerfen "Letzte Ergebnisse" nicht verdraengen.
   const past = (data.spiele.vergangene || [])
-    .filter(g => g.status !== 'verschoben')
+    .filter(g => g.status !== 'verschoben' && !g.fremdspiel)
     .sort((a, b) => (b.datum + (b.zeit || '')).localeCompare(a.datum + (a.zeit || '')))
     .slice(0, 2);
   const lastResultsSection = document.getElementById('letzte-ergebnisse');

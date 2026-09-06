@@ -30,7 +30,7 @@ THUMB_QUALITY = 78
 
 def optimize(src_dir: pathlib.Path, dst_dir: pathlib.Path, slug: str) -> None:
     dst_dir.mkdir(parents=True, exist_ok=True)
-    files = sorted(p for p in src_dir.iterdir() if p.suffix.lower() in {".jpg", ".jpeg", ".png"})
+    files = sorted(p for p in src_dir.iterdir() if p.suffix.lower() in {".jpg", ".jpeg", ".jfif", ".png"})
     if not files:
         print(f"Keine Bilder in {src_dir}", file=sys.stderr)
         return

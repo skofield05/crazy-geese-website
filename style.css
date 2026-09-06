@@ -569,6 +569,19 @@ li {
   padding: var(--space-xs) var(--space-sm);
 }
 
+/* Ankuendigungs-Flyer am Spiel (data.json: spiele[].bild). Bewusst schmal
+   gehalten: die Karte ist Column-Flex, ein 800x1000-Hochformat wuerde sonst
+   die eigentlichen Spieldaten nach unten aus dem Blick schieben. Bekommt
+   NICHT die Klasse .event-flyer – die triggert :has()-Regeln, die das
+   hero-highlights-Grid auf eine Spalte umstellen. */
+.highlight-flyer {
+  margin-top: var(--space-sm);
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  border-radius: var(--radius);
+}
+
 /* Event-Karte (z.B. Slowpitch Firmenturnier) – nutzt Softball-Lila, weil
    Slowpitch-Event. Liegt im selben hero-highlights-Grid wie Spiel/Heimspiel. */
 .highlight-card.highlight-event {
@@ -1446,6 +1459,16 @@ li {
 .game-card.postponed,
 .game-compact.postponed {
   opacity: 0.75;
+}
+
+/* Fremdspiel: laeuft an unserem Ballpark, aber ohne Geese-Beteiligung
+   (z.B. Spiel um Platz 3 vor dem Finale). Bewusst neutral-grau statt
+   HEIM-Blau – die Farbe ist nie alleiniger Traeger, der Badge sagt es. */
+.game-badge.neutral,
+.game-homeaway.neutral {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-text-muted);
 }
 
 /* Finale: Gold-Badge. Der Badge traegt das Wort "FINALE", die Farbe ist also

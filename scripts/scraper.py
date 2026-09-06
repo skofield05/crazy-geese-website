@@ -139,6 +139,7 @@ def save_data(data):
     """Speichert die aktualisierte data.json"""
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")  # sonst faellt bei jedem Lauf ein "No newline"-Diff an
     print(f"[OK] Daten gespeichert: {DATA_FILE}")
 
 
@@ -149,8 +150,9 @@ def find_existing_game(existing_games, new_game):
 
     Match-Reihenfolge:
       1. spielnr (eindeutig pro Liga, bleibt auch bei Verlegung gleich)
-      2. (heim, gast). Bei mehreren Kandidaten: gleiches Datum bevorzugt.
-         Wenn nicht aufloesbar, kein Match (→ neues Spiel).
+      2. (heim, gast) + gleiches Datum. Dann (heim, gast) allein, sofern es
+         genau einen Kandidaten gibt und der noch nicht gespielt ist
+         (Verlegung). Sonst kein Match (→ neues Spiel).
       3. Platzhalter (`platzhalter: true`) per (datum + geteiltes Team) –
          fuer vorab beworbene Spiele, deren Gegner noch nicht feststeht.
 
@@ -164,20 +166,34 @@ def find_existing_game(existing_games, new_game):
             if g.get("spielnr") == new_spielnr:
                 return g
 
+    new_datum = new_game.get("datum")
     candidates = [
         g for g in existing_games
         if g.get("heim") == new_game.get("heim")
         and g.get("gast") == new_game.get("gast")
     ]
-    if len(candidates) == 1:
-        return candidates[0]
+    # Gleiche Paarung UND gleiches Datum ist immer der beste Treffer.
+    if new_datum:
+        same_day = [c for c in candidates if c.get("datum") == new_datum]
+        if len(same_day) == 1:
+            return same_day[0]
     if len(candidates) > 1:
-        new_datum = new_game.get("datum")
-        if new_datum:
-            for c in candidates:
-                if c.get("datum") == new_datum:
-                    return c
         return None
+
+    # 2b. Genau ein Kandidat, aber an einem anderen Tag. Das ist der
+    #     Verlegungs-Fall (Termin geaendert, Spiel bleibt dasselbe) – aber
+    #     NUR, wenn das Bestandsspiel noch nicht gespielt ist. Ein Spiel mit
+    #     Endstand kann nicht in die Zukunft wandern; waere es matchbar,
+    #     wuerde z.B. das Finale (dieselbe Paarung wie ein Spiel des
+    #     Grunddurchgangs) dessen Datum/spielnr ueberschreiben und das
+    #     Ergebnis aus der Saison loeschen.
+    if len(candidates) == 1:
+        c = candidates[0]
+        played = c.get("ergebnis_heim") is not None
+        dates_conflict = bool(new_datum) and bool(c.get("datum")) and c.get("datum") != new_datum
+        if not (played and dates_conflict):
+            return c
+        # sonst: kein Match – faellt auf Platzhalter/Neuanlage durch
 
     # 3. Platzhalter-Eintrag: ein Spiel, das schon beworben wird, bevor der
     #    Gegner feststeht (z.B. das Finale, dessen Paarung erst im Halbfinale
@@ -192,7 +208,6 @@ def find_existing_game(existing_games, new_game):
     #    Paarung ueberschreiben. Ein Duplikat nach einer Verlegung faellt
     #    dagegen sofort auf und ist von Hand korrigiert.
     new_teams = {new_game.get("heim"), new_game.get("gast")} - {None, ""}
-    new_datum = new_game.get("datum")
     shared = [
         g for g in existing_games
         if g.get("platzhalter")
@@ -248,7 +263,13 @@ def scrape_standings(page):
     # warten dann gezielt auf das Tabellen-Element, statt auf networkidle.
     goto_with_retry(page, ABF_STANDINGS, wait_until="domcontentloaded")
     try:
-        page.wait_for_selector("table.standings-print", timeout=15000)
+        # state="attached", NICHT der Default "visible": die Seite liefert zwei
+        # standings-print-Tabellen, und die erste (auf die wait_for_selector
+        # matcht) ist unsichtbar. Mit dem Default lief hier jeder Lauf in den
+        # Timeout und fiel auf Metrostars zurueck, obwohl ABF die Tabelle
+        # sauber ausliefert. Das Parsing unten braucht keine Sichtbarkeit – es
+        # geht ohnehin ueber alle Tabellen und nimmt die erste nicht-leere.
+        page.wait_for_selector("table.standings-print", state="attached", timeout=15000)
     except PlaywrightTimeoutError:
         # Frueher Ausstieg: ohne Tabelle braucht der nachfolgende
         # query_selector_all gar nicht erst zu laufen – die React-App
@@ -1104,19 +1125,27 @@ def update_data():
             # ersetzt den Platzhaltertext ("X oder Y").
             is_placeholder = bool(existing.get("platzhalter"))
             if is_placeholder:
-                for key in ("heim", "gast"):
-                    new_val = formatted_game.get(key)
-                    if new_val and existing.get(key) != new_val:
-                        changes.append(f"{key}: {existing.get(key)!r}->{new_val!r}")
-                        existing[key] = new_val
-                existing.pop("platzhalter", None)
-                # spielnr dauerhaft festnageln. `platzhalter` taugt dafuer
-                # NICHT: es wird genau hier entfernt, der naechste Lauf saehe
-                # das Flag also nicht mehr, wuerde per (heim, gast) matchen
-                # und die spielnr doch noch ueberschreiben – die ICS-UID waere
-                # eine Woche spaeter trotzdem gewandert.
-                existing["spielnr_fest"] = True
-                changes.append("platzhalter aufgeloest, spielnr festgenagelt")
+                # ABF listet das Finale schon vor dem Halbfinale – dann aber
+                # mit LEEREM Gegner-Feld. Nur eine vollstaendige Paarung loest
+                # den Platzhalter auf: sonst wuerde das Flag entfernt, waehrend
+                # der Platzhaltertext ("X oder Y") stehen bleibt. Danach koennte
+                # Match-Stufe 3 nie wieder greifen (sie liest `platzhalter`),
+                # die echte Paarung kaeme als zweites Spiel am selben Tag dazu
+                # und der Phantasie-Gegner bliebe fuer immer auf Seite und ICS.
+                if formatted_game.get("heim") and formatted_game.get("gast"):
+                    for key in ("heim", "gast"):
+                        new_val = formatted_game.get(key)
+                        if existing.get(key) != new_val:
+                            changes.append(f"{key}: {existing.get(key)!r}->{new_val!r}")
+                            existing[key] = new_val
+                    existing.pop("platzhalter", None)
+                    # spielnr dauerhaft festnageln. `platzhalter` taugt dafuer
+                    # NICHT: es wird genau hier entfernt, der naechste Lauf saehe
+                    # das Flag also nicht mehr, wuerde per (heim, gast) matchen
+                    # und die spielnr doch noch ueberschreiben – die ICS-UID waere
+                    # eine Woche spaeter trotzdem gewandert.
+                    existing["spielnr_fest"] = True
+                    changes.append("platzhalter aufgeloest, spielnr festgenagelt")
 
             # spielnr: persistenter Schluessel. Echte ABF-Nummer (#NN) hat
             # Vorrang vor synthetischer Metrostars-ID (m-...). Beim Recovery

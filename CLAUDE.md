@@ -329,6 +329,31 @@ noch ueberschreiben wuerde. Das Datum ist im Match bewusst Pflicht: ohne es wuer
 andere Playoff-Spiel des Teams den Platzhalter still ueberschreiben; ein
 Duplikat nach einer Verlegung faellt dagegen sofort auf.
 
+**Optional: `fremdspiel`** – `true` markiert ein Spiel, das an unserem
+Ballpark stattfindet, an dem die Geese aber **nicht beteiligt** sind
+(Erstanwendung: das Spiel um Platz 3 am 13.09.2026 um 11:00, direkt vor dem
+Finale). Es gibt dort kein „wir": HEIM/AUSWAERTS, das W/L-Badge und die
+`.team.us`-Hervorhebung ergeben keinen Sinn, stattdessen steht ein neutral-
+graues **OHNE GEESE**-Badge und beide Teams werden genannt. Das Spiel bleibt
+**sichtbar** im Startseiten-Spielplan und auf `baseball.html` (es gehoert zum
+Spieltag), wird aber ausgenommen aus: den Highlight-Karten (sonst waere das
+11:00-Spiel „Nächstes Spiel" statt des Finales um 14:00), „Letzte Ergebnisse",
+dem Schema.org-JSON-LD und **beiden ICS-Dateien** (ein Termin „Sieger X vs
+Verlierer Y" in einem Crazy-Geese-Kalender waere nur verwirrend). Bewusst
+**kein** `platzhalter`, obwohl die Paarung noch offen ist: der Scraper filtert
+nach Team-ID und bekommt Fremdspiele nie zu sehen, koennte den Platzhalter also
+nie aufloesen – der Validator-Staleness-Check wuerde ab dem 13.09. dauerhaft
+rot laufen. `validate_data.py` prueft nur den bool-Typ.
+
+**Optional: `bild` / `bild_alt`** – Ankuendigungs-Flyer am Spiel. Wird von
+`renderHighlightGame` unter den Spieldaten der Hero-Karte gerendert (max.
+260 px breit – die Karte ist Column-Flex, ein Hochformat-Flyer in voller
+Breite wuerde die eigentlichen Spieldaten aus dem Blick schieben). Die Klasse
+heisst `.highlight-flyer` und **nicht** `.event-flyer`: letztere triggert
+`:has()`-Regeln, die das `hero-highlights`-Grid auf eine Spalte umstellen.
+`validate_data.py` prueft Typ, Existenz der Datei auf der Platte und warnt bei
+fehlendem `bild_alt`.
+
 **Optional: `hinweis`** – Freitext-Kontexthinweis am Spiel-Objekt (in `naechste`
 oder `vergangene`), z.B. `"hinweis": "Fortsetzung des in Graz im 2. Inning
 abgebrochenen Spiels."`. Erscheint als ℹ️-Info-Zeile auf der Startseiten-
@@ -427,6 +452,24 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ---
 
 ## Changelog
+
+### 2026-09-06 (2)
+- **Awards-Blogpost** (`posts/awards-2026-09.html`): Die Liga hat ihre Regular Season Awards vergeben, sechs gehen an die Geese – Christian Suchard (#36) als **MVP** + Silver Slugger Pitcher, Michael Rigby (#3) Gold Glove Catcher, Bernd Ecker (#52) Gold Glove *und* Silver Slugger 2nd Base, Joey Vickery (#35) Gold Glove 3rd Base, Peter Moser (#22) Gold Glove Outfield, Jörg Dorner (#12) Silver Slugger Outfield. Vier Grafiken nach `img/blog/awards-2026-09/` (Reihenfolge bewusst gesetzt: Uebersicht → Spieler I → Spieler II → Glossar; die UUID-Dateinamen der Quellen haetten sonst eine zufaellige Reihenfolge ergeben). Bootstrap `scripts/post-awards-2026.js` mit echten Bildunterschriften statt „Bild n von m", Eintrag in `blog.posts`, `sitemap.xml` ergaenzt.
+- **`optimize_blog_images.py` akzeptiert jetzt `.jfif`** – Windows/WhatsApp liefern JPEGs oft mit dieser Endung, der Helper meldete bisher nur „Keine Bilder in ...".
+- **Finale-Flyer auf der Startseite**: neues optionales Feld **`bild`/`bild_alt`** am Spiel-Objekt (siehe „Manuell Spiel eintragen"). Der Flyer haengt an der bestehenden Finale-Karte statt an einem eigenen `events`-Eintrag – so erscheint das Finale nicht doppelt (einmal als Event-Flyer, einmal als Spiel-Highlight).
+- **Spiel um Platz 3 eingetragen** (ABF #79, 13.09. 11:00 bei uns am Ballpark): neues optionales Feld **`fremdspiel`** fuer Spiele ohne Geese-Beteiligung, samt Guards in allen Konsumenten (Highlight-Karten, „Letzte Ergebnisse", Schema.org, beide ICS) – analog zum bestehenden `status: "verschoben"`-Muster. **Erster Anlauf war zu grob:** der Filter sass an `baseballGames` und hat das Spiel aus der ganzen Pipeline geworfen, also auch aus dem Spielplan, wo es hingehoert. Jetzt haengt der Guard nur an `nextBaseball`/`nextHomeGame`.
+- **Rahmenprogramm vom Flyer als `hinweis`** am Finale (Hüpfburg, Kantine).
+- **Playoff-Baum von ABF geholt** (Runde „Playoffs" ohne Team-Filter, weil der Standard-Scrape nur Geese-Spiele sieht): #77 Vienna Bucks @ Graz Dirty Sox und #78 Schremser Beers 2 @ Danube Titans, beide **06.09. in Stockerau** und beide noch 0:0 – die Halbfinals laufen also erst. #79 = Sieger #77 @ Verlierer #78, #80 = Sieger #78 @ Geese. Der Platzhaltertext im `gast`-Feld deckt sich exakt mit #78.
+- Verifiziert: 10 Seiten x 4 Viewports (320–1280) ohne Overflow und ohne JS-Fehler, 19 Content-Assertions (Finale-Karte traegt den Flyer und nicht Platz 3, Platz-3-Zeile ohne HEIM-Badge, Fremdspiel nicht im JSON-LD, Galerie + Lightbox inkl. Blaettern/ESC). Scraper-Lauf gegengeprueft: `fremdspiel`, `bild`, `bild_alt`, `hinweis` und `platzhalter` ueberleben, #79 wird nicht angefasst. Validator 0 Fehler, beide ICS weiterhin 1 Event.
+- **Cache-Buster:** `shared.js` + `style.css` (10 Files), `page-index.js`, `page-baseball.js` auf `?v=2026-09-06`.
+
+### 2026-09-06
+- **Workflow-Fehlschlag vom 05.09. war transient** – ABF UND Metrostars waren im selben Lauf (23:46 Wien) nicht erreichbar, beide "beide leer"-Checks schlugen zu, Exit 1. Zwei Laeufe zwei Stunden vorher waren gruen, beide Quellen antworten wieder normal (Metrostars in 1,3 s). Kein Fix noetig – aber der Lauf hat drei echte Bugs sichtbar gemacht:
+- **(HIGH) Der Platzhalter wurde "aufgeloest", ohne dass ein Gegner feststand.** ABF listet das Finale inzwischen als **#80** (13.09., 14:00) – aber mit **leerem `gast`**, weil das Halbfinale noch laeuft. Der Merge schuetzt zwar jedes Feld mit `if new_val` und schrieb den Leerstring korrekt nicht, entfernte `platzhalter` aber **bedingungslos**. Ergebnis: Flag weg, Phantasie-Gegner ("Danube Titans oder Schremser Beers 2") bleibt stehen – und Match-Stufe 3 liest `platzhalter`, haette also nie wieder greifen koennen. Die echte Paarung waere als **zweites Spiel am 13.09.** dazugekommen, der Phantasie-Gegner fuer immer auf Startseite, `baseball.html` und in beiden ICS geblieben. Fix: Aufloesung nur noch bei **vollstaendiger Paarung** (`heim` UND `gast` gesetzt). Bleibt der Platzhalter stehen, greift `spielnr_locked` weiterhin ueber `is_placeholder` – die `#FINALE`-UID ist also auch im Zwischenzustand geschuetzt.
+- **(HIGH) `find_existing_game` Regel 2 matchte datumsblind.** `if len(candidates) == 1: return candidates[0]` prueft das Datum nie. Die Geese haben **jeden** der beiden moeglichen Finalgegner genau einmal daheim gespielt – sobald ABF die echte Paarung liefert, haette Regel 2 also das **gespielte Grunddurchgangsspiel** zurueckgegeben, noch bevor Regel 3 (Platzhalter) ueberhaupt drankommt, und ihm `datum`/`zeit`/`spielnr` des Finales aufgezwungen. Konkret gemessen: #28 (13.06., 4:7 vs Danube Titans) waere zum Finale umdatiert worden, das Saisonergebnis dabei verloren, der Platzhalter ungeloest geblieben. Fix: erst (heim, gast) **+ gleiches Datum**; ein einzelner Kandidat an einem anderen Tag zaehlt nur noch als Verlegung, wenn er **noch nicht gespielt** ist (ein Spiel mit Endstand wandert nicht in die Zukunft). 9 Match-Faelle als Unit-Check, dazu 3 simulierte Scraper-Laeufe mit echter Paarung: in-place aufgeloest, kein Duplikat, `spielnr` bleibt `#FINALE`, #28 unangetastet.
+- **(MEDIUM) Die ABF-Tabelle wurde seit Laengerem gar nicht mehr gelesen.** `wait_for_selector("table.standings-print")` laeuft im Default `state="visible"`; die Seite liefert **zwei** solche Tabellen und die erste ist unsichtbar, also lief jeder Lauf in den 15-s-Timeout und fiel still auf Metrostars zurueck – die `[WARNUNG]`-Zeile las sich wie ein ABF-Ausfall, obwohl ABF die Tabelle sauber ausliefert. Genau diese stille Einquellen-Abhaengigkeit hat den Metrostars-Blip vom 05.09. ueberhaupt erst zum roten Lauf gemacht. Fix: `state="attached"` – das Parsing braucht keine Sichtbarkeit, es geht ohnehin ueber alle Tabellen und nimmt die erste nicht-leere. Verifiziert: "Gefunden: 9 Teams", Platz 1 (15W-1L), deckungsgleich mit Metrostars.
+- **`save_data` schreibt wieder ein abschliessendes Newline** – ohne das produzierte jeder Scraper-Lauf ein "\ No newline at end of file" im Diff.
+- **Daten:** Tabelle auf Stand 06.09. (Platzierungsrunde gespielt: Red Devils 5-11 auf Rang 7, Metrostars 3 4-12 auf Rang 8), `phase` auf "Playoffs". Das **Finale bleibt Platzhalter** – ABF kennt Termin und Heimrecht (13.09., 14:00, Rohrbach), aber noch keinen Gegner. Der naechste Lauf nach dem Halbfinale loest ihn jetzt korrekt auf. Validator 0 Fehler, beide ICS regeneriert (1 Event).
 
 ### 2026-08-24 (5)
 - **Horizontaler Overflow auf Handys behoben** (vorbestehend, betraf jede Breite unter ~440px). Ursache war nicht das Hero-Logo (das wird von `overflow: hidden` geclippt und traegt gar nicht zur `scrollWidth` bei), sondern die Tabelle: `.tabelle-card` ist ein **Grid-Item**, und Grid-Items haben per Default `min-width: auto`, was auf die **min-content-Breite** des Inhalts aufloest – hier 422px. Die einspaltige `.hero-grid`-Spalte wurde dadurch breiter als der Viewport, und weil `.spielplan-card` in derselben Spalte liegt, wurde sie mitgezogen (gemessen: beide exakt 422px bei Viewports von 320 bis 430). Der bereits vorhandene `.table-container { overflow-x: auto }` half nicht – das Auto-Minimum schlaegt den Scroll-Container.

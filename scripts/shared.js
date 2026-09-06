@@ -177,20 +177,26 @@ function showError(container, message) {
 }
 
 function renderGame(game, isFeatured) {
-  const isHome = isOurTeam(game.heim);
+  // Fremdspiel: findet an unserem Ballpark statt, aber ohne Geese-Beteiligung
+  // (z.B. das Spiel um Platz 3 vor dem Finale). Weder HEIM/AUSWAERTS noch ein
+  // W/L-Badge ergeben hier Sinn – es gibt kein "wir".
+  const isFremdspiel = game.fremdspiel === true;
+  const isHome = !isFremdspiel && isOurTeam(game.heim);
   const hasResult = game.ergebnis_heim !== null && game.ergebnis_heim !== undefined;
   const isPostponed = game.status === 'verschoben';
   const isHomeGame = isHomeVenue(game.ort);
-  const venueBadge = isHomeGame
-    ? '<span class="game-badge home">HEIMSPIEL</span>'
-    : '<span class="game-badge away">AUSWÄRTS</span>';
+  const venueBadge = isFremdspiel
+    ? '<span class="game-badge neutral">OHNE GEESE</span>'
+    : (isHomeGame
+      ? '<span class="game-badge home">HEIMSPIEL</span>'
+      : '<span class="game-badge away">AUSWÄRTS</span>');
   const postponedBadge = isPostponed
     ? '<span class="game-badge postponed" aria-label="Verschoben">VERSCHOBEN</span>'
     : '';
 
   let resultClass = '';
   let resultBadge = '';
-  if (hasResult) {
+  if (hasResult && !isFremdspiel) {
     const ourScore = isHome ? game.ergebnis_heim : game.ergebnis_gast;
     const theirScore = isHome ? game.ergebnis_gast : game.ergebnis_heim;
     if (ourScore > theirScore) {
@@ -217,7 +223,9 @@ function renderGame(game, isFeatured) {
     ? '<span class="game-homeaway finale">FINALE</span>'
     : '';
   const featuredClass = isFeatured ? 'next-game-featured' : '';
-  const scoreClass = hasResult ? 'score score-' + resultClass : 'vs';
+  const scoreClass = hasResult
+    ? ('score' + (resultClass ? ' score-' + resultClass : ''))
+    : 'vs';
 
   return `
     <div class="game-card ${resultClass} ${featuredClass} ${isPostponed ? 'postponed' : ''}" role="article" aria-label="${gast} bei ${heim}">
@@ -266,6 +274,7 @@ function renderGameCompact(game) {
   const homeAwayText = isHomeGame ? 'HEIM' : 'AUSWÄRTS';
   const homeAwayClass = isHomeGame ? 'home' : 'away';
   const isPostponed = game.status === 'verschoben';
+  const isFremdspiel = game.fremdspiel === true;
   const compactClass = isPostponed ? 'game-compact postponed' : 'game-compact';
   const postponedTag = isPostponed
     ? '<span class="game-homeaway postponed">VERSCHOBEN</span>'
@@ -293,7 +302,13 @@ function renderGameCompact(game) {
   }
 
   const isHome = isOurTeam(game.heim);
-  const opponent = escapeHtml(isHome ? game.gast : game.heim);
+  // Beim Fremdspiel gibt es keinen "Gegner" – beide Teams nennen.
+  const opponent = isFremdspiel
+    ? escapeHtml(game.gast) + ' vs ' + escapeHtml(game.heim)
+    : escapeHtml(isHome ? game.gast : game.heim);
+  const homeAwayTag = isFremdspiel
+    ? '<span class="game-homeaway neutral">OHNE GEESE</span>'
+    : `<span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>`;
 
   return `
     <div class="${compactClass}">
@@ -302,7 +317,7 @@ function renderGameCompact(game) {
       <span class="game-opponent">${opponent}</span>
       <span class="game-tags-compact">
         <span class="game-sport ${sport}">${sportTag}</span>
-        <span class="game-homeaway ${homeAwayClass}">${homeAwayText}</span>
+        ${homeAwayTag}
         ${finaleTag}
         ${postponedTag}
       </span>
@@ -346,6 +361,7 @@ function renderHighlightGame(game) {
     <span class="highlight-opponent">vs ${opponent}</span>
     ${game.ort ? `<span class="highlight-location">📍 ${escapeHtml(game.ort)}</span>` : ''}
     ${game.hinweis ? `<span class="highlight-hinweis">ℹ️ ${escapeHtml(game.hinweis)}</span>` : ''}
+    ${game.bild ? `<img class="highlight-flyer" src="${escapeHtml(game.bild)}" alt="${escapeHtml(game.bild_alt || 'Ankündigung zum Spiel')}" loading="lazy" decoding="async">` : ''}
   `;
 }
 

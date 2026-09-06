@@ -25,3 +25,9 @@ tests/
 .~lock.*
 WhatsApp Image*
 /Sponsoren/
+# Quellbilder fuer den Blog (Originale aus WhatsApp o.ae.). Aufbereitet
+# liegen sie unter img/blog/<slug>/. Fuehrender Slash ist load-bearing:
+# ohne ihn wuerde die Regel auf Windows wegen Case-Insensitivity auch
+# img/blog/ filtern (vgl. /Sponsoren/).
+/Blog/
+*.jfif

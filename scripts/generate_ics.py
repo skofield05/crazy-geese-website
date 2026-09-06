@@ -54,10 +54,14 @@ def main() -> int:
     # Verschobene Spiele (status "verschoben") haben keinen gueltigen Termin mehr
     # und gehoeren nicht in den Kalender, sonst zeigen Kalender-Apps ein
     # Phantom-Event am alten Datum.
+    # Fremdspiele (ohne Geese-Beteiligung, nur am selben Ballpark) gehoeren
+    # nicht in einen Crazy-Geese-Kalender – ein Termin "Sieger X vs Verlierer Y"
+    # waere fuer Abonnenten nur verwirrend.
     games = [
         g for g in games
         if g.get("datum") and g.get("zeit") and g.get("heim") and g.get("gast")
         and g.get("status") != "verschoben"
+        and not g.get("fremdspiel")
     ]
     games.sort(key=lambda g: (g["datum"], g["zeit"]))
 

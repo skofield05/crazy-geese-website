@@ -51,7 +51,7 @@ function injectEventSchema(games) {
   const events = games
     // Verschobene Spiele haben keinen gueltigen Termin mehr – nicht als
     // EventScheduled an Suchmaschinen melden (konsistent mit ICS-Ausschluss).
-    .filter(g => g.datum && g.heim && g.gast && g.status !== 'verschoben')
+    .filter(g => g.datum && g.heim && g.gast && g.status !== 'verschoben' && !g.fremdspiel)
     .map(g => {
       const startDate = g.zeit ? `${g.datum}T${g.zeit}:00+02:00` : g.datum;
       const ev = {

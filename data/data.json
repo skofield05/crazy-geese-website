@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-09-05",
+    "stand": "2026-09-06",
     "phase": "Playoffs",
     "teams": [
       {
@@ -103,8 +103,21 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-09-05",
+    "letztes_update": "2026-09-06",
     "naechste": [
+      {
+        "spielnr": "#79",
+        "datum": "2026-09-13",
+        "zeit": "11:00",
+        "heim": "Verlierer Titans/Beers 2",
+        "gast": "Sieger Bucks/Dirty Sox",
+        "ergebnis_heim": null,
+        "ergebnis_gast": null,
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Spiel um Platz 3",
+        "fremdspiel": true,
+        "hinweis": "Vorspiel zum Finale bei uns am Ballpark. Die Paarung steht nach den Halbfinals am 06.09. fest."
+      },
       {
         "spielnr": "#FINALE",
         "datum": "2026-09-13",
@@ -115,7 +128,10 @@
         "ergebnis_gast": null,
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Finale",
-        "platzhalter": true
+        "platzhalter": true,
+        "hinweis": "Rahmenprogramm: Hüpfburg für die Kids, Speisen & Getränke aus der Kantine.",
+        "bild": "img/finale-2026.jpg",
+        "bild_alt": "Flyer zum Geese-Finale am 13.09.2026 am Geese Ballpark in Rohrbach bei Mattersburg: Spiel um Platz 3 um 11:00 Uhr, Finale um 14:00 Uhr, Gegner wird noch bekannt gegeben."
       }
     ],
     "vergangene": [
@@ -351,6 +367,16 @@
   },
   "blog": {
     "posts": [
+      {
+        "slug": "awards-2026-09",
+        "url": "posts/awards-2026-09.html",
+        "titel": "Sechs Awards für die Crazy Geese",
+        "datum": "2026-09-06",
+        "kategorie": "Team",
+        "teaser": "Die Baseball Landesliga Ost hat ihre Regular Season Awards vergeben – sechs davon gehen nach Rohrbach, angeführt von MVP Christian Suchard.",
+        "cover": "img/blog/awards-2026-09/awards-2026-01-thumb.jpg",
+        "cover_alt": "Übersicht der Regular Season Awards mit allen sechs ausgezeichneten Crazy Geese"
+      },
       {
         "slug": "schulcup-mattersburg-2026-04",
         "url": "posts/schulcup-mattersburg-2026-04.html",
