@@ -70,6 +70,7 @@ function renderPage(data) {
 
   const highlightsEl = document.querySelector('.hero-highlights');
   const nextGameCard = document.getElementById('next-game-card');
+  const flyerCard = document.getElementById('flyer-card');
   const nextSoftballCard = document.getElementById('next-softball-card');
   const nextHomeCard = document.getElementById('next-home-card');
   const eventCard = document.getElementById('event-card');
@@ -153,11 +154,39 @@ function renderPage(data) {
   }
   nextHomeCard.hidden = false;
 
+  // Ankuendigungs-Flyer (data.json: spiele[].bild) steht als eigenes Grid-Item
+  // NEBEN seiner Karte, nicht darin – ein Hochformat-Flyer unter den Spieldaten
+  // macht die Karte sehr lang und schiebt Datum/Uhrzeit aus dem Blick.
+  // Traeger ist die erste sichtbare Karte, deren Spiel ein Bild hat.
+  const flyerOwner = [
+    showBaseballSeparately ? { el: nextGameCard, game: nextBaseball } : null,
+    showSoftballSeparately ? { el: nextSoftballCard, game: nextSoftball } : null,
+    nextHomeGame ? { el: nextHomeCard, game: nextHomeGame } : null,
+  ].find(c => c && c.game && c.game.bild) || null;
+
+  if (flyerOwner) {
+    const g = flyerOwner.game;
+    flyerCard.hidden = false;
+    flyerCard.innerHTML =
+      `<img class="highlight-flyer" src="${escapeHtml(g.bild)}" ` +
+      `alt="${escapeHtml(g.bild_alt || 'Ankündigung zum Spiel')}" ` +
+      `loading="lazy" decoding="async">`;
+  } else {
+    flyerCard.hidden = true;
+    flyerCard.innerHTML = '';
+  }
+
   // Single-Layout (eine zentrierte Karte) nur, wenn ausschliesslich die
   // Heimspiel-Karte ein Spiel zeigt (kein separates Baseball-/Softball-Spiel,
-  // kein Event).
+  // kein Event) – und kein Flyer daneben steht, der ja eine zweite Spalte ist.
   const onlyHomeCard = !showBaseballSeparately && !showSoftballSeparately && !!nextHomeGame;
-  highlightsEl.classList.toggle('hero-highlights--single', onlyHomeCard && !upcomingEvent);
+  const soloLayout = onlyHomeCard && !upcomingEvent;
+  highlightsEl.classList.toggle('hero-highlights--single', soloLayout && !flyerOwner);
+  // Das feste Zweispalten-Template gilt nur fuer "eine Karte + Flyer". Stehen
+  // mehr Karten im Grid, bleibt das auto-fit-Layout – sonst faellt der Flyer
+  // bei drei Items in eine zweite Zeile und stuende wieder unter statt neben
+  // seiner Karte.
+  highlightsEl.classList.toggle('hero-highlights--with-flyer', soloLayout && !!flyerOwner);
 
   // Karten chronologisch anordnen: naeheres Datum links. Wir setzen CSS-`order`
   // auf jede sichtbare Karte anhand ihres Datums (Sortkey datum+zeit). Karten
@@ -173,9 +202,14 @@ function renderPage(data) {
   if (upcomingEvent && !eventCard.querySelector('.event-flyer')) {
     orderCards.push({ el: eventCard, key: sortKey(upcomingEvent) });
   }
-  orderCards
-    .sort((a, b) => a.key.localeCompare(b.key))
-    .forEach((c, i) => { c.el.style.order = String(i); });
+  orderCards.sort((a, b) => a.key.localeCompare(b.key));
+  // Flyer direkt hinter seine Karte schieben, damit er wirklich daneben steht
+  // und nicht ans Ende der Reihe rutscht.
+  if (flyerOwner) {
+    const at = orderCards.findIndex(c => c.el === flyerOwner.el);
+    orderCards.splice(at < 0 ? orderCards.length : at + 1, 0, { el: flyerCard, key: '' });
+  }
+  orderCards.forEach((c, i) => { c.el.style.order = String(i); });
 
   // Die Liste zeigt bewusst ALLE anstehenden Termine, auch die, die schon in
   // einer Highlight-Karte stehen. Frueher wurden die herausgefiltert ("weitere

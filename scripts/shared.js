@@ -361,7 +361,6 @@ function renderHighlightGame(game) {
     <span class="highlight-opponent">vs ${opponent}</span>
     ${game.ort ? `<span class="highlight-location">📍 ${escapeHtml(game.ort)}</span>` : ''}
     ${game.hinweis ? `<span class="highlight-hinweis">ℹ️ ${escapeHtml(game.hinweis)}</span>` : ''}
-    ${game.bild ? `<img class="highlight-flyer" src="${escapeHtml(game.bild)}" alt="${escapeHtml(game.bild_alt || 'Ankündigung zum Spiel')}" loading="lazy" decoding="async">` : ''}
   `;
 }
 

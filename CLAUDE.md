@@ -345,14 +345,19 @@ nach Team-ID und bekommt Fremdspiele nie zu sehen, koennte den Platzhalter also
 nie aufloesen – der Validator-Staleness-Check wuerde ab dem 13.09. dauerhaft
 rot laufen. `validate_data.py` prueft nur den bool-Typ.
 
-**Optional: `bild` / `bild_alt`** – Ankuendigungs-Flyer am Spiel. Wird von
-`renderHighlightGame` unter den Spieldaten der Hero-Karte gerendert (max.
-260 px breit – die Karte ist Column-Flex, ein Hochformat-Flyer in voller
-Breite wuerde die eigentlichen Spieldaten aus dem Blick schieben). Die Klasse
-heisst `.highlight-flyer` und **nicht** `.event-flyer`: letztere triggert
-`:has()`-Regeln, die das `hero-highlights`-Grid auf eine Spalte umstellen.
-`validate_data.py` prueft Typ, Existenz der Datei auf der Platte und warnt bei
-fehlendem `bild_alt`.
+**Optional: `bild` / `bild_alt`** – Ankuendigungs-Flyer am Spiel. Steht als
+**eigenes Grid-Item neben** der Hero-Karte (`#flyer-card` in `index.html`,
+befuellt von `page-index.js`), nicht in ihr: die Karte ist Column-Flex, ein
+Hochformat-Flyer darin macht sie sehr lang und schiebt Datum/Uhrzeit aus dem
+Blick. Traeger ist die erste sichtbare Karte, deren Spiel ein `bild` hat; der
+Flyer wird beim Ordering direkt hinter diese Karte einsortiert. Das feste
+Zweispalten-Layout (`.hero-highlights--with-flyer`, max. 920 px) greift nur,
+wenn ausser dem Flyer genau **eine** Karte sichtbar ist – sonst bleibt
+`auto-fit`, weil der Flyer bei drei Items sonst in eine zweite Zeile faellt.
+Unter 600 px ist das Grid einspaltig, der Flyer rutscht also unter die Karte.
+Die Klasse heisst `.highlight-flyer` und **nicht** `.event-flyer`: letztere
+triggert `:has()`-Regeln fuer das Event-Layout. `validate_data.py` prueft Typ,
+Existenz der Datei auf der Platte und warnt bei fehlendem `bild_alt`.
 
 **Optional: `hinweis`** – Freitext-Kontexthinweis am Spiel-Objekt (in `naechste`
 oder `vergangene`), z.B. `"hinweis": "Fortsetzung des in Graz im 2. Inning
@@ -452,6 +457,11 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ---
 
 ## Changelog
+
+### 2026-09-06 (3)
+- **Finale-Flyer steht jetzt neben der Highlight-Karte statt darunter** (auf Wunsch). Er ist aus `renderHighlightGame` raus und ein eigenes Grid-Item (`#flyer-card`) im `hero-highlights`-Grid; `page-index.js` befuellt es und sortiert es beim Ordering direkt hinter die Karte, deren Spiel das `bild` traegt. Neuer Modifier `.hero-highlights--with-flyer` (zwei Spalten `1fr / 320px`, vertikal zentriert, max. 920 px – ohne die gezaehmte Gesamtbreite stuenden Karte und Flyer 1200 px auseinander). Der Modifier greift bewusst nur, wenn ausser dem Flyer genau **eine** Karte sichtbar ist; bei mehr Karten bleibt `auto-fit`, sonst faellt der Flyer bei drei Items in eine zweite Zeile und stuende wieder unter statt neben seiner Karte. Unter 600 px ist das Grid ohnehin einspaltig – dort stapelt es weiterhin, was bei einem Hochformat-Flyer auch richtig ist.
+- Gemessen: 1280 px Karte 584 px / Flyer 320 px nebeneinander, 768 px 400/320 nebeneinander, 390 px gestapelt. 10 Seiten x 6 Viewports (320–1280) ohne Overflow, keine JS-Fehler, Gold-Rahmen und Spielplan unveraendert.
+- **Cache-Buster** `shared.js` + `style.css` (10 Files) und `page-index.js` auf `?v=2026-09-06b`.
 
 ### 2026-09-06 (2)
 - **Awards-Blogpost** (`posts/awards-2026-09.html`): Die Liga hat ihre Regular Season Awards vergeben, sechs gehen an die Geese – Christian Suchard (#36) als **MVP** + Silver Slugger Pitcher, Michael Rigby (#3) Gold Glove Catcher, Bernd Ecker (#52) Gold Glove *und* Silver Slugger 2nd Base, Joey Vickery (#35) Gold Glove 3rd Base, Peter Moser (#22) Gold Glove Outfield, Jörg Dorner (#12) Silver Slugger Outfield. Vier Grafiken nach `img/blog/awards-2026-09/` (Reihenfolge bewusst gesetzt: Uebersicht → Spieler I → Spieler II → Glossar; die UUID-Dateinamen der Quellen haetten sonst eine zufaellige Reihenfolge ergeben). Bootstrap `scripts/post-awards-2026.js` mit echten Bildunterschriften statt „Bild n von m", Eintrag in `blog.posts`, `sitemap.xml` ergaenzt.

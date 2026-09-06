@@ -456,6 +456,14 @@ li {
     grid-template-columns: minmax(0, 560px);
     justify-content: center;
   }
+  /* Karte + Flyer: zwei Spalten, Flyer schmaler und vertikal zentriert.
+     Ohne die gezaehmte max-width stuenden beide auf 1200px auseinander. */
+  .hero-highlights.hero-highlights--with-flyer {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
+    align-items: center;
+    justify-content: center;
+    max-width: 920px;
+  }
 }
 
 .highlight-card {
@@ -569,15 +577,25 @@ li {
   padding: var(--space-xs) var(--space-sm);
 }
 
-/* Ankuendigungs-Flyer am Spiel (data.json: spiele[].bild). Bewusst schmal
-   gehalten: die Karte ist Column-Flex, ein 800x1000-Hochformat wuerde sonst
-   die eigentlichen Spieldaten nach unten aus dem Blick schieben. Bekommt
-   NICHT die Klasse .event-flyer – die triggert :has()-Regeln, die das
-   hero-highlights-Grid auf eine Spalte umstellen. */
+/* Ankuendigungs-Flyer am Spiel (data.json: spiele[].bild). Steht als eigenes
+   Grid-Item NEBEN seiner Karte, nicht darin: die Karte ist Column-Flex, ein
+   800x1000-Hochformat darin wuerde Datum und Uhrzeit nach unten aus dem Blick
+   schieben. Das Bild selbst ist die Kachel – kein Rahmen, kein Padding, damit
+   es nicht wie eine halbleere zweite Karte wirkt. Bekommt NICHT die Klasse
+   .event-flyer – die triggert :has()-Regeln fuer das Event-Layout. */
+.highlight-flyer-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.highlight-flyer-card[hidden] {
+  display: none;
+}
+
 .highlight-flyer {
-  margin-top: var(--space-sm);
   width: 100%;
-  max-width: 260px;
+  max-width: 320px;
   height: auto;
   border-radius: var(--radius);
 }
