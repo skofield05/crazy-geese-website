@@ -600,6 +600,59 @@ li {
   border-radius: var(--radius);
 }
 
+/* Der Flyer ist ein Button (Lightbox, auch per Tastatur). Er erbt von
+   .gallery-item, muss aber dessen quadratisches Kachel-Format loswerden –
+   ein Hochformat-Flyer darf nicht beschnitten werden. */
+.flyer-trigger {
+  aspect-ratio: auto;
+  background: none;
+  display: block;
+  position: relative;
+  line-height: 0;
+}
+
+.flyer-trigger img {
+  height: auto;
+  object-fit: contain;
+}
+
+.flyer-trigger .flyer-zoom-hint {
+  position: absolute;
+  left: 50%;
+  bottom: var(--space-sm);
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.flyer-trigger:hover .flyer-zoom-hint,
+.flyer-trigger:focus-visible .flyer-zoom-hint {
+  opacity: 1;
+}
+
+/* Touch-Geraete kennen kein Hover – dort den Hinweis dauerhaft zeigen,
+   sonst ist nicht erkennbar, dass der Flyer anklickbar ist. */
+@media (hover: none) {
+  .flyer-trigger .flyer-zoom-hint {
+    opacity: 1;
+  }
+}
+
+/* Bei einem einzelnen Bild blendet lightbox.js Vor/Zurueck aus. Ohne diese
+   Regel bliebe [hidden] wirkungslos, weil beide display:flex gesetzt haben. */
+.lightbox-prev[hidden],
+.lightbox-next[hidden] {
+  display: none;
+}
+
 /* Event-Karte (z.B. Slowpitch Firmenturnier) – nutzt Softball-Lila, weil
    Slowpitch-Event. Liegt im selben hero-highlights-Grid wie Spiel/Heimspiel. */
 .highlight-card.highlight-event {

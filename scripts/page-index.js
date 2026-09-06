@@ -166,11 +166,32 @@ function renderPage(data) {
 
   if (flyerOwner) {
     const g = flyerOwner.game;
+    const alt = g.bild_alt || 'Ankündigung zum Spiel';
     flyerCard.hidden = false;
+    // Als <button>, damit der Flyer auch per Tastatur zu oeffnen ist – ein
+    // <img> mit Click-Handler waere fuer Screenreader und Tab-Nutzer tot.
     flyerCard.innerHTML =
+      `<button type="button" class="gallery-item flyer-trigger" data-index="0" ` +
+      `aria-label="${escapeHtml(alt)} – größer anzeigen">` +
       `<img class="highlight-flyer" src="${escapeHtml(g.bild)}" ` +
-      `alt="${escapeHtml(g.bild_alt || 'Ankündigung zum Spiel')}" ` +
-      `loading="lazy" decoding="async">`;
+      `alt="${escapeHtml(alt)}" loading="lazy" decoding="async">` +
+      `<span class="flyer-zoom-hint" aria-hidden="true">🔍 Größer anzeigen</span>` +
+      `</button>`;
+    // Grossformat erst beim Klick laden (bild_full), Fallback auf das
+    // angezeigte Bild, falls keine grosse Variante hinterlegt ist.
+    // Die Bildunterschrift ist bewusst kurz und aus den Spieldaten gebaut:
+    // `bild_alt` beschreibt den ganzen Flyer und waere als sichtbare Zeile
+    // eine Textwand unter einem Bild, das dasselbe schon sagt. Der lange
+    // Text bleibt als alt am Thumbnail und im aria-label des Buttons.
+    if (typeof setupLightbox === 'function') {
+      const caption = [
+        g.phase || 'Spiel',
+        formatDateLong(g.datum),
+        g.zeit ? g.zeit + ' Uhr' : '',
+        g.ort || ''
+      ].filter(Boolean).join(' · ');
+      setupLightbox('flyer-card', [{ full: g.bild_full || g.bild, caption: caption }]);
+    }
   } else {
     flyerCard.hidden = true;
     flyerCard.innerHTML = '';

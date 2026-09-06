@@ -356,8 +356,20 @@ wenn ausser dem Flyer genau **eine** Karte sichtbar ist – sonst bleibt
 `auto-fit`, weil der Flyer bei drei Items sonst in eine zweite Zeile faellt.
 Unter 600 px ist das Grid einspaltig, der Flyer rutscht also unter die Karte.
 Die Klasse heisst `.highlight-flyer` und **nicht** `.event-flyer`: letztere
-triggert `:has()`-Regeln fuer das Event-Layout. `validate_data.py` prueft Typ,
-Existenz der Datei auf der Platte und warnt bei fehlendem `bild_alt`.
+triggert `:has()`-Regeln fuer das Event-Layout.
+
+Der Flyer ist ein `<button class="gallery-item flyer-trigger">` und oeffnet
+die **Lightbox** (`scripts/lightbox.js`, auf `index.html` eingebunden) – per
+Klick, Enter und Leertaste. Optionales **`bild_full`** liefert das Grossformat
+fuer die Lightbox (Fallback: `bild`); es wird erst beim Klick geladen, die
+Landing Page zieht nur das kleine `bild`. Konvention wie beim Blog: `bild` =
+Anzeigegroesse (640 px = 2x der 320-px-Darstellung), `bild_full` = native
+Aufloesung der Quelle. Die sichtbare Bildunterschrift wird kurz aus den
+Spieldaten gebaut (`phase · Datum · Zeit · Ort`); `bild_alt` beschreibt den
+ganzen Flyer und bleibt als `alt` am Thumbnail sowie im `aria-label` des
+Buttons – als sichtbare Zeile waere es eine Textwand unter einem Bild, das
+dasselbe schon sagt. `validate_data.py` prueft Typ und Existenz beider
+Dateien und warnt bei fehlendem `bild_alt`.
 
 **Optional: `hinweis`** – Freitext-Kontexthinweis am Spiel-Objekt (in `naechste`
 oder `vergangene`), z.B. `"hinweis": "Fortsetzung des in Graz im 2. Inning
@@ -457,6 +469,15 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ---
 
 ## Changelog
+
+### 2026-09-06 (4)
+- **Finale-Flyer ist anklickbar und oeffnet die Lightbox** (auf Wunsch). Der Flyer ist jetzt ein `<button class="gallery-item flyer-trigger">` statt eines nackten `<img>` – ein Bild mit Click-Handler waere fuer Tastatur und Screenreader tot gewesen. `scripts/lightbox.js` ist dafuer erstmals auf `index.html` eingebunden (samt Lightbox-Markup), wird also nicht neu erfunden.
+- **Zwei Bildgroessen**, Konvention wie beim Blog: `img/finale-2026-thumb.jpg` (640x800, 123 KB) steht auf der Startseite, `img/finale-2026.jpg` (1080x1350, native Quellaufloesung) laedt **erst beim Klick**. Neues optionales Feld **`bild_full`** am Spiel-Objekt, Fallback auf `bild`. Gemessen: 320 px in der Seite → 850 px in der Lightbox.
+- **`lightbox.js` kann jetzt Einzelbilder**: bei genau einem Bild werden Vor/Zurueck ausgeblendet, Pfeiltasten und Swipe sind inaktiv und der Fokus-Trap zirkuliert nur noch ueber den Schliessen-Button. Vorher waeren die Pfeile dagewesen und haetten auf dasselbe Bild zurueckgesprungen. Dazu `.lightbox-prev[hidden]/.lightbox-next[hidden]{display:none}` – ohne die Regel bliebe `hidden` wirkungslos, weil beide `display:flex` gesetzt haben. Die Blog-Galerie (4 Bilder) ist gegengeprueft und blaettert unveraendert.
+- **Sichtbare Bildunterschrift kurz** (`phase · Datum · Zeit · Ort`); der lange `bild_alt` bleibt als `alt` am Thumbnail und im `aria-label` des Buttons, statt als 200-Zeichen-Zeile unter einem Bild zu stehen, das dasselbe schon sagt.
+- Auf Touch-Geraeten steht der „🔍 Größer anzeigen"-Hinweis dauerhaft (`@media (hover: none)`) – ohne Hover waere sonst nicht erkennbar, dass der Flyer anklickbar ist.
+- Verifiziert: 17 Assertions (oeffnen per Klick/Enter, Grossformat geladen mit naturalWidth 1080, Pfeile ausgeblendet, ESC + Hintergrundklick schliessen, **Fokus kehrt auf den Flyer zurueck**, Blog-Galerie unveraendert), dazu 10 Seiten x 6 Viewports ohne Overflow.
+- **Cache-Buster** `style.css` + `page-index.js` auf `?v=2026-09-06c`, `lightbox.js` auf `?v=2026-09-06`.
 
 ### 2026-09-06 (3)
 - **Finale-Flyer steht jetzt neben der Highlight-Karte statt darunter** (auf Wunsch). Er ist aus `renderHighlightGame` raus und ein eigenes Grid-Item (`#flyer-card`) im `hero-highlights`-Grid; `page-index.js` befuellt es und sortiert es beim Ordering direkt hinter die Karte, deren Spiel das `bild` traegt. Neuer Modifier `.hero-highlights--with-flyer` (zwei Spalten `1fr / 320px`, vertikal zentriert, max. 920 px – ohne die gezaehmte Gesamtbreite stuenden Karte und Flyer 1200 px auseinander). Der Modifier greift bewusst nur, wenn ausser dem Flyer genau **eine** Karte sichtbar ist; bei mehr Karten bleibt `auto-fit`, sonst faellt der Flyer bei drei Items in eine zweite Zeile und stuende wieder unter statt neben seiner Karte. Unter 600 px ist das Grid ohnehin einspaltig – dort stapelt es weiterhin, was bei einem Hochformat-Flyer auch richtig ist.

@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Raleway:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2026-09-06b">
+  <link rel="stylesheet" href="style.css?v=2026-09-06c">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -254,6 +254,15 @@
   </main>
 
   <!-- FOOTER -->
+  <!-- Lightbox (fuer den Finale-Flyer in der Hero-Sektion) -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Bildanzeige" hidden>
+    <button class="lightbox-close" id="lightbox-close" aria-label="Schließen">✕</button>
+    <button class="lightbox-prev" id="lightbox-prev" aria-label="Vorheriges Bild">‹</button>
+    <img class="lightbox-img" id="lightbox-img" alt="">
+    <button class="lightbox-next" id="lightbox-next" aria-label="Nächstes Bild">›</button>
+    <p class="lightbox-caption" id="lightbox-caption"></p>
+  </div>
+
   <footer>
     <div class="footer-social">
       <span>follow us on:</span>
@@ -271,7 +280,8 @@
   </footer>
 
   <script src="scripts/shared.js?v=2026-09-06b"></script>
-  <script src="scripts/page-index.js?v=2026-09-06b"></script>
+  <script src="scripts/lightbox.js?v=2026-09-06"></script>
+  <script src="scripts/page-index.js?v=2026-09-06c"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "fa36618f3ac94932a361e46b5ccf4a03"}'></script>
   <!-- End Cloudflare Web Analytics -->

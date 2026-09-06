@@ -130,8 +130,9 @@
         "phase": "Finale",
         "platzhalter": true,
         "hinweis": "Rahmenprogramm: Hüpfburg für die Kids, Speisen & Getränke aus der Kantine.",
-        "bild": "img/finale-2026.jpg",
-        "bild_alt": "Flyer zum Geese-Finale am 13.09.2026 am Geese Ballpark in Rohrbach bei Mattersburg: Spiel um Platz 3 um 11:00 Uhr, Finale um 14:00 Uhr, Gegner wird noch bekannt gegeben."
+        "bild": "img/finale-2026-thumb.jpg",
+        "bild_alt": "Flyer zum Geese-Finale am 13.09.2026 am Geese Ballpark in Rohrbach bei Mattersburg: Spiel um Platz 3 um 11:00 Uhr, Finale um 14:00 Uhr, Gegner wird noch bekannt gegeben.",
+        "bild_full": "img/finale-2026.jpg"
       }
     ],
     "vergangene": [

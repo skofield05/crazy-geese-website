@@ -344,6 +344,17 @@ def _check_spiele(spiele: object, errors: list[str], warnings: list[str]) -> Non
             if bild_alt is not None and not isinstance(bild_alt, str):
                 errors.append(f"{where}.bild_alt muss ein String sein.")
 
+            # bild_full: Grossformat fuer die Lightbox (optional, Fallback bild)
+            bild_full = g.get("bild_full")
+            if bild_full is not None:
+                if not isinstance(bild_full, str):
+                    errors.append(f"{where}.bild_full muss ein String sein.")
+                elif not (REPO_ROOT / bild_full).is_file():
+                    errors.append(f"{where}.bild_full fehlt auf der Platte: {bild_full}")
+                elif not bild:
+                    errors.append(f"{where}.bild_full ohne bild – ohne Anzeigebild "
+                                  "gibt es nichts zum Anklicken.")
+
             spielnr = g.get("spielnr")
             if spielnr:
                 if spielnr in seen_spielnr:

@@ -24,7 +24,13 @@ function setupLightbox(gridId, images) {
   const btnNext = document.getElementById('lightbox-next');
   if (!grid || !lightbox || !img || !btnClose || !btnPrev || !btnNext) return;
 
-  const focusables = [btnClose, btnPrev, btnNext];
+  // Bei nur einem Bild sind Vor/Zurueck sinnlos (sie wuerden auf dasselbe
+   // Bild zurueckspringen) – Buttons raus, Pfeiltasten und Swipe inaktiv,
+   // und der Fokus-Trap zirkuliert nur noch ueber den Schliessen-Button.
+  const multi = images.length > 1;
+  btnPrev.hidden = !multi;
+  btnNext.hidden = !multi;
+  const focusables = multi ? [btnClose, btnPrev, btnNext] : [btnClose];
   let currentIndex = 0;
   let lastFocus = null;
 
@@ -116,8 +122,8 @@ function setupLightbox(gridId, images) {
   document.addEventListener('keydown', function(e) {
     if (lightbox.hidden) return;
     if (e.key === 'Escape') close();
-    else if (e.key === 'ArrowRight') next();
-    else if (e.key === 'ArrowLeft') prev();
+    else if (e.key === 'ArrowRight' && multi) next();
+    else if (e.key === 'ArrowLeft' && multi) prev();
     else if (e.key === 'Tab') trapTab(e);
   });
 
@@ -127,7 +133,7 @@ function setupLightbox(gridId, images) {
     if (e.touches.length === 1) touchStartX = e.touches[0].clientX;
   }, { passive: true });
   lightbox.addEventListener('touchend', function(e) {
-    if (touchStartX === null) return;
+    if (touchStartX === null || !multi) return;
     const dx = e.changedTouches[0].clientX - touchStartX;
     touchStartX = null;
     if (Math.abs(dx) < 40) return;
