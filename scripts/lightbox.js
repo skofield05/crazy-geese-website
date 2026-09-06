@@ -5,7 +5,9 @@
 //   #lightbox-close, #lightbox-prev, #lightbox-next
 //
 // Aufruf (einmal pro Seite, nicht SPA-sicher – global keydown-Listener):
-//   setupLightbox('gallery-grid', [{ thumb, full, caption }, ...]);
+//   setupLightbox('gallery-grid', [{ thumb, full, caption, alt? }, ...]);
+//   `alt` ist optional und beschreibt das Bild fuer Screenreader; ohne
+//   Angabe dient `caption` als alt (Verhalten der Blog-Galerien).
 //
 // Features:
 //   - Keyboard: ESC schliesst, ArrowLeft/Right navigieren
@@ -83,7 +85,12 @@ function setupLightbox(gridId, images) {
   function render() {
     const item = images[currentIndex];
     img.src = isSafeImageUrl(item.full) ? item.full : '';
-    img.alt = item.caption || '';
+    // Sichtbare Bildunterschrift und Alt-Text duerfen auseinanderfallen: die
+    // Unterschrift ist oft kurz, waehrend der Alt-Text das Bild beschreibt.
+    // Waehrend die Lightbox offen ist, sind alle Geschwister `inert` – der
+    // beschreibende alt des Thumbnails ist dann nicht mehr erreichbar, muss
+    // hier also mitgegeben werden. Ohne `alt` bleibt es beim alten Verhalten.
+    img.alt = item.alt || item.caption || '';
     caption.textContent = item.caption || '';
   }
 

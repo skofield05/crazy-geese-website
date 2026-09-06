@@ -602,8 +602,15 @@ li {
 
 /* Der Flyer ist ein Button (Lightbox, auch per Tastatur). Er erbt von
    .gallery-item, muss aber dessen quadratisches Kachel-Format loswerden –
-   ein Hochformat-Flyer darf nicht beschnitten werden. */
-.flyer-trigger {
+   ein Hochformat-Flyer darf nicht beschnitten werden.
+   ACHTUNG Kaskade: .gallery-item steht WEITER UNTEN in dieser Datei (~2180)
+   und hat dieselbe Spezifitaet. Bei `.flyer-trigger` allein gewinnt daher die
+   spaetere Regel und der Flyer wird auf 1:1 zugeschnitten (gemessen: 320x320
+   statt 320x400, je 40px oben und unten weg). Deshalb wird hier ueber den
+   Elternselektor die Spezifitaet angehoben, statt den Block ans Dateiende zu
+   verschieben – so bleibt er bei den anderen Flyer-Regeln stehen und
+   ueberlebt auch eine spaetere Umsortierung. */
+.highlight-flyer-card .flyer-trigger {
   aspect-ratio: auto;
   background: none;
   display: block;
@@ -611,9 +618,17 @@ li {
   line-height: 0;
 }
 
-.flyer-trigger img {
+.highlight-flyer-card .flyer-trigger img {
   height: auto;
   object-fit: contain;
+}
+
+/* .gallery-item:hover img skaliert die Kachel um 1.05 – zusammen mit dem von
+   .gallery-item geerbten overflow:hidden wuerde das dem Flyer bei Hover die
+   Raender abschneiden. Braucht (0,3,1), weil .gallery-item:hover img selbst
+   schon (0,2,1) hat und spaeter steht. */
+.highlight-flyer-card .flyer-trigger:hover img {
+  transform: none;
 }
 
 .flyer-trigger .flyer-zoom-hint {

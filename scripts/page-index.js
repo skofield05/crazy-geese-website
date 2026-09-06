@@ -190,7 +190,7 @@ function renderPage(data) {
         g.zeit ? g.zeit + ' Uhr' : '',
         g.ort || ''
       ].filter(Boolean).join(' · ');
-      setupLightbox('flyer-card', [{ full: g.bild_full || g.bild, caption: caption }]);
+      setupLightbox('flyer-card', [{ full: g.bild_full || g.bild, caption: caption, alt: alt }]);
     }
   } else {
     flyerCard.hidden = true;
