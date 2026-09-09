@@ -24,7 +24,7 @@ END:VTIMEZONE
 BEGIN:VEVENT
 DTSTART;TZID=Europe/Vienna:20260913T140000
 DTEND;TZID=Europe/Vienna:20260913T163000
-SUMMARY:⚾ FINALE: Danube Titans oder Schremser Beers 2 vs Crazy Geese (HEIM)
+SUMMARY:⚾ FINALE: Danube Titans vs Crazy Geese (HEIM)
 LOCATION:Geese Ballpark\, Rohrbach
 DESCRIPTION:Baseball Landesliga Ost – Finale\nHeimspiel – Eintritt frei!
 UID:cg-FINALE@crazy-geese.at
