@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-09-12",
+    "stand": "2026-09-13",
     "phase": "Playoffs",
     "teams": [
       {
@@ -103,7 +103,7 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-09-12",
+    "letztes_update": "2026-09-13",
     "naechste": [
       {
         "spielnr": "#79",
