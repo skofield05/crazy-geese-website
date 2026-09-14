@@ -486,6 +486,11 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 
 ## Changelog
 
+### 2026-09-14 (4)
+- **Blogpost durchgehend in der dritten Person.** Der Artikel berichtet ueber die Geese („die Crazy Geese", „die Geese", „Rohrbach"), war an zwei Stellen aber in die erste Person Plural gerutscht – „sassen **uns** im Nacken" und „**unsere** Sponsoren". Beides gezogen; der Danke-Absatz beginnt jetzt mit „Der Dank der Crazy Geese geht an …". Auch der `<video>`-Fallbacktext war als einziger Satz in der zweiten Person und heisst jetzt neutral „Das Video kann in diesem Browser nicht abgespielt werden."
+- **Zwei hakelige Formulierungen geglaettet:** „den Weg an den Ballpark gefunden haben" → „am Ballpark waren"; „einem Verein, der komplett vertreten war" → „vollzaehlig da war".
+- Verifiziert: 18 Assertions ueber 2 Viewports, darunter ein Regex ueber den sichtbaren Artikeltext, der **jede** Form von 1./2. Person (wir/uns/unser*/euch/euer*/dein*/du) abfaengt – findet nichts mehr. Galerie und Videos unveraendert, kein Overflow, keine JS-Fehler.
+
 ### 2026-09-14 (3)
 - **Korrekturen nach Rueckmeldung:**
   - **Spielbeginn war 14:30**, nicht 14:00 (`zeit` am `#FINALE`, Anwurfsatz im Blogpost). Der Flyer und sein `bild_alt` nennen weiterhin 14:00 – das ist korrekt, weil sie das ankuendigen, was damals angekuendigt war.
