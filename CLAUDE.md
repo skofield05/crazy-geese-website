@@ -486,6 +486,20 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 
 ## Changelog
 
+### 2026-09-14 (3)
+- **Korrekturen nach Rueckmeldung:**
+  - **Spielbeginn war 14:30**, nicht 14:00 (`zeit` am `#FINALE`, Anwurfsatz im Blogpost). Der Flyer und sein `bild_alt` nennen weiterhin 14:00 – das ist korrekt, weil sie das ankuendigen, was damals angekuendigt war.
+  - **„mit deutlichem Abstand auf den Rest der Liga" war schlicht falsch** und ist raus: die Danube Titans standen bei 14-2. Ersetzt durch die tatsaechliche Konstellation (Titans mit zwei Niederlagen ins Finale).
+  - **Dank an Titans und Beers entfernt** (auf Wunsch). Die Titans bleiben im Artikel, aber nur beschreibend als Finalgegner.
+  - **Video 1 ist das letzte Out**, nicht irgendeine Spielszene – Bildunterschrift entsprechend.
+- **Meisterbanner ueberarbeitet:**
+  - **`16 : 1` / `29 : 1` statt `16–1` / `29–1`**, dazu das Label „Siege : Niederlagen" an beiden Kacheln. Vorher war aus der Zahl allein nicht ablesbar, was sie zaehlt.
+  - **Labels von 0.8rem auf 0.95rem** und von Muted-Grau auf `--color-text`: das Label traegt hier die Bedeutung, es ist nicht Dekoration. Der Zeitraum rutscht in eine neue, kleinere `.champion-stat-note` („2026 inkl. Finale", „2025 & 2026").
+  - **Unter 480px stapeln die Kacheln einspaltig.** Bei 320px blieben pro Spalte ~82px, „Titel in Folge" brach dort auf drei Zeilen um. Gestapelt steht jedes Label einzeilig.
+  - **Link `.champion-link` auf den Blogbeitrag** unter den Kacheln.
+- Verifiziert: 63 Assertions am Banner ueber 6 Viewports (Labelgroesse, Werte, Stapeln unter 480px, Link fuehrt tatsaechlich auf den Beitrag, 14:30 auf `baseball.html` und im Artikel, kein „Schremser" und kein „deutlicher Abstand" mehr), dazu die 30 Blogpost-Assertions und 11 Seiten x 2 Viewports ohne Overflow/JS-Fehler. Validator 0 Fehler.
+- **Cache-Buster** `style.css` auf `?v=2026-09-14c` (10 Files).
+
 ### 2026-09-14 (2)
 - **Blogpost zum Meistertitel** (`posts/meister-2026-09.html`, Bootstrap `scripts/post-meister-2026.js`): Finalbericht, 13 kuratierte Fotos als Galerie mit Lightbox, zwei Videos, Eintrag in `blog.posts` und `sitemap.xml`. Der meinbezirk-Bericht ist als `aside.post-external` verlinkt, der Text ist eigen formuliert.
 - **Fotoauswahl kuratiert statt komplett:** 30 Quelldateien (eine davon ein exaktes Duplikat, dazu ein ZIP mit zwei schon lose vorliegenden Bildern) wurden auf **13** reduziert und in eine Erzaehlreihenfolge gebracht – Teamfoto, Handshake-Line, Jubel, Pokale, Presse, Rahmenprogramm. `optimize_blog_images.py` nummeriert nach Sortierung, die Auswahl wird deshalb vorher als `01.jpg`…`13.jpg` in einen Temp-Ordner gestaged.

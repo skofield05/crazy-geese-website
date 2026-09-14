@@ -503,7 +503,17 @@ li {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 2px;
+}
+
+/* Unter 480px reicht die Spaltenbreite nicht mehr: bei 320px blieben pro
+   Kachel ~82px, "Titel in Folge" brach dort auf drei Zeilen um. Gestapelt
+   hat jedes Label die volle Breite und steht einzeilig. */
+@media (max-width: 479px) {
+  .champion-stats {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
 }
 
 .champion-stat-value {
@@ -513,9 +523,36 @@ li {
   color: var(--color-finale);
 }
 
+/* Bewusst kein Muted-Grau und nicht 0.8rem: die Zahlen 16 : 1 / 29 : 1 sagen
+   ohne das Label nicht, was sie zaehlen. Das Label traegt die Bedeutung und
+   muss deshalb lesbar sein, nicht nur dekorativ. */
 .champion-stat-label {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: var(--color-text);
+}
+
+.champion-stat-note {
+  font-size: 0.85rem;
+  line-height: 1.3;
   color: var(--color-text-muted);
+}
+
+.champion-link {
+  margin-top: var(--space-md);
+}
+
+.champion-link a {
+  font-weight: 700;
+  color: var(--color-finale);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(234, 179, 8, 0.45);
+  padding-bottom: 2px;
+}
+
+.champion-link a:hover,
+.champion-link a:focus-visible {
+  border-bottom-color: var(--color-finale);
 }
 
 /* Highlight cards: Nächstes Spiel + Nächstes Heimspiel + ggf. Event */
