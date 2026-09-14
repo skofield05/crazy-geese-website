@@ -25,7 +25,7 @@
     }
   },
   "tabelle": {
-    "stand": "2026-09-13",
+    "stand": "2026-09-14",
     "phase": "Playoffs",
     "teams": [
       {
@@ -103,38 +103,8 @@
     ]
   },
   "spiele": {
-    "letztes_update": "2026-09-13",
-    "naechste": [
-      {
-        "spielnr": "#79",
-        "datum": "2026-09-13",
-        "zeit": "11:00",
-        "heim": "Schremser Beers 2",
-        "gast": "Vienna Bucks",
-        "ergebnis_heim": null,
-        "ergebnis_gast": null,
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Spiel um Platz 3",
-        "fremdspiel": true,
-        "hinweis": "Vorspiel zum Finale bei uns am Ballpark."
-      },
-      {
-        "spielnr": "#FINALE",
-        "datum": "2026-09-13",
-        "zeit": "14:00",
-        "heim": "Rohrbach Crazy Geese",
-        "gast": "Danube Titans",
-        "ergebnis_heim": null,
-        "ergebnis_gast": null,
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Finale",
-        "spielnr_fest": true,
-        "hinweis": "Rahmenprogramm: Hüpfburg für die Kids, Speisen & Getränke aus der Kantine.",
-        "bild": "img/finale-2026-titans-thumb.jpg",
-        "bild_alt": "Flyer zum Geese-Finale am 13.09.2026 am Geese Ballpark in Rohrbach bei Mattersburg: Rohrbach Crazy Geese gegen die Danube Titans, Spiel um Platz 3 um 11:00 Uhr, Finale um 14:00 Uhr, dazu Hüpfburg für die Kinder und Kantine.",
-        "bild_full": "img/finale-2026-titans.jpg"
-      }
-    ],
+    "letztes_update": "2026-09-14",
+    "naechste": [],
     "vergangene": [
       {
         "datum": "2026-05-03",
@@ -312,6 +282,35 @@
         "spielnr": "#36",
         "ergebnis_heim": 9,
         "ergebnis_gast": 20
+      },
+      {
+        "spielnr": "#79",
+        "datum": "2026-09-13",
+        "zeit": "11:00",
+        "heim": "Schremser Beers 2",
+        "gast": "Vienna Bucks",
+        "ergebnis_heim": null,
+        "ergebnis_gast": null,
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Spiel um Platz 3",
+        "fremdspiel": true,
+        "hinweis": "Vorspiel zum Finale bei uns am Ballpark."
+      },
+      {
+        "spielnr": "#FINALE",
+        "datum": "2026-09-13",
+        "zeit": "14:00",
+        "heim": "Rohrbach Crazy Geese",
+        "gast": "Danube Titans",
+        "ergebnis_heim": null,
+        "ergebnis_gast": null,
+        "ort": "Geese Ballpark, Rohrbach",
+        "phase": "Finale",
+        "spielnr_fest": true,
+        "hinweis": "Rahmenprogramm: Hüpfburg für die Kids, Speisen & Getränke aus der Kantine.",
+        "bild": "img/finale-2026-titans-thumb.jpg",
+        "bild_alt": "Flyer zum Geese-Finale am 13.09.2026 am Geese Ballpark in Rohrbach bei Mattersburg: Rohrbach Crazy Geese gegen die Danube Titans, Spiel um Platz 3 um 11:00 Uhr, Finale um 14:00 Uhr, dazu Hüpfburg für die Kinder und Kantine.",
+        "bild_full": "img/finale-2026-titans.jpg"
       }
     ]
   },
