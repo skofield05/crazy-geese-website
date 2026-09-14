@@ -435,6 +435,89 @@ li {
   background: radial-gradient(ellipse at center, transparent 0%, var(--color-bg) 60%);
 }
 
+/* Meisterbanner (Saison 2026). Steht im Hero ueber den Highlight-Karten.
+   Gold wie der FINALE-Badge, aber Farbe traegt nie die Information allein:
+   "Meister 2026" und "Back-to-Back" stehen als Text da. */
+.champion-banner {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 0 auto var(--space-xl);
+  padding: var(--space-lg) var(--space-md);
+  background: rgba(22, 27, 34, 0.95);
+  border: 2px solid var(--color-finale);
+  border-radius: 8px;
+  box-shadow: 0 0 28px rgba(234, 179, 8, 0.22);
+  text-align: center;
+}
+
+.champion-eyebrow {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.champion-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 9vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-finale);
+  margin: var(--space-xs) 0;
+}
+
+.champion-subtitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.champion-final {
+  margin-top: var(--space-sm);
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.champion-final strong {
+  color: var(--color-text);
+}
+
+/* Drei Kacheln, feste 3er-Aufteilung statt Flex-Wrap: bei Wrap rutscht die
+   dritte Kachel allein in eine zweite Zeile und steht dann unsymmetrisch
+   unter der Luecke zwischen den ersten beiden. Lieber umbrechende Labels. */
+.champion-stats {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.champion-stats li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.champion-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1.1;
+  color: var(--color-finale);
+}
+
+.champion-stat-label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
 /* Highlight cards: Nächstes Spiel + Nächstes Heimspiel + ggf. Event */
 .hero-highlights {
   position: relative;
@@ -2170,7 +2253,8 @@ footer {
   margin-top: var(--space-2xl);
 }
 
-.post-gallery h2 {
+.post-gallery h2,
+.post-videos h2 {
   font-family: var(--font-display);
   font-size: 1.6rem;
   letter-spacing: 0.05em;
@@ -2217,6 +2301,42 @@ footer {
 .gallery-item:hover img {
   transform: scale(1.05);
   filter: brightness(1.1);
+}
+
+/* Videos im Blogbeitrag. Selbst gehostete MP4s – die CSP erlaubt sie ueber
+   default-src 'self' (kein eigener media-src noetig). preload="none" im
+   Markup ist load-bearing: die beiden Dateien sind zusammen ~8,6 MB und
+   duerfen nicht beim Seitenaufruf mitgeladen werden; sichtbar ist bis zum
+   Klick das Poster-JPEG. */
+.post-videos {
+  margin-top: var(--space-2xl);
+}
+
+.post-video {
+  margin-bottom: var(--space-xl);
+}
+
+.post-video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  background: #000;
+}
+
+/* Hochformat-Video (Handyaufnahme): ohne Deckel wuerde ein 576x1024-Video
+   auf dem Desktop ueber die volle Textbreite gezogen und waere dann ueber
+   1000px hoch. */
+.post-video--portrait video {
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.post-video figcaption {
+  margin-top: var(--space-sm);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 .post-external {

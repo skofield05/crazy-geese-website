@@ -4,7 +4,10 @@ Einmal-Helper zum Aufbereiten von WhatsApp-Bildern fuer den Blog.
 - Nimmt Quellordner mit JPEGs
 - Schreibt fuer jede Datei zwei Varianten ins Zielverzeichnis:
     <slug>-<nn>.jpg      -> max. 1600px Breite, Qualitaet 82 (Lightbox)
-    <slug>-<nn>-thumb.jpg -> max.  800px Breite, Qualitaet 78 (Galerie-Kachel)
+    <slug>-<nn>-thumb.jpg -> max.  800px laengste Kante, Qualitaet 78 (Kachel)
+  Die Kachel begrenzt bewusst die LAENGSTE Kante, nicht die Breite: ein
+  Hochformat 900x1600 bliebe sonst 800x1422 gross und waere als Thumbnail
+  kaum kleiner als das Vollbild (gemessen: 231 KB Thumb zu 287 KB Full).
 - Respektiert EXIF-Orientierung und strippt EXIF-Metadaten fuers Web.
 
 Nutzung:
@@ -23,7 +26,7 @@ from PIL import Image, ImageOps
 
 
 FULL_MAX_WIDTH = 1600
-THUMB_MAX_WIDTH = 800
+THUMB_MAX_SIDE = 800
 FULL_QUALITY = 82
 THUMB_QUALITY = 78
 
@@ -47,12 +50,21 @@ def optimize(src_dir: pathlib.Path, dst_dir: pathlib.Path, slug: str) -> None:
             full = _resize_max_width(im, FULL_MAX_WIDTH)
             full.save(dst_dir / full_name, "JPEG", quality=FULL_QUALITY, optimize=True, progressive=True)
 
-            thumb = _resize_max_width(im, THUMB_MAX_WIDTH)
+            thumb = _resize_max_side(im, THUMB_MAX_SIDE)
             thumb.save(dst_dir / thumb_name, "JPEG", quality=THUMB_QUALITY, optimize=True, progressive=True)
 
         full_kb = (dst_dir / full_name).stat().st_size // 1024
         thumb_kb = (dst_dir / thumb_name).stat().st_size // 1024
         print(f"{src.name} -> {full_name} ({full_kb} KB), {thumb_name} ({thumb_kb} KB)")
+
+
+def _resize_max_side(im: Image.Image, max_side: int) -> Image.Image:
+    """Skaliert so, dass die laengste Kante max_side nicht ueberschreitet."""
+    longest = max(im.width, im.height)
+    if longest <= max_side:
+        return im.copy()
+    ratio = max_side / longest
+    return im.resize((round(im.width * ratio), round(im.height * ratio)), Image.LANCZOS)
 
 
 def _resize_max_width(im: Image.Image, max_width: int) -> Image.Image:

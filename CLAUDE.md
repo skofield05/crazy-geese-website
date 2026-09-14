@@ -409,6 +409,22 @@ String-Typ.
    ```
    `blog.html` sortiert automatisch nach `datum` absteigend.
 
+3b. **Optional: Videos.** Selbst gehostete MP4s liegen im selben
+   `img/blog/<slug>/`-Ordner wie die Bilder (`<slug>-video-NN.mp4` plus
+   `<slug>-video-NN-poster.jpg`). Nur **remuxen**, nicht neu kodieren –
+   WhatsApp-Videos sind schon stark komprimiert, ein Re-Encode mit CRF 27
+   wurde gemessen *groesser*:
+   ```bash
+   ffmpeg -i "<quelle>.mp4" -c copy -movflags +faststart      "img/blog/<slug>/<slug>-video-01.mp4"
+   ffmpeg -ss 00:00:02 -i "img/blog/<slug>/<slug>-video-01.mp4"      -frames:v 1 -q:v 6 "img/blog/<slug>/<slug>-video-01-poster.jpg"
+   ```
+   `+faststart` schiebt das moov-Atom nach vorn (sonst spielt der Browser
+   erst nach dem vollstaendigen Download). Im Markup `<video controls
+   preload="none" playsinline poster="…">` – `preload="none"` ist Pflicht,
+   sonst zieht die Seite mehrere MB beim Aufruf. Die CSP braucht **keinen**
+   `media-src`: `default-src 'self'` deckt das ab. Hochformat-Videos bekommen
+   `.post-video--portrait` (deckelt die Breite auf 360 px).
+
 4. **Sitemap erweitern:** `sitemap.xml` um `blog.html` (bei Erstanlage) und `posts/<slug>.html` ergänzen.
 
 5. **Smoke-Test:** Lokal `python -m http.server` im Repo-Root, dann Artikel + Galerie + Lightbox im Browser durchklicken (Prev/Next/ESC/Swipe).
@@ -469,6 +485,30 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ---
 
 ## Changelog
+
+### 2026-09-14 (2)
+- **Blogpost zum Meistertitel** (`posts/meister-2026-09.html`, Bootstrap `scripts/post-meister-2026.js`): Finalbericht, 13 kuratierte Fotos als Galerie mit Lightbox, zwei Videos, Eintrag in `blog.posts` und `sitemap.xml`. Der meinbezirk-Bericht ist als `aside.post-external` verlinkt, der Text ist eigen formuliert.
+- **Fotoauswahl kuratiert statt komplett:** 30 Quelldateien (eine davon ein exaktes Duplikat, dazu ein ZIP mit zwei schon lose vorliegenden Bildern) wurden auf **13** reduziert und in eine Erzaehlreihenfolge gebracht – Teamfoto, Handshake-Line, Jubel, Pokale, Presse, Rahmenprogramm. `optimize_blog_images.py` nummeriert nach Sortierung, die Auswahl wird deshalb vorher als `01.jpg`…`13.jpg` in einen Temp-Ordner gestaged.
+- **Originale liegen in `Blog/meister-2026/`** (per `/Blog/` gitignored), **nicht** mehr unter `img/blog/`. Dort lagen sie zuerst – die `.jpeg` waren zwar ueber `WhatsApp Image*` schon ignoriert, die **MP4s und das ZIP aber nicht** und waeren mitcommittet worden.
+- **`optimize_blog_images.py`: Thumbnails begrenzen jetzt die laengste Kante** (`_resize_max_side`) statt der Breite. Bei Hochformat-Fotos (900x1600, hier die Mehrheit) war das Thumbnail sonst 800x1422 und kaum kleiner als das Vollbild – gemessen 231 KB Thumb zu 287 KB Full. Jetzt liegen alle 13 Kacheln bei 56–94 KB statt bis 233 KB. Bestehende Posts sind nicht betroffen (ihre Dateien werden nicht neu erzeugt).
+- **Videos selbst gehostet** (`img/blog/meister-2026-09/meister-2026-video-0{1,2}.mp4`, 3,6 + 5,0 MB). **Nur remuxt** (`-c copy -movflags +faststart`): ein erster Versuch mit `libx264 -crf 27` machte die WhatsApp-Dateien *groesser* (3,6 → 4,6 MB), weil sie schon stark komprimiert sind. `preload="none"` + Poster-JPEG, damit der Seitenaufruf die 8,6 MB nicht mitzieht. Neues CSS `.post-videos`/`.post-video`; `.post-video--portrait` deckelt das Hochformat-Video auf 360 px, sonst waere es auf dem Desktop ueber 1000 px hoch.
+- **Spiel um Platz 3 (`#79`) entfernt** (auf Wunsch). Weder ABF noch Metrostars haben je ein Ergebnis dazu veroeffentlicht – ABF hat nach dem 23.08. ueberhaupt nichts mehr eingetragen, die Playoff-Runde im Kalender ist inzwischen wieder leer. Validator jetzt **0 Warnungen**.
+- Verifiziert: 30 Assertions am Blogpost (13 Kacheln, Lightbox oeffnet das 1600er Grossbild, ausfuehrlicher `alt` unterscheidet sich von der kurzen Bildunterschrift, Blaettern/ESC/Fokus-Restore, Video-Metadaten laden mit 576x1024 und 28 s), dazu 11 Seiten x 2 Viewports ohne Overflow und ohne JS-Fehler. Validator 0 Fehler.
+- **Cache-Buster** `style.css` auf `?v=2026-09-14b` (11 Files).
+- **Offen:** Der ORF-Beitrag („Burgenland heute") ist noch nicht online – das Kamerateam war am Finaltag am Ballpark (Fotos 10 und 11 der Galerie). Sobald der Link da ist, gehoert er in den `aside.post-external` neben den meinbezirk-Bericht.
+
+### 2026-09-14
+- **MEISTER 2026 – Titel verteidigt.** Finale am 13.09. am Geese Ballpark **8:4 gegen die Danube Titans** gewonnen. `#FINALE` und das Fremdspiel `#79` wandern nach `spiele.vergangene`, `spiele.naechste` ist leer, beide ICS regeneriert (0 Events – korrekt, es steht kein Baseballspiel mehr an).
+- **Meisterbanner auf der Startseite** (`.champion-banner` in `index.html`, CSS in `style.css` vor den Highlight-Karten). Bewusst **statisch gepflegt** wie die Sponsorenliste, nicht aus `data.json`: der Text ist redaktionell und einmalig, ein eigenes Schema plus Validator-Zweig waere Aufwand fuer genau einen Datensatz. **Zum Saisonstart 2027 entfernen.**
+  - Gold (`--color-finale`) wie der FINALE-Badge, aber Farbe traegt nie die Information allein – „Meister 2026" und „Back-to-Back-Champions" stehen als Text da. Trophaeen-Emoji ist `aria-hidden`.
+  - Titel ist ein `<h2>`; die Hero-Hierarchie (visually-hidden `<h1>` → `h2` Banner/Letzte Ergebnisse/Spielplan/Tabelle) bleibt intakt.
+  - Drei Stat-Kacheln als **3-Spalten-Grid**, nicht als Flex-Wrap: bei Wrap rutscht die dritte Kachel allein in eine zweite Zeile und steht unsymmetrisch unter der Luecke zwischen den ersten beiden. Lieber umbrechende Labels (ab 320 px sauber).
+  - **Label „2026 inkl. Finale" ist Absicht:** die Kachel sagt 16–1, die Tabelle direkt darunter 15–1. Die Ligatabelle fuehrt nur Grunddurchgang + Platzierungsrunde, das Finale steht dort nicht drin – ohne den Zusatz haette das wie ein Zahlendreher gewirkt.
+- **`hinweis` am Finale** von „Rahmenprogramm: Huepfburg…" (nach dem Spiel veraltet) auf „Back-to-Back: zweiter Meistertitel in Folge." geaendert; der Hinweis erscheint weiterhin auf `baseball.html`. Der Flyer (`bild`/`bild_full`) bleibt am Spiel – er rendert nur in Highlight-Karten, die es fuer vergangene Spiele nicht gibt.
+- **Meta-Description + og:description** auf der Startseite nennen jetzt den Titel.
+- **Offen:** Das Ergebnis vom Spiel um Platz 3 (`#79`, Schremser Beers 2 vs Vienna Bucks) fehlt – der Validator warnt entsprechend. Der Scraper kann es nicht liefern (Fremdspiele werden vom Team-Filter nie erfasst), es muss von Hand nach. Ausserdem: Blogpost zum Finale, sobald Fotos und der ORF-Beitrag („Burgenland heute") da sind.
+- Verifiziert: 10 Seiten x 2 Viewports ohne Overflow und ohne JS-Fehler, Banner zusaetzlich ueber 6 Viewports (320–1280) geprueft (steht immer ueber den Highlight-Karten, 3 Kacheln in einer Zeile, kein Ausbrechen). Validator 0 Fehler / 1 Warnung (siehe oben).
+- **Cache-Buster** `style.css` auf `?v=2026-09-14` (10 Files).
 
 ### 2026-09-09 (2)
 - **Finale-Flyer ausgebessert** – das Platzhalter-Schild mit dem Fragezeichen und die Zeile „GEGNER WIRD NOCH BEKANNT GEGEBEN!" waren nach der Auslosung falsch. Statt eines Neuentwurfs pixelgenau in die Vorlage retuschiert (Pillow):

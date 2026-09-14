@@ -284,30 +284,17 @@
         "ergebnis_gast": 20
       },
       {
-        "spielnr": "#79",
-        "datum": "2026-09-13",
-        "zeit": "11:00",
-        "heim": "Schremser Beers 2",
-        "gast": "Vienna Bucks",
-        "ergebnis_heim": null,
-        "ergebnis_gast": null,
-        "ort": "Geese Ballpark, Rohrbach",
-        "phase": "Spiel um Platz 3",
-        "fremdspiel": true,
-        "hinweis": "Vorspiel zum Finale bei uns am Ballpark."
-      },
-      {
         "spielnr": "#FINALE",
         "datum": "2026-09-13",
         "zeit": "14:00",
         "heim": "Rohrbach Crazy Geese",
         "gast": "Danube Titans",
-        "ergebnis_heim": null,
-        "ergebnis_gast": null,
+        "ergebnis_heim": 8,
+        "ergebnis_gast": 4,
         "ort": "Geese Ballpark, Rohrbach",
         "phase": "Finale",
         "spielnr_fest": true,
-        "hinweis": "Rahmenprogramm: Hüpfburg für die Kids, Speisen & Getränke aus der Kantine.",
+        "hinweis": "Back-to-Back: zweiter Meistertitel in Folge.",
         "bild": "img/finale-2026-titans-thumb.jpg",
         "bild_alt": "Flyer zum Geese-Finale am 13.09.2026 am Geese Ballpark in Rohrbach bei Mattersburg: Rohrbach Crazy Geese gegen die Danube Titans, Spiel um Platz 3 um 11:00 Uhr, Finale um 14:00 Uhr, dazu Hüpfburg für die Kinder und Kantine.",
         "bild_full": "img/finale-2026-titans.jpg"
@@ -367,6 +354,16 @@
   },
   "blog": {
     "posts": [
+      {
+        "slug": "meister-2026-09",
+        "url": "posts/meister-2026-09.html",
+        "titel": "Back-to-Back: Die Crazy Geese sind wieder Meister",
+        "datum": "2026-09-14",
+        "kategorie": "Team",
+        "teaser": "8:4 gegen die Danube Titans: Die Rohrbach Crazy Geese gewinnen das Finale der Baseball Landesliga Ost am eigenen Ballpark und verteidigen den Meistertitel.",
+        "cover": "img/blog/meister-2026-09/meister-2026-01-thumb.jpg",
+        "cover_alt": "Die Meistermannschaft 2026 der Rohrbach Crazy Geese mit den Pokalen vor der Tribüne am Geese Ballpark"
+      },
       {
         "slug": "awards-2026-09",
         "url": "posts/awards-2026-09.html",
