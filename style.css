@@ -2342,9 +2342,9 @@ footer {
 
 /* Videos im Blogbeitrag. Selbst gehostete MP4s – die CSP erlaubt sie ueber
    default-src 'self' (kein eigener media-src noetig). preload="none" im
-   Markup ist load-bearing: die beiden Dateien sind zusammen ~8,6 MB und
-   duerfen nicht beim Seitenaufruf mitgeladen werden; sichtbar ist bis zum
-   Klick das Poster-JPEG. */
+   Markup ist load-bearing: die Dateien sind zusammen ~13,6 MB und duerfen
+   nicht beim Seitenaufruf mitgeladen werden; sichtbar ist bis zum Klick
+   das Poster-JPEG. */
 .post-videos {
   margin-top: var(--space-2xl);
 }

@@ -428,6 +428,11 @@ String-Typ.
    sonst zieht die Seite mehrere MB beim Aufruf. Die CSP braucht **keinen**
    `media-src`: `default-src 'self'` deckt das ab. Hochformat-Videos bekommen
    `.post-video--portrait` (deckelt die Breite auf 360 px).
+   **Achtung Rotationsmatrix:** `ffmpeg -i` meldet bei Handyvideos die
+   *gespeicherte* Aufloesung, nicht die angezeigte – ein Hochformatvideo
+   steht dort als `1024x576`. Massgeblich ist, was der Browser sagt:
+   `video.videoHeight > video.videoWidth`. Danach richtet sich, ob
+   `.post-video--portrait` gesetzt wird.
 
 4. **Sitemap erweitern:** `sitemap.xml` um `blog.html` (bei Erstanlage) und `posts/<slug>.html` ergänzen.
 
@@ -489,6 +494,15 @@ Die Sponsorenliste ist hardcoded in `index.html` → `#sponsoren` → `.sponsors
 ---
 
 ## Changelog
+
+### 2026-09-14 (5)
+- **Drittes Video im Finalbericht:** Mike Rigby (#3) mit einem Double. Wie die anderen nur remuxt (`-c copy -movflags +faststart`), 5,0 MB, Poster bei 00:00:05. Das Original liegt jetzt bei den anderen Quellen unter `Blog/meister-2026/` – abgelegt war es in `img/blog/meister-2026-09/`, also im publizierten Ordner, wo es unaufbereitet mitcommittet worden waere.
+- **Videos chronologisch umnummeriert:** 01 Double (im Spiel) → 02 letztes Out → 03 Sektdusche. Die Nummer ist zwar nur eine ID, soll aber der Anzeigereihenfolge entsprechen; die Assets waren einen Tag alt und nur aus diesem einen Post referenziert, der Rename war also billig.
+- **(MEDIUM) Das Double-Video ist Hochformat, obwohl `ffmpeg -i` `1024x576` meldet.** Die Datei traegt eine Rotationsmatrix; gespeichert ist quer, angezeigt wird hoch (576x1024). Ohne `.post-video--portrait` wurde es am Desktop 788 px breit und damit rund 1400 px hoch – genau der Fall, den die Klasse verhindern soll. Gefunden hat das der Test, nicht das Auge.
+  - **Test verschaerft:** Die Portrait-Klasse wird nicht mehr gegen eine erwartete Liste geprueft, sondern gegen die **echten Dimensionen aus dem Browser** (`video.videoHeight > video.videoWidth`), dazu eine Hoehenschranke. Ein weiteres rotiertes Video faellt damit sofort auf.
+  - Der How-to-Abschnitt „Optional: Videos" warnt jetzt davor, `ffmpeg -i` zu glauben.
+- Verifiziert: 32 Assertions ueber 4 Viewports (Reihenfolge, Captions, Poster gehoert zum jeweiligen Video, `preload="none"`, Portrait-Klasse deckt sich mit den echten Dimensionen, kein Video hoeher als 1000 px, Galerie unveraendert). Kein Overflow, keine JS-Fehler.
+- **Cache-Buster** `style.css` auf `?v=2026-09-14d` (11 Files); der Kommentar am Video-CSS nennt jetzt ~13,6 MB statt ~8,6 MB.
 
 ### 2026-09-14 (4)
 - **Blogpost durchgehend in der dritten Person.** Der Artikel berichtet ueber die Geese („die Crazy Geese", „die Geese", „Rohrbach"), war an zwei Stellen aber in die erste Person Plural gerutscht – „sassen **uns** im Nacken" und „**unsere** Sponsoren". Beides gezogen; der Danke-Absatz beginnt jetzt mit „Der Dank der Crazy Geese geht an …". Auch der `<video>`-Fallbacktext war als einziger Satz in der zweiten Person und heisst jetzt neutral „Das Video kann in diesem Browser nicht abgespielt werden."
