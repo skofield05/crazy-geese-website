@@ -14,8 +14,9 @@ Website für den Baseballverein **Rohrbach Crazy Geese** (crazy-geese.at), spiel
 
 - **Liga:** Baseball Landesliga Ost
 - **Teamname:** Rohrbach Crazy Geese (bis 2025: "Kutro Crazy Geese")
-- **Vorjahr:** 2025 – 13 Siege, 0 Niederlagen – **MEISTER!**
-- **Spielplan 2026:** 16 Spiele (8 Spieltage, Mai–August), verifiziert gegen Excel + ABF
+- **Saison 2026:** abgeschlossen – 16 Siege, 1 Niederlage – **MEISTER!** Finale am 13.09.2026 am Geese Ballpark mit **8:4 gegen die Danube Titans**, zweiter Titel in Folge (Back-to-Back). `spiele.naechste` ist leer, beide ICS haben 0 Events.
+- **Vorjahr:** 2025 – 13 Siege, 0 Niederlagen – **MEISTER!** (über beide Saisonen zusammen: 29 Siege, 1 Niederlage)
+- **Spielplan 2026:** 16 Spiele Grunddurchgang (8 Spieltage, Mai–August) + Finale, verifiziert gegen Excel + ABF
 - **E-Mail:** crazygeese93@gmail.com (keine @crazy-geese.at Adressen mehr)
 
 ### Trainingszeiten
@@ -415,9 +416,12 @@ String-Typ.
    WhatsApp-Videos sind schon stark komprimiert, ein Re-Encode mit CRF 27
    wurde gemessen *groesser*:
    ```bash
-   ffmpeg -i "<quelle>.mp4" -c copy -movflags +faststart      "img/blog/<slug>/<slug>-video-01.mp4"
-   ffmpeg -ss 00:00:02 -i "img/blog/<slug>/<slug>-video-01.mp4"      -frames:v 1 -q:v 6 "img/blog/<slug>/<slug>-video-01-poster.jpg"
+   ffmpeg -i "<quelle>.mp4" -c copy -movflags +faststart "img/blog/<slug>/<slug>-video-01.mp4"
+   ffmpeg -ss 00:00:02 -i "img/blog/<slug>/<slug>-video-01.mp4" -frames:v 1 -q:v 6 "img/blog/<slug>/<slug>-video-01-poster.jpg"
    ```
+   **`ffmpeg` liegt auf dieser Maschine nicht im PATH.** Die Binary kommt
+   ueber `pip install imageio-ffmpeg`, den Pfad liefert
+   `python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"`.
    `+faststart` schiebt das moov-Atom nach vorn (sonst spielt der Browser
    erst nach dem vollstaendigen Download). Im Markup `<video controls
    preload="none" playsinline poster="…">` – `preload="none"` ist Pflicht,
